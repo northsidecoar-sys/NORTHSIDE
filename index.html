@@ -808,7 +808,16 @@ window.updateLabel = (arrName, i, val) => {
 
 // ── GRID & FILTERS ────────────────────────────────────
 function getCategories() { return [...new Set(products.map(p => p.cat))]; }
-window.filterCat = cat => { currentFilter = cat; renderFilters(); renderGrid(); };
+window.filterCat = function(cat) {
+  currentFilter = cat;
+  // If we're in detail or orders view, go back to home first
+  document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
+  document.getElementById('viewHome').classList.add('active');
+  openProductId = null;
+  history.pushState({ view: 'home' }, '', window.location.pathname);
+  renderFilters();
+  renderGrid();
+};
 
 function renderFilters() {
   const bar = document.getElementById('filterBar');
@@ -978,7 +987,7 @@ function renderDetail(p) {
 let _selSize = null, _selColor = null;
 window.selectSize = (i,val) => { _selSize=val; document.querySelectorAll('.size-btn').forEach((b,j)=>b.classList.toggle('selected',j===i)); const l=document.getElementById('selectedSizeLabel'); if(l)l.textContent=val; };
 window.selectColor = i => { const p=products.find(x=>x.id===openProductId); if(!p)return; _selColor=p.colors[i].name; document.querySelectorAll('.color-btn').forEach((b,j)=>b.classList.toggle('selected',j===i)); const l=document.getElementById('selectedColorLabel'); if(l)l.textContent=_selColor; };
-window.sendWhatsapp = id => {
+window.sendWhatsapp = async function(id) {
   const p=products.find(x=>x.id===id); if(!p)return;
   const needsSize=(p.sizes||'').trim().length>0;
   const needsColor=(p.colors||[]).length>0;
@@ -990,6 +999,24 @@ window.sendWhatsapp = id => {
   if(needsSize&&_selSize)text+='\nTalle: '+_selSize;
   if(needsColor&&_selColor)text+='\nColor: '+_selColor;
   text+='\n¿Hay stock disponible?';
+  // Save order if user is logged in
+  if(currentUser) {
+    try {
+      await addDoc(collection(db, 'orders'), {
+        uid: currentUser.uid,
+        userName: currentUser.displayName || '',
+        userEmail: currentUser.email || '',
+        productId: p.id,
+        productName: p.name,
+        size: _selSize || '',
+        color: _selColor || '',
+        price: p.price,
+        imgUrl: (p.imgs && p.imgs.length > 0) ? p.imgs[0].url : '',
+        status: 'pendiente',
+        createdAt: Date.now()
+      });
+    } catch(e) { console.error('Error saving order:', e); }
+  }
   window.open('https://wa.me/'+num+'?text='+encodeURIComponent(text),'_blank');
 };
 window.prevDetailImg = () => { const p=products.find(x=>x.id===openProductId); if(!p||!p.imgs||p.imgs.length<2)return; detailActiveImg=(detailActiveImg-1+p.imgs.length)%p.imgs.length; updateDetailGallery(p); };
