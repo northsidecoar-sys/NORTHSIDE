@@ -9,7 +9,7 @@
   :root{--bg:#f7f3ee;--bg2:#ede8e0;--bg3:#e4ddd3;--black:#1a1612;--muted:#9e9188;--border:#d6cfc6;--warm:#8b6f52;--whatsapp:#25D366;}
   *{margin:0;padding:0;box-sizing:border-box;}
   body{background:var(--bg);color:var(--black);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;}
-  nav{display:flex;align-items:center;justify-content:space-between;padding:1.2rem 2rem;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg);z-index:100;}
+  nav{display:flex;align-items:center;justify-content:space-between;padding:1.2rem 2rem;border-bottom:1px solid var(--border);position:sticky;top:28px;background:var(--bg);z-index:100;}
   .logo{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:0.12em;color:var(--black);cursor:pointer;}
   .nav-cats{display:flex;gap:2rem;list-style:none;}
   .nav-cats a{color:var(--muted);text-decoration:none;font-size:0.78rem;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;transition:color 0.2s;}
@@ -26,7 +26,7 @@
 
 
   /* TICKER */
-  .ticker{width:100%;background:var(--black);color:var(--white, #f5f3ee);overflow:hidden;white-space:nowrap;border-bottom:1px solid #2a2a2a;cursor:pointer;user-select:none;position:sticky;top:57px;z-index:99;}
+  .ticker{width:100%;background:var(--black);color:var(--white, #f5f3ee);overflow:hidden;white-space:nowrap;border-bottom:1px solid #2a2a2a;cursor:pointer;user-select:none;position:sticky;top:0;z-index:101;}
   .ticker-track{display:inline-flex;animation:ticker-move 30s linear infinite;will-change:transform;}
   .ticker-track:hover,.ticker:hover .ticker-track{animation-play-state:paused;}
   .ticker-item{display:inline-block;padding:0.55rem 2rem;font-size:0.7rem;letter-spacing:0.15em;text-transform:uppercase;font-weight:400;white-space:nowrap;}
@@ -104,7 +104,7 @@
   .banner{position:relative;width:100%;overflow:hidden;background:var(--black);border-bottom:1px solid var(--border);}
   .banner-track{display:flex;transition:transform 0.5s cubic-bezier(.77,0,.18,1);}
   .banner-slide{position:relative;min-width:100%;cursor:pointer;overflow:hidden;}
-  .banner-slide img{width:100%;height:100vh;object-fit:cover;object-position:center;display:block;transition:transform 0.6s ease;}
+  .banner-slide img{width:100%;height:75vh;object-fit:cover;object-position:center;display:block;transition:transform 0.6s ease;}
   .banner-slide:hover img{transform:scale(1.02);}
   .banner-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,transparent 40%,rgba(26,22,18,0.55) 100%);}
   .banner-label{position:absolute;bottom:2rem;left:2.5rem;color:#fff;}
@@ -118,7 +118,7 @@
   .banner-dots{position:absolute;bottom:1rem;right:1.5rem;display:flex;gap:6px;z-index:10;}
   .banner-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.4);border:none;cursor:pointer;padding:0;transition:all 0.2s;}
   .banner-dot.active{background:#fff;transform:scale(1.3);}
-  .banner-empty{width:100%;height:100vh;background:var(--bg2);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0.8rem;border-bottom:1px solid var(--border);}
+  .banner-empty{width:100%;height:75vh;background:var(--bg2);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0.8rem;border-bottom:1px solid var(--border);}
   .banner-empty p{font-size:0.8rem;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;}
   .banner-empty button{background:none;border:1px solid var(--black);color:var(--black);padding:0.5rem 1.2rem;font-family:'DM Sans',sans-serif;font-size:0.75rem;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;transition:all 0.2s;}
   .banner-empty button:hover{background:var(--black);color:var(--bg);}
@@ -313,7 +313,7 @@
     .ticker-item{font-size:0.62rem;padding:0.45rem 1.2rem;letter-spacing:0.1em;}
 
     /* BANNER */
-    .banner-slide img{height:100svh;}
+    .banner-slide img{height:55vh;}
     .banner-arrow{width:36px;height:36px;font-size:0.7rem;}
     .banner-label{bottom:1.2rem;left:1.2rem;}
     .banner-label h3{font-size:1.4rem;}
@@ -380,6 +380,9 @@
   <div class="loading-bar"><div class="loading-bar-fill"></div></div>
 </div>
 
+<div class="ticker" id="tickerBar">
+    <div class="ticker-track" id="tickerTrack"></div>
+  </div>
 <nav>
   <span class="logo" onclick="showHome()">NORTHSIDE</span>
   <ul class="nav-cats" id="navCats"><li><a class="active" onclick="filterCat('all',this)">Todo</a></li></ul>
@@ -390,9 +393,6 @@
 </nav>
 
 <div class="view active" id="viewHome">
-  <div class="ticker" id="tickerBar">
-    <div class="ticker-track" id="tickerTrack"></div>
-  </div>
   <div id="bannerSection"></div>
   <div class="hero">
     <h1>NORTH<span>SIDE</span></h1>
