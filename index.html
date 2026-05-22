@@ -222,11 +222,11 @@
   .detail-swiper .swiper-pagination{bottom:12px;}
 
   /* CARD GALLERY */
-  .card-gallery{position:relative;aspect-ratio:3/4;background:var(--bg2);overflow:hidden;cursor:pointer;}
-  .card-gallery-static{position:relative;width:100%;height:100%;}
-  .card-img-1,.card-img-2{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;display:block;transition:opacity 0.6s ease;}
-  .card-img-1{opacity:1;z-index:1;}
-  .card-img-2{opacity:0;z-index:2;}
+  .card-gallery{position:relative;width:100%;background:var(--bg2);overflow:hidden;cursor:pointer;}
+  .card-gallery::before{content:"";display:block;padding-top:133.33%;}
+  .card-img-1{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;display:block;opacity:1;z-index:1;transition:opacity 0.6s ease;}
+  .card-img-2{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;display:block;opacity:0;z-index:2;transition:opacity 0.6s ease;}
+  .gallery-placeholder{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0.5rem;}
   .product-card:hover .card-img-2{opacity:1;}
   .product-card:hover .card-img-1{opacity:0;}
 
@@ -1282,7 +1282,7 @@ function renderGrid() {
     const imgs = p.imgs || [];
     let gal = '';
     if (imgs.length > 0) {
-      gal += '<img class="card-img-1" src="' + (imgs[0].url||imgs[0].data||'') + '" alt="' + (imgs[0].label||'') + '" loading="lazy">';
+      gal += '<img class="card-img-1" src="' + (imgs[0].url||imgs[0].data||'') + '" alt="' + (imgs[0].label||'') + '" loading="eager">';
       if (imgs.length === 2) {
         gal += '<img class="card-img-2" src="' + (imgs[1].url||imgs[1].data||'') + '" alt="' + (imgs[1].label||'') + '" loading="lazy">';
       }
