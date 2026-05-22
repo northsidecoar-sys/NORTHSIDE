@@ -3078,6 +3078,7 @@ window.removeBanner = async function(btn) {
 async function init() {
   try {
     await Promise.all([loadProducts(), loadWaConfig(), loadBanner(), loadTicker(), loadPaymentConfig()]);
+  window._products = products; // debug access
   } catch(e) {
     showToast('Error conectando a Firebase. Verificá tu conexión.');
   }
