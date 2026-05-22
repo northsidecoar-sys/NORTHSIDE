@@ -853,7 +853,10 @@
         <div class="upload-progress-bar"><div class="upload-progress-fill" id="pSizeGuideProgressFill"></div></div>
         <p>Subiendo...</p>
       </div>
-      <img id="pSizeGuideImgPreview" src="" alt="" style="display:none;width:100%;max-height:180px;object-fit:contain;margin-top:0.6rem;border:1px solid var(--border);">
+      <div id="pSizeGuideImgWrap" style="display:none;margin-top:0.6rem;position:relative;">
+        <img id="pSizeGuideImgPreview" src="" alt="" style="width:100%;max-height:180px;object-fit:contain;border:1px solid var(--border);display:block;">
+        <button onclick="window.removeSizeGuideImg('p')" style="position:absolute;top:6px;right:6px;background:rgba(26,22,18,0.75);color:#fff;border:none;padding:0.3rem 0.6rem;font-size:0.7rem;cursor:pointer;letter-spacing:0.06em;text-transform:uppercase;font-family:'DM Sans',sans-serif;">✕ Sacar foto</button>
+      </div>
       <input type="hidden" id="pSizeGuideImgUrl" value="">
 
       <label style="margin-top:1.2rem">Stock por talle (opcional)</label>
@@ -991,7 +994,10 @@
       <div class="upload-progress-bar"><div class="upload-progress-fill" id="eSizeGuideProgressFill"></div></div>
       <p>Subiendo...</p>
     </div>
-    <img id="eSizeGuideImgPreview" src="" alt="" style="display:none;width:100%;max-height:180px;object-fit:contain;margin-top:0.6rem;border:1px solid var(--border);">
+    <div id="eSizeGuideImgWrap" style="display:none;margin-top:0.6rem;position:relative;">
+      <img id="eSizeGuideImgPreview" src="" alt="" style="width:100%;max-height:180px;object-fit:contain;border:1px solid var(--border);display:block;">
+      <button onclick="window.removeSizeGuideImg('e')" style="position:absolute;top:6px;right:6px;background:rgba(26,22,18,0.75);color:#fff;border:none;padding:0.3rem 0.6rem;font-size:0.7rem;cursor:pointer;letter-spacing:0.06em;text-transform:uppercase;font-family:'DM Sans',sans-serif;">✕ Sacar foto</button>
+    </div>
     <input type="hidden" id="eSizeGuideImgUrl" value="">
 
     <label style="margin-top:1.2rem">Stock por talle</label>
@@ -1668,8 +1674,10 @@ window.openEdit = id => {
   const eSGIP = document.getElementById('eSizeGuideImgPreview');
   const eSGIT = document.getElementById('eSizeGuideImgTxt');
   if(eSGIU) eSGIU.value = p.sizeGuideImg || '';
-  if(eSGIP){ if(p.sizeGuideImg){ eSGIP.src=p.sizeGuideImg; eSGIP.style.display='block'; } else { eSGIP.style.display='none'; eSGIP.src=''; } }
-  if(eSGIT) eSGIT.textContent = p.sizeGuideImg ? 'Foto cargada ✓' : 'Subí la foto de la guía de talles';
+  const eSGIW = document.getElementById('eSizeGuideImgWrap');
+  if(eSGIW) eSGIW.style.display = p.sizeGuideImg ? 'block' : 'none';
+  if(eSGIP){ if(p.sizeGuideImg){ eSGIP.src=p.sizeGuideImg; } else { eSGIP.src=''; } }
+  if(eSGIT) eSGIT.textContent = p.sizeGuideImg ? 'Cambiar foto' : 'Subí la foto de la guía de talles';
   document.getElementById('editOverlay').classList.add('open');
 };
 window.closeEdit = () => { document.getElementById('editOverlay').classList.remove('open'); editingId=null; };
@@ -1973,6 +1981,19 @@ window.setOrderStatus = async function(btn) {
 
 
 
+
+window.removeSizeGuideImg = function(prefix) {
+  const wrap = document.getElementById(prefix + 'SizeGuideImgWrap');
+  const preview = document.getElementById(prefix + 'SizeGuideImgPreview');
+  const urlInput = document.getElementById(prefix + 'SizeGuideImgUrl');
+  const txt = document.getElementById(prefix + 'SizeGuideImgTxt');
+  if(wrap) wrap.style.display = 'none';
+  if(preview) preview.src = '';
+  if(urlInput) urlInput.value = '';
+  if(txt) txt.textContent = 'Subí la foto de la guía de talles';
+  showToast('Foto de guía eliminada');
+};
+
 // ── SIZE GUIDE IMAGE UPLOAD ───────────────────────────
 window.uploadSizeGuideImg = async function(e, previewId, urlId) {
   const file = e.target.files[0]; if(!file) return;
@@ -2002,7 +2023,9 @@ window.uploadSizeGuideImg = async function(e, previewId, urlId) {
         const res = JSON.parse(xhr.responseText);
         const preview = document.getElementById(previewId);
         const urlInput = document.getElementById(urlId);
-        if(preview){ preview.src = res.secure_url; preview.style.display = 'block'; }
+        if(preview){ preview.src = res.secure_url; }
+        const wrap = document.getElementById(base + 'ImgWrap');
+        if(wrap) wrap.style.display = 'block';
         if(urlInput) urlInput.value = res.secure_url;
         const fillEl = document.getElementById(fillId);
         if(fillEl) fillEl.style.width = '100%';
