@@ -739,21 +739,21 @@
             <input type="radio" name="payment" value="transferencia">
             <div>
               <div class="payment-option-label">💸 Transferencia bancaria</div>
-              <div class="payment-option-sub" id="transferSubLabel">Ahorrás un % del total</div>
+              <div class="payment-option-sub" id="transferSubLabel">Ahorrás un % del total · Alias: NORTHSIDE.CO</div>
             </div>
           </label>
           <label class="payment-option" onclick="window.selectPayment('mercadopago',this)">
             <input type="radio" name="payment" value="mercadopago">
             <div>
-              <div class="payment-option-label">💳 Mercado Pago</div>
+              <div class="payment-option-label">💳 Galicia o Mercado Pago</div>
               <div class="payment-option-sub">Tarjeta, cuotas, billetera virtual</div>
             </div>
           </label>
           <label class="payment-option" onclick="window.selectPayment('efectivo',this)">
             <input type="radio" name="payment" value="efectivo">
             <div>
-              <div class="payment-option-label">💵 Efectivo en sucursal</div>
-              <div class="payment-option-sub">Pagás al retirar</div>
+              <div class="payment-option-label">💵 Efectivo</div>
+              <div class="payment-option-sub">Pagás al retirar o coordinar entrega</div>
             </div>
           </label>
         </div>
@@ -2609,11 +2609,20 @@ window.selectPayment = function(type, el) {
   el.classList.add('selected');
   selectedPayment = type;
   const saving = document.getElementById('transferSaving');
-  if(type === 'transferencia' && paymentConfig.transferPct > 0) {
+  if(type === 'transferencia') {
     const subtotal = getCartTotal() + shippingCost;
-    const discount = Math.round(subtotal * paymentConfig.transferPct / 100);
-    const final = subtotal - discount;
-    saving.innerHTML = '✅ Ahorrás <strong>$' + Number(discount).toLocaleString('es-AR') + '</strong> — Total final: <strong>$' + Number(final).toLocaleString('es-AR') + '</strong>';
+    if(paymentConfig.transferPct > 0) {
+      const discount = Math.round(subtotal * paymentConfig.transferPct / 100);
+      const final = subtotal - discount;
+      saving.innerHTML =
+        '✅ Ahorrás <strong>$' + Number(discount).toLocaleString('es-AR') + '</strong> — Total a transferir: <strong>$' + Number(final).toLocaleString('es-AR') + '</strong>' +
+        '<br><span style="font-size:0.82rem;margin-top:0.3rem;display:block">📋 Alias: <strong>NORTHSIDE.CO</strong></span>';
+    } else {
+      const total = subtotal;
+      saving.innerHTML =
+        '💸 Total a transferir: <strong>$' + Number(total).toLocaleString('es-AR') + '</strong>' +
+        '<br><span style="font-size:0.82rem;margin-top:0.3rem;display:block">📋 Alias: <strong>NORTHSIDE.CO</strong></span>';
+    }
     saving.classList.add('show');
   } else {
     saving.classList.remove('show');
@@ -2685,7 +2694,7 @@ window.finalizarCompra = async function() {
     text += '• ' + item.name + ' — Talle: ' + item.size + ' — Color: ' + item.color + ' — $' + Number(item.price).toLocaleString('es-AR') + '\n';
   });
   text += '\nEnvío: ' + (selectedShipping ? selectedShipping.name : '—');
-  text += '\nPago: ' + selectedPayment;
+  text += '\nPago: ' + selectedPayment + (selectedPayment === 'transferencia' ? ' — Alias: NORTHSIDE.CO — Total: $' + Number(total).toLocaleString('es-AR') : '');
   text += '\nTotal: $' + Number(total).toLocaleString('es-AR');
 
   // Save order if logged in
