@@ -142,6 +142,30 @@
   .cart-qty button:hover { background:var(--black);color:var(--bg); }
   .cart-qty span { font-size:0.82rem;min-width:20px;text-align:center; }
 
+
+  /* PAYMENT TABS */
+  .payment-tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:1.2rem;}
+  .payment-tab-btn{flex:1;background:none;border:none;border-bottom:2px solid transparent;padding:0.7rem 0.5rem;font-family:'DM Sans',sans-serif;font-size:0.75rem;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;color:var(--muted);transition:all 0.2s;margin-bottom:-1px;}
+  .payment-tab-btn.active{border-bottom-color:var(--black);color:var(--black);font-weight:500;}
+  .payment-tab-panel{display:none;}
+  .payment-tab-panel.active{display:block;}
+  /* COMPROBANTE */
+  .comprobante-box{border:1px solid var(--border);padding:1.2rem;margin-top:1rem;background:var(--bg2);}
+  .comprobante-title{font-size:0.75rem;letter-spacing:0.12em;text-transform:uppercase;font-weight:500;margin-bottom:0.4rem;}
+  .comprobante-warning{background:#fff3cd;border:1px solid #ffc107;color:#856404;font-size:0.72rem;padding:0.5rem 0.8rem;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.4rem;}
+  .comprobante-upload-area{border:2px dashed var(--border);padding:1.2rem;text-align:center;cursor:pointer;position:relative;transition:border-color 0.2s;background:var(--bg);}
+  .comprobante-upload-area:hover{border-color:var(--warm);}
+  .comprobante-upload-area input[type="file"]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+  .comprobante-upload-icon{font-size:1.8rem;margin-bottom:0.4rem;}
+  .comprobante-upload-txt{font-size:0.75rem;color:var(--muted);letter-spacing:0.06em;}
+  .comprobante-preview{margin-top:0.8rem;position:relative;display:none;}
+  .comprobante-preview img{width:100%;max-height:200px;object-fit:contain;border:1px solid var(--border);display:block;}
+  .comprobante-preview-name{font-size:0.7rem;color:var(--muted);margin-top:0.3rem;text-align:center;}
+  .btn-rm-comprobante{position:absolute;top:4px;right:4px;background:rgba(26,22,18,0.7);color:#fff;border:none;padding:0.2rem 0.5rem;font-size:0.65rem;cursor:pointer;}
+  .alias-box{background:var(--black);color:var(--bg);padding:0.8rem 1rem;margin-bottom:0.8rem;display:flex;align-items:center;justify-content:space-between;}
+  .alias-label{font-size:0.68rem;letter-spacing:0.1em;text-transform:uppercase;opacity:0.6;}
+  .alias-value{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:0.08em;}
+  .alias-amount{font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--warm);}
   /* SHIPPING CALCULATOR */
   .shipping-calc { margin-top:1.5rem; }
   .shipping-input-row { display:flex;gap:0.5rem;margin-bottom:1rem; }
@@ -734,33 +758,119 @@
       <!-- STEP 3: PAYMENT -->
       <div id="checkout-step-3" style="display:none">
         <div class="section-label">Pago</div>
-        <div class="payment-options">
-          <label class="payment-option" onclick="window.selectPayment('transferencia',this)">
-            <input type="radio" name="payment" value="transferencia">
-            <div>
-              <div class="payment-option-label">💸 Transferencia bancaria</div>
-              <div class="payment-option-sub" id="transferSubLabel">Ahorrás un % del total · Alias: NORTHSIDE.CO</div>
-            </div>
-          </label>
-          <label class="payment-option" onclick="window.selectPayment('mercadopago',this)">
-            <input type="radio" name="payment" value="mercadopago">
-            <div>
-              <div class="payment-option-label">💳 Galicia o Mercado Pago</div>
-              <div class="payment-option-sub">Tarjeta, cuotas, billetera virtual</div>
-            </div>
-          </label>
-          <label class="payment-option" onclick="window.selectPayment('efectivo',this)">
-            <input type="radio" name="payment" value="efectivo">
-            <div>
-              <div class="payment-option-label">💵 Efectivo</div>
-              <div class="payment-option-sub">Pagás al retirar o coordinar entrega</div>
-            </div>
-          </label>
+
+        <!-- PAYMENT TABS -->
+        <div class="payment-tabs">
+          <button class="payment-tab-btn active" onclick="window.switchPaymentTab('metodo',this)">1 · Método de pago</button>
+          <button class="payment-tab-btn" id="tabPagoBtn" onclick="window.switchPaymentTab('pago',this)">2 · Datos de pago</button>
         </div>
-        <div class="transfer-saving" id="transferSaving"></div>
-        <div style="margin-top:1.5rem">
-          <button class="btn-next-step" onclick="window.finalizarCompra()">Finalizar consulta por WhatsApp →</button>
-          <button class="btn-back-step" onclick="window.goCheckoutStep(2)">← Volver a entrega</button>
+
+        <!-- TAB 1: elegir método -->
+        <div class="payment-tab-panel active" id="payTabMetodo">
+          <div class="payment-options">
+            <label class="payment-option" onclick="window.selectPayment('transferencia',this)">
+              <input type="radio" name="payment" value="transferencia">
+              <div>
+                <div class="payment-option-label">💸 Transferencia bancaria</div>
+                <div class="payment-option-sub" id="transferSubLabel">20% de descuento · Alias: NORTHSIDE.CO</div>
+              </div>
+            </label>
+            <label class="payment-option" onclick="window.selectPayment('mercadopago',this)">
+              <input type="radio" name="payment" value="mercadopago">
+              <div>
+                <div class="payment-option-label">💳 Galicia o Mercado Pago</div>
+                <div class="payment-option-sub">Cuotas sin interés · Alias: NORTHSIDE.CO</div>
+              </div>
+            </label>
+            <label class="payment-option" onclick="window.selectPayment('efectivo',this)">
+              <input type="radio" name="payment" value="efectivo">
+              <div>
+                <div class="payment-option-label">💵 Efectivo</div>
+                <div class="payment-option-sub">Pagás al retirar o coordinar entrega</div>
+              </div>
+            </label>
+          </div>
+          <div style="margin-top:1rem">
+            <button class="btn-next-step" onclick="window.goPayTab()">Continuar →</button>
+          </div>
+        </div>
+
+        <!-- TAB 2: datos de pago -->
+        <div class="payment-tab-panel" id="payTabPago">
+          <!-- TRANSFERENCIA -->
+          <div id="payDetailTransferencia" style="display:none">
+            <div class="transfer-saving show" id="transferSaving" style="margin-bottom:1rem"></div>
+            <div class="alias-box">
+              <div>
+                <div class="alias-label">Alias</div>
+                <div class="alias-value">NORTHSIDE.CO</div>
+              </div>
+              <div id="aliasAmount" class="alias-amount"></div>
+            </div>
+            <div class="comprobante-box">
+              <div class="comprobante-title">📎 Comprobante de pago</div>
+              <div class="comprobante-warning">⚠️ Si no subís el comprobante, el pedido no se realizará.</div>
+              <div class="comprobante-upload-area" id="comprobanteUploadArea">
+                <input type="file" id="comprobanteFile" accept="image/*,application/pdf" onchange="window.handleComprobante(event)">
+                <div class="comprobante-upload-icon">📄</div>
+                <div class="comprobante-upload-txt">Tocá para subir foto o PDF del comprobante</div>
+              </div>
+              <div class="comprobante-preview" id="comprobantePreview">
+                <img id="comprobanteImg" src="" alt="Comprobante">
+                <div class="comprobante-preview-name" id="comprobanteName"></div>
+                <button class="btn-rm-comprobante" onclick="window.removeComprobante()">✕ Sacar</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- MERCADO PAGO / GALICIA -->
+          <div id="payDetailMercadopago" style="display:none">
+            <div class="alias-box">
+              <div>
+                <div class="alias-label">Alias</div>
+                <div class="alias-value">NORTHSIDE.CO</div>
+              </div>
+              <div id="aliasAmountMP" class="alias-amount"></div>
+            </div>
+            <div class="comprobante-box">
+              <div class="comprobante-title">📎 Comprobante de pago</div>
+              <div class="comprobante-warning">⚠️ Si no subís el comprobante, el pedido no se realizará.</div>
+              <div class="comprobante-upload-area" id="comprobanteUploadAreaMP">
+                <input type="file" id="comprobanteFileMP" accept="image/*,application/pdf" onchange="window.handleComprobanteMP(event)">
+                <div class="comprobante-upload-icon">📄</div>
+                <div class="comprobante-upload-txt">Tocá para subir foto o PDF del comprobante</div>
+              </div>
+              <div class="comprobante-preview" id="comprobantePreviewMP">
+                <img id="comprobanteImgMP" src="" alt="Comprobante">
+                <div class="comprobante-preview-name" id="comprobanteNameMP"></div>
+                <button class="btn-rm-comprobante" onclick="window.removeComprobanteMP()">✕ Sacar</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- EFECTIVO -->
+          <div id="payDetailEfectivo" style="display:none">
+            <div style="background:var(--bg2);border:1px solid var(--border);padding:1.2rem;margin-bottom:1rem;">
+              <div style="font-size:0.82rem;font-weight:500;margin-bottom:0.3rem">💵 Pago en efectivo</div>
+              <div style="font-size:0.75rem;color:var(--muted)">Completá tus datos y te contactamos por WhatsApp para coordinar el punto de encuentro.</div>
+            </div>
+            <div id="efectivoTotal" style="background:var(--black);color:var(--bg);padding:0.8rem 1rem;margin-bottom:1rem;display:flex;justify-content:space-between;align-items:center;">
+              <span style="font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;opacity:0.6">Total a pagar en efectivo</span>
+              <span style="font-family:'Bebas Neue',sans-serif;font-size:1.3rem;" id="efectivoTotalAmount"></span>
+            </div>
+            <label style="margin-top:0">Nombre y apellido *</label>
+            <input type="text" id="efectivoNombre" placeholder="Tu nombre completo">
+            <label>Localidad / Barrio *</label>
+            <input type="text" id="efectivoDireccion" placeholder="Ej: Palermo, Buenos Aires">
+            <label>Aclaraciones (opcional)</label>
+            <textarea id="efectivoNota" placeholder="Horarios disponibles, preferencia de zona, cualquier detalle..."></textarea>
+          </div>
+
+          <div style="margin-top:1.5rem">
+            <button class="btn-next-step" onclick="window.finalizarCompra()">Finalizar consulta por WhatsApp →</button>
+            <button class="btn-back-step" onclick="window.switchPaymentTab('metodo', document.querySelector('.payment-tab-btn'))">← Cambiar método</button>
+            <button class="btn-back-step" onclick="window.goCheckoutStep(2)">← Volver a entrega</button>
+          </div>
         </div>
       </div>
     </div>
@@ -2364,6 +2474,8 @@ window.openCheckout = function() {
   document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
   document.getElementById('viewCheckout').classList.add('active');
   currentCheckoutStep = 1;
+  comprobanteUrl = null;
+  comprobanteUrlMP = null;
   renderCheckoutStep(1);
   renderSummary();
   window.scrollTo(0,0);
@@ -2595,6 +2707,110 @@ window.changeShipping = function() {
   document.getElementById('shippingNextActions').style.display = 'none';
 };
 
+
+// ── PAYMENT TABS ──────────────────────────────────────
+let comprobanteUrl = null;
+let comprobanteUrlMP = null;
+
+window.switchPaymentTab = function(tab, btn) {
+  document.querySelectorAll('.payment-tab-btn').forEach(function(b){ b.classList.remove('active'); });
+  document.querySelectorAll('.payment-tab-panel').forEach(function(p){ p.classList.remove('active'); });
+  if(btn) btn.classList.add('active');
+  const panel = document.getElementById('payTab' + tab.charAt(0).toUpperCase() + tab.slice(1));
+  if(panel) panel.classList.add('active');
+};
+
+window.goPayTab = function() {
+  if(!selectedPayment) { showToast('Seleccioná un método de pago primero'); return; }
+  // Show correct detail panel
+  document.getElementById('payDetailTransferencia').style.display = 'none';
+  document.getElementById('payDetailMercadopago').style.display = 'none';
+  document.getElementById('payDetailEfectivo').style.display = 'none';
+
+  const subtotal = getCartTotal() + shippingCost;
+  if(selectedPayment === 'transferencia') {
+    document.getElementById('payDetailTransferencia').style.display = 'block';
+    const pct = paymentConfig.transferPct || 0;
+    if(pct > 0) {
+      const discount = Math.round(subtotal * pct / 100);
+      const final = subtotal - discount;
+      document.getElementById('transferSaving').innerHTML =
+        '✅ Ahorrás <strong>$' + Number(discount).toLocaleString('es-AR') + '</strong> — Total a transferir: <strong>$' + Number(final).toLocaleString('es-AR') + '</strong>';
+      document.getElementById('aliasAmount').textContent = '$' + Number(final).toLocaleString('es-AR');
+    } else {
+      document.getElementById('transferSaving').innerHTML = '';
+      document.getElementById('aliasAmount').textContent = '$' + Number(subtotal).toLocaleString('es-AR');
+    }
+  } else if(selectedPayment === 'mercadopago') {
+    document.getElementById('payDetailMercadopago').style.display = 'block';
+    document.getElementById('aliasAmountMP').textContent = '$' + Number(subtotal).toLocaleString('es-AR');
+  } else if(selectedPayment === 'efectivo') {
+    document.getElementById('payDetailEfectivo').style.display = 'block';
+    const totalEl = document.getElementById('efectivoTotalAmount');
+    if(totalEl) totalEl.textContent = '$' + Number(subtotal).toLocaleString('es-AR');
+  }
+
+  // Switch to pago tab
+  document.querySelectorAll('.payment-tab-btn').forEach(function(b){ b.classList.remove('active'); });
+  document.querySelectorAll('.payment-tab-panel').forEach(function(p){ p.classList.remove('active'); });
+  document.getElementById('tabPagoBtn').classList.add('active');
+  document.getElementById('payTabPago').classList.add('active');
+};
+
+window.handleComprobante = function(e) {
+  const file = e.target.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    comprobanteUrl = ev.target.result;
+    const preview = document.getElementById('comprobantePreview');
+    const img = document.getElementById('comprobanteImg');
+    const name = document.getElementById('comprobanteName');
+    if(file.type.startsWith('image/')) {
+      img.src = ev.target.result;
+      img.style.display = 'block';
+    } else {
+      img.style.display = 'none';
+    }
+    if(name) name.textContent = file.name;
+    if(preview) preview.style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+};
+
+window.removeComprobante = function() {
+  comprobanteUrl = null;
+  document.getElementById('comprobantePreview').style.display = 'none';
+  document.getElementById('comprobanteImg').src = '';
+  document.getElementById('comprobanteFile').value = '';
+};
+
+window.handleComprobanteMP = function(e) {
+  const file = e.target.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    comprobanteUrlMP = ev.target.result;
+    const preview = document.getElementById('comprobantePreviewMP');
+    const img = document.getElementById('comprobanteImgMP');
+    const name = document.getElementById('comprobanteNameMP');
+    if(file.type.startsWith('image/')) {
+      img.src = ev.target.result;
+      img.style.display = 'block';
+    } else {
+      img.style.display = 'none';
+    }
+    if(name) name.textContent = file.name;
+    if(preview) preview.style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+};
+
+window.removeComprobanteMP = function() {
+  comprobanteUrlMP = null;
+  document.getElementById('comprobantePreviewMP').style.display = 'none';
+  document.getElementById('comprobanteImgMP').src = '';
+  document.getElementById('comprobanteFileMP').value = '';
+};
+
 // ── PAYMENT ───────────────────────────────────────────
 function setupPaymentStep() {
   const subtotal = getCartTotal();
@@ -2608,25 +2824,7 @@ window.selectPayment = function(type, el) {
   document.querySelectorAll('.payment-option').forEach(function(o){ o.classList.remove('selected'); });
   el.classList.add('selected');
   selectedPayment = type;
-  const saving = document.getElementById('transferSaving');
-  if(type === 'transferencia') {
-    const subtotal = getCartTotal() + shippingCost;
-    if(paymentConfig.transferPct > 0) {
-      const discount = Math.round(subtotal * paymentConfig.transferPct / 100);
-      const final = subtotal - discount;
-      saving.innerHTML =
-        '✅ Ahorrás <strong>$' + Number(discount).toLocaleString('es-AR') + '</strong> — Total a transferir: <strong>$' + Number(final).toLocaleString('es-AR') + '</strong>' +
-        '<br><span style="font-size:0.82rem;margin-top:0.3rem;display:block">📋 Alias: <strong>NORTHSIDE.CO</strong></span>';
-    } else {
-      const total = subtotal;
-      saving.innerHTML =
-        '💸 Total a transferir: <strong>$' + Number(total).toLocaleString('es-AR') + '</strong>' +
-        '<br><span style="font-size:0.82rem;margin-top:0.3rem;display:block">📋 Alias: <strong>NORTHSIDE.CO</strong></span>';
-    }
-    saving.classList.add('show');
-  } else {
-    saving.classList.remove('show');
-  }
+  // saving shown in goPayTab
   renderSummary();
 };
 
@@ -2684,18 +2882,49 @@ window.toggleCheckoutSummary = function() {
 // ── FINALIZAR ─────────────────────────────────────────
 window.finalizarCompra = async function() {
   if(!selectedPayment) { showToast('Seleccioná un método de pago'); return; }
+  // Check comprobante for transfer/mp
+  if(selectedPayment === 'transferencia' && !comprobanteUrl) {
+    showToast('⚠️ Subí el comprobante de transferencia para continuar');
+    return;
+  }
+  if(selectedPayment === 'mercadopago' && !comprobanteUrlMP) {
+    showToast('⚠️ Subí el comprobante de pago para continuar');
+    return;
+  }
+  // Validate efectivo fields
+  if(selectedPayment === 'efectivo') {
+    const nombre = document.getElementById('efectivoNombre') ? document.getElementById('efectivoNombre').value.trim() : '';
+    const dir = document.getElementById('efectivoDireccion') ? document.getElementById('efectivoDireccion').value.trim() : '';
+    if(!nombre || !dir) {
+      showToast('⚠️ Completá nombre y localidad para continuar');
+      return;
+    }
+  }
   const subtotal = getCartTotal();
   const transferDiscount = selectedPayment === 'transferencia' && paymentConfig.transferPct > 0
     ? Math.round((subtotal + shippingCost) * paymentConfig.transferPct / 100) : 0;
   const total = subtotal + shippingCost - transferDiscount;
 
   let text = (waConfig.msg || 'Hola! Quiero hacer un pedido:') + '\n\n';
+  // Products
   cart.forEach(function(item) {
     text += '• ' + item.name + ' — Talle: ' + item.size + ' — Color: ' + item.color + ' — $' + Number(item.price).toLocaleString('es-AR') + '\n';
   });
   text += '\nEnvío: ' + (selectedShipping ? selectedShipping.name : '—');
-  text += '\nPago: ' + selectedPayment + (selectedPayment === 'transferencia' ? ' — Alias: NORTHSIDE.CO — Total: $' + Number(total).toLocaleString('es-AR') : '');
-  text += '\nTotal: $' + Number(total).toLocaleString('es-AR');
+  if(selectedPayment === 'efectivo') {
+    const nombre = document.getElementById('efectivoNombre') ? document.getElementById('efectivoNombre').value.trim() : '';
+    const dir = document.getElementById('efectivoDireccion') ? document.getElementById('efectivoDireccion').value.trim() : '';
+    const nota = document.getElementById('efectivoNota') ? document.getElementById('efectivoNota').value.trim() : '';
+    text += '\nPago: Efectivo';
+    text += '\nTotal a pagar: $' + Number(total).toLocaleString('es-AR');
+    text += '\n\n— DATOS DEL COMPRADOR —';
+    text += '\nNombre: ' + nombre;
+    text += '\nLocalidad: ' + dir;
+    if(nota) text += '\nAclaraciones: ' + nota;
+  } else {
+    text += '\nPago: ' + selectedPayment + (selectedPayment === 'transferencia' ? ' — Alias: NORTHSIDE.CO — Total: $' + Number(total).toLocaleString('es-AR') : '');
+    text += '\nTotal: $' + Number(total).toLocaleString('es-AR');
+  }
 
   // Save order if logged in
   if(currentUser) {
