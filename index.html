@@ -705,7 +705,11 @@
     </div>
     <div class="step-divider"></div>
     <div class="checkout-step" id="step-tab-3">
-      <div class="step-num">3</div><span class="step-name">Pago</span>
+      <div class="step-num">3</div><span class="step-name">Método de pago</span>
+    </div>
+    <div class="step-divider"></div>
+    <div class="checkout-step" id="step-tab-4">
+      <div class="step-num">4</div><span class="step-name">Pago</span>
     </div>
   </div>
 
@@ -759,14 +763,8 @@
       <div id="checkout-step-3" style="display:none">
         <div class="section-label">Pago</div>
 
-        <!-- PAYMENT TABS -->
-        <div class="payment-tabs">
-          <button class="payment-tab-btn active" onclick="window.switchPaymentTab('metodo',this)">1 · Método de pago</button>
-          <button class="payment-tab-btn" id="tabPagoBtn" onclick="window.switchPaymentTab('pago',this)">2 · Datos de pago</button>
-        </div>
-
-        <!-- TAB 1: elegir método -->
-        <div class="payment-tab-panel active" id="payTabMetodo">
+        <!-- METHOD SELECTION -->
+        <div id="payTabMetodo">
           <div class="payment-options">
             <label class="payment-option" onclick="window.selectPayment('transferencia',this)">
               <input type="radio" name="payment" value="transferencia">
@@ -791,87 +789,97 @@
             </label>
           </div>
           <div style="margin-top:1rem">
-            <button class="btn-next-step" onclick="window.goPayTab()">Continuar →</button>
-          </div>
-        </div>
-
-        <!-- TAB 2: datos de pago -->
-        <div class="payment-tab-panel" id="payTabPago">
-          <!-- TRANSFERENCIA -->
-          <div id="payDetailTransferencia" style="display:none">
-            <div class="transfer-saving show" id="transferSaving" style="margin-bottom:1rem"></div>
-            <div class="alias-box">
-              <div>
-                <div class="alias-label">Alias</div>
-                <div class="alias-value">NORTHSIDE.CO</div>
-              </div>
-              <div id="aliasAmount" class="alias-amount"></div>
-            </div>
-            <div class="comprobante-box">
-              <div class="comprobante-title">📎 Comprobante de pago</div>
-              <div class="comprobante-warning">⚠️ Si no subís el comprobante, el pedido no se realizará.</div>
-              <div class="comprobante-upload-area" id="comprobanteUploadArea">
-                <input type="file" id="comprobanteFile" accept="image/*,application/pdf" onchange="window.handleComprobante(event)">
-                <div class="comprobante-upload-icon">📄</div>
-                <div class="comprobante-upload-txt">Tocá para subir foto o PDF del comprobante</div>
-              </div>
-              <div class="comprobante-preview" id="comprobantePreview">
-                <img id="comprobanteImg" src="" alt="Comprobante">
-                <div class="comprobante-preview-name" id="comprobanteName"></div>
-                <button class="btn-rm-comprobante" onclick="window.removeComprobante()">✕ Sacar</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- MERCADO PAGO / GALICIA -->
-          <div id="payDetailMercadopago" style="display:none">
-            <div class="alias-box">
-              <div>
-                <div class="alias-label">Alias</div>
-                <div class="alias-value">NORTHSIDE.CO</div>
-              </div>
-              <div id="aliasAmountMP" class="alias-amount"></div>
-            </div>
-            <div class="comprobante-box">
-              <div class="comprobante-title">📎 Comprobante de pago</div>
-              <div class="comprobante-warning">⚠️ Si no subís el comprobante, el pedido no se realizará.</div>
-              <div class="comprobante-upload-area" id="comprobanteUploadAreaMP">
-                <input type="file" id="comprobanteFileMP" accept="image/*,application/pdf" onchange="window.handleComprobanteMP(event)">
-                <div class="comprobante-upload-icon">📄</div>
-                <div class="comprobante-upload-txt">Tocá para subir foto o PDF del comprobante</div>
-              </div>
-              <div class="comprobante-preview" id="comprobantePreviewMP">
-                <img id="comprobanteImgMP" src="" alt="Comprobante">
-                <div class="comprobante-preview-name" id="comprobanteNameMP"></div>
-                <button class="btn-rm-comprobante" onclick="window.removeComprobanteMP()">✕ Sacar</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- EFECTIVO -->
-          <div id="payDetailEfectivo" style="display:none">
-            <div style="background:var(--bg2);border:1px solid var(--border);padding:1.2rem;margin-bottom:1rem;">
-              <div style="font-size:0.82rem;font-weight:500;margin-bottom:0.3rem">💵 Pago en efectivo</div>
-              <div style="font-size:0.75rem;color:var(--muted)">Completá tus datos y te contactamos por WhatsApp para coordinar el punto de encuentro.</div>
-            </div>
-            <div id="efectivoTotal" style="background:var(--black);color:var(--bg);padding:0.8rem 1rem;margin-bottom:1rem;display:flex;justify-content:space-between;align-items:center;">
-              <span style="font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;opacity:0.6">Total a pagar en efectivo</span>
-              <span style="font-family:'Bebas Neue',sans-serif;font-size:1.3rem;" id="efectivoTotalAmount"></span>
-            </div>
-            <label style="margin-top:0">Nombre y apellido *</label>
-            <input type="text" id="efectivoNombre" placeholder="Tu nombre completo">
-            <label>Localidad / Barrio *</label>
-            <input type="text" id="efectivoDireccion" placeholder="Ej: Palermo, Buenos Aires">
-            <label>Aclaraciones (opcional)</label>
-            <textarea id="efectivoNota" placeholder="Horarios disponibles, preferencia de zona, cualquier detalle..."></textarea>
-          </div>
-
-          <div style="margin-top:1.5rem">
-            <button class="btn-next-step" onclick="window.finalizarCompra()">Finalizar consulta por WhatsApp →</button>
-            <button class="btn-back-step" onclick="window.switchPaymentTab('metodo', document.querySelector('.payment-tab-btn'))">← Cambiar método</button>
+            <button class="btn-next-step" onclick="window.goPayTab()">Continuar con el pago →</button>
             <button class="btn-back-step" onclick="window.goCheckoutStep(2)">← Volver a entrega</button>
           </div>
         </div>
+
+
+      </div>
+    </div>
+
+    <!-- STEP 4: PAYMENT DETAILS -->
+    <div id="checkout-step-4" style="display:none">
+      <div class="section-label">Datos de pago</div>
+
+      <!-- TRANSFERENCIA -->
+      <div id="payDetailTransferencia4" style="display:none">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.6rem;margin-bottom:1rem;">
+          <div style="background:var(--black);color:var(--bg);padding:0.8rem;text-align:center;">
+            <div style="font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;opacity:0.6;margin-bottom:0.3rem">Alias</div>
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:0.06em">NORTHSIDE.CO</div>
+          </div>
+          <div style="background:var(--bg2);border:1px solid var(--border);padding:0.8rem;text-align:center;">
+            <div style="font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:0.3rem">Total a pagar</div>
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;" id="step4TransTotal">$0</div>
+          </div>
+          <div style="background:#d1fae5;border:1px solid #6ee7b7;padding:0.8rem;text-align:center;">
+            <div style="font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:#065f46;margin-bottom:0.3rem">Ahorrás</div>
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:#065f46" id="step4TransSaving">$0</div>
+          </div>
+        </div>
+        <div class="comprobante-box">
+          <div class="comprobante-title">📎 Comprobante de pago</div>
+          <div class="comprobante-warning">⚠️ Si no subís el comprobante, el pedido no se realizará.</div>
+          <div class="comprobante-upload-area">
+            <input type="file" id="comprobanteFile" accept="image/*,application/pdf" onchange="window.handleComprobante(event)">
+            <div class="comprobante-upload-icon">📄</div>
+            <div class="comprobante-upload-txt">Tocá para subir foto o PDF del comprobante</div>
+          </div>
+          <div class="comprobante-preview" id="comprobantePreview">
+            <img id="comprobanteImg" src="" alt="Comprobante">
+            <div class="comprobante-preview-name" id="comprobanteName"></div>
+            <button class="btn-rm-comprobante" onclick="window.removeComprobante()">✕ Sacar</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- MERCADO PAGO -->
+      <div id="payDetailMercadopago4" style="display:none">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.6rem;margin-bottom:1rem;">
+          <div style="background:var(--black);color:var(--bg);padding:0.8rem;text-align:center;">
+            <div style="font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;opacity:0.6;margin-bottom:0.3rem">Alias</div>
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:0.06em">NORTHSIDE.CO</div>
+          </div>
+          <div style="background:var(--bg2);border:1px solid var(--border);padding:0.8rem;text-align:center;">
+            <div style="font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:0.3rem">Total a pagar</div>
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;" id="step4MPTotal">$0</div>
+          </div>
+        </div>
+        <div class="comprobante-box">
+          <div class="comprobante-title">📎 Comprobante de pago</div>
+          <div class="comprobante-warning">⚠️ Si no subís el comprobante, el pedido no se realizará.</div>
+          <div class="comprobante-upload-area">
+            <input type="file" id="comprobanteFileMP" accept="image/*,application/pdf" onchange="window.handleComprobanteMP(event)">
+            <div class="comprobante-upload-icon">📄</div>
+            <div class="comprobante-upload-txt">Tocá para subir foto o PDF del comprobante</div>
+          </div>
+          <div class="comprobante-preview" id="comprobantePreviewMP">
+            <img id="comprobanteImgMP" src="" alt="Comprobante">
+            <div class="comprobante-preview-name" id="comprobanteNameMP"></div>
+            <button class="btn-rm-comprobante" onclick="window.removeComprobanteMP()">✕ Sacar</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- EFECTIVO -->
+      <div id="payDetailEfectivo4" style="display:none">
+        <div style="background:var(--black);color:var(--bg);padding:0.8rem 1rem;margin-bottom:1rem;display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;opacity:0.6">Total a pagar en efectivo</span>
+          <span style="font-family:'Bebas Neue',sans-serif;font-size:1.3rem;" id="efectivoTotalAmount"></span>
+        </div>
+        <label style="margin-top:0">Nombre y apellido *</label>
+        <input type="text" id="efectivoNombre" placeholder="Tu nombre completo">
+        <label>Localidad / Barrio *</label>
+        <input type="text" id="efectivoDireccion" placeholder="Ej: Palermo, Buenos Aires">
+        <label>Aclaraciones (opcional)</label>
+        <textarea id="efectivoNota" placeholder="Horarios disponibles, preferencia de zona, cualquier detalle..."></textarea>
+      </div>
+
+      <div style="margin-top:1.5rem">
+        <button class="btn-next-step" onclick="window.finalizarCompra()">Finalizar consulta por WhatsApp →</button>
+        <button class="btn-back-step" onclick="window.goCheckoutStep(3)">← Cambiar método de pago</button>
+        <button class="btn-back-step" onclick="window.goCheckoutStep(2)">← Volver a entrega</button>
       </div>
     </div>
 
@@ -2490,7 +2498,7 @@ window.goCheckoutStep = function(step) {
 
 function renderCheckoutStep(step) {
   // Update steps bar
-  for(let i=1; i<=3; i++) {
+  for(let i=1; i<=4; i++) {
     const tab = document.getElementById('step-tab-' + i);
     if(!tab) continue;
     tab.className = 'checkout-step' + (i===step ? ' active' : i<step ? ' done' : '');
@@ -2498,7 +2506,7 @@ function renderCheckoutStep(step) {
     else tab.querySelector('.step-num').textContent = i;
   }
   // Show/hide step panels
-  for(let i=1; i<=3; i++) {
+  for(let i=1; i<=4; i++) {
     const panel = document.getElementById('checkout-step-' + i);
     if(panel) panel.style.display = i===step ? 'block' : 'none';
   }
@@ -2750,11 +2758,8 @@ window.goPayTab = function() {
     if(totalEl) totalEl.textContent = '$' + Number(subtotal).toLocaleString('es-AR');
   }
 
-  // Switch to pago tab
-  document.querySelectorAll('.payment-tab-btn').forEach(function(b){ b.classList.remove('active'); });
-  document.querySelectorAll('.payment-tab-panel').forEach(function(p){ p.classList.remove('active'); });
-  document.getElementById('tabPagoBtn').classList.add('active');
-  document.getElementById('payTabPago').classList.add('active');
+  // Go to step 4
+  window.goCheckoutStep(4);
 };
 
 window.handleComprobante = function(e) {
