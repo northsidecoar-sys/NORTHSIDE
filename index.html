@@ -123,6 +123,26 @@
   }
   .checkout-main { padding:2rem;border-right:1px solid var(--border); }
   .checkout-summary { padding:2rem;background:var(--bg2); }
+  /* Step 4 full width */
+  #checkout-step-4 .payment-grid {
+    display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;
+  }
+  #checkout-step-4 .payment-grid-3 {
+    display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1.2rem;
+  }
+  #checkout-step-4 .payment-grid-2 {
+    display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.2rem;
+  }
+  .info-card{padding:1rem;text-align:center;}
+  .info-card-label{font-size:0.6rem;letter-spacing:0.14em;text-transform:uppercase;opacity:0.6;margin-bottom:0.4rem;}
+  .info-card-value{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:0.06em;}
+  .info-card.dark{background:var(--black);color:var(--bg);}
+  .info-card.light{background:var(--bg2);border:1px solid var(--border);}
+  .info-card.green{background:#d1fae5;border:1px solid #6ee7b7;color:#065f46;}
+  @media(max-width:768px){
+    #checkout-step-4 .payment-grid-3{grid-template-columns:1fr;}
+    #checkout-step-4 .payment-grid-2{grid-template-columns:1fr;}
+  }
 
   /* CART ITEMS */
   .cart-item {
@@ -804,18 +824,18 @@
 
       <!-- TRANSFERENCIA -->
       <div id="payDetailTransferencia4" style="display:none">
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.6rem;margin-bottom:1rem;">
-          <div style="background:var(--black);color:var(--bg);padding:0.8rem;text-align:center;">
-            <div style="font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;opacity:0.6;margin-bottom:0.3rem">Alias</div>
-            <div style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:0.06em">NORTHSIDE.CO</div>
+        <div class="payment-grid-3">
+          <div class="info-card dark">
+            <div class="info-card-label">Alias</div>
+            <div class="info-card-value">NORTHSIDE.CO</div>
           </div>
-          <div style="background:var(--bg2);border:1px solid var(--border);padding:0.8rem;text-align:center;">
-            <div style="font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:0.3rem">Total a pagar</div>
-            <div style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;" id="step4TransTotal">$0</div>
+          <div class="info-card light">
+            <div class="info-card-label">Total a pagar</div>
+            <div class="info-card-value" id="step4TransTotal">$0</div>
           </div>
-          <div style="background:#d1fae5;border:1px solid #6ee7b7;padding:0.8rem;text-align:center;">
-            <div style="font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:#065f46;margin-bottom:0.3rem">Ahorrás</div>
-            <div style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:#065f46" id="step4TransSaving">$0</div>
+          <div class="info-card green">
+            <div class="info-card-label">Ahorrás</div>
+            <div class="info-card-value" id="step4TransSaving">—</div>
           </div>
         </div>
         <div class="comprobante-box">
@@ -836,14 +856,14 @@
 
       <!-- MERCADO PAGO -->
       <div id="payDetailMercadopago4" style="display:none">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.6rem;margin-bottom:1rem;">
-          <div style="background:var(--black);color:var(--bg);padding:0.8rem;text-align:center;">
-            <div style="font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;opacity:0.6;margin-bottom:0.3rem">Alias</div>
-            <div style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:0.06em">NORTHSIDE.CO</div>
+        <div class="payment-grid-2">
+          <div class="info-card dark">
+            <div class="info-card-label">Alias</div>
+            <div class="info-card-value">NORTHSIDE.CO</div>
           </div>
-          <div style="background:var(--bg2);border:1px solid var(--border);padding:0.8rem;text-align:center;">
-            <div style="font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:0.3rem">Total a pagar</div>
-            <div style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;" id="step4MPTotal">$0</div>
+          <div class="info-card light">
+            <div class="info-card-label">Total a pagar</div>
+            <div class="info-card-value" id="step4MPTotal">$0</div>
           </div>
         </div>
         <div class="comprobante-box">
@@ -2555,6 +2575,8 @@ window.removeCartItem = function(idx) {
 // ── SHIPPING CALCULATOR ───────────────────────────────
 function getZonaByCP(cp) {
   const n = parseInt(cp);
+  // Palermo: 1414-1427, Belgrano: 1426-1429, Tigre: 1648
+  if((n >= 1414 && n <= 1429) || n === 1648) return 'GRATIS';
   if(n >= 1000 && n <= 1499) return 'AMBA';
   if(n >= 1500 && n <= 1999) return 'GBA';
   if(n >= 1600 && n <= 1899) return 'GBA_NORTE';
@@ -2596,6 +2618,15 @@ window.calcularEnvio = async function() {
   if(!zona) {
     errEl.textContent = 'Código postal no reconocido. Probá con otro.';
     errEl.style.display = 'block'; return;
+  }
+  // Free shipping zones
+  if(zona === 'GRATIS') {
+    optEl.innerHTML = '';
+    const freeDiv = buildShippingOption('express', '🛵', 'Envío Gratis a tu zona', 0, 1, 2, true);
+    optEl.appendChild(freeDiv);
+    actEl.style.display = 'block';
+    loadEl.style.display = 'none';
+    return;
   }
 
   loadEl.style.display = 'block';
