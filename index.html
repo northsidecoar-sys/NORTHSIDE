@@ -2730,35 +2730,35 @@ window.switchPaymentTab = function(tab, btn) {
 
 window.goPayTab = function() {
   if(!selectedPayment) { showToast('Seleccioná un método de pago primero'); return; }
-  // Show correct detail panel
-  document.getElementById('payDetailTransferencia').style.display = 'none';
-  document.getElementById('payDetailMercadopago').style.display = 'none';
-  document.getElementById('payDetailEfectivo').style.display = 'none';
-
   const subtotal = getCartTotal() + shippingCost;
+
+  // Hide all step 4 panels
+  ['payDetailTransferencia4','payDetailMercadopago4','payDetailEfectivo4'].forEach(function(id){
+    var el = document.getElementById(id); if(el) el.style.display = 'none';
+  });
+
   if(selectedPayment === 'transferencia') {
-    document.getElementById('payDetailTransferencia').style.display = 'block';
-    const pct = paymentConfig.transferPct || 0;
-    if(pct > 0) {
-      const discount = Math.round(subtotal * pct / 100);
-      const final = subtotal - discount;
-      document.getElementById('transferSaving').innerHTML =
-        '✅ Ahorrás <strong>$' + Number(discount).toLocaleString('es-AR') + '</strong> — Total a transferir: <strong>$' + Number(final).toLocaleString('es-AR') + '</strong>';
-      document.getElementById('aliasAmount').textContent = '$' + Number(final).toLocaleString('es-AR');
-    } else {
-      document.getElementById('transferSaving').innerHTML = '';
-      document.getElementById('aliasAmount').textContent = '$' + Number(subtotal).toLocaleString('es-AR');
-    }
+    var panelT = document.getElementById('payDetailTransferencia4');
+    if(panelT) panelT.style.display = 'block';
+    var pct = paymentConfig.transferPct || 0;
+    var tot = pct > 0 ? Math.round(subtotal * (1 - pct/100)) : subtotal;
+    var sav = pct > 0 ? Math.round(subtotal * pct/100) : 0;
+    var totEl = document.getElementById('step4TransTotal');
+    var savEl = document.getElementById('step4TransSaving');
+    if(totEl) totEl.textContent = '$' + Number(tot).toLocaleString('es-AR');
+    if(savEl) savEl.textContent = sav > 0 ? '$' + Number(sav).toLocaleString('es-AR') : '—';
   } else if(selectedPayment === 'mercadopago') {
-    document.getElementById('payDetailMercadopago').style.display = 'block';
-    document.getElementById('aliasAmountMP').textContent = '$' + Number(subtotal).toLocaleString('es-AR');
+    var panelMP = document.getElementById('payDetailMercadopago4');
+    if(panelMP) panelMP.style.display = 'block';
+    var totElMP = document.getElementById('step4MPTotal');
+    if(totElMP) totElMP.textContent = '$' + Number(subtotal).toLocaleString('es-AR');
   } else if(selectedPayment === 'efectivo') {
-    document.getElementById('payDetailEfectivo').style.display = 'block';
-    const totalEl = document.getElementById('efectivoTotalAmount');
+    var panelEf = document.getElementById('payDetailEfectivo4');
+    if(panelEf) panelEf.style.display = 'block';
+    var totalEl = document.getElementById('efectivoTotalAmount');
     if(totalEl) totalEl.textContent = '$' + Number(subtotal).toLocaleString('es-AR');
   }
 
-  // Go to step 4
   window.goCheckoutStep(4);
 };
 
