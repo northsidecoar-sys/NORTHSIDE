@@ -2576,7 +2576,7 @@ window.removeCartItem = function(idx) {
 function getZonaByCP(cp) {
   const n = parseInt(cp);
   // Palermo: 1414-1427, Belgrano: 1426-1429, Tigre: 1648
-  if((n >= 1414 && n <= 1429) || n === 1648) return 'GRATIS';
+  if((n >= 1414 && n <= 1429) || n === 1648 || n === 1670) return 'GRATIS';
   if(n >= 1000 && n <= 1499) return 'AMBA';
   if(n >= 1500 && n <= 1999) return 'GBA';
   if(n >= 1600 && n <= 1899) return 'GBA_NORTE';
