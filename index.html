@@ -878,6 +878,10 @@
             <div class="info-card-value" id="step4MPTotal">$0</div>
           </div>
         </div>
+        <a href="https://link.mercadopago.com.ar/thenorthside" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:0.6rem;background:#009ee3;color:#fff;text-decoration:none;padding:0.9rem 1.2rem;font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:600;letter-spacing:0.05em;margin-bottom:1rem;transition:opacity 0.2s;" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
+          <svg width="20" height="20" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="20" cy="20" r="20" fill="#fff"/><text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" font-size="18" fill="#009ee3" font-weight="bold">MP</text></svg>
+          Pagar con Mercado Pago
+        </a>
         <div class="comprobante-box">
           <div class="comprobante-title">📎 Comprobante de pago</div>
           <div class="comprobante-warning">⚠️ Si no subís el comprobante, el pedido no se realizará.</div>
@@ -2565,13 +2569,13 @@ function renderCheckoutStep(step) {
   var sidebar = document.querySelector('.checkout-summary');
   var main = document.querySelector('.checkout-main');
   if(step === 4) {
-    if(body) body.style.gridTemplateColumns = '1fr';
+    if(body) { body.style.gridTemplateColumns = '1fr'; body.style.maxWidth = '900px'; body.style.margin = '0 auto'; }
     if(sidebar) sidebar.style.display = 'none';
-    if(main) main.style.borderRight = 'none';
+    if(main) { main.style.borderRight = 'none'; main.style.maxWidth = '100%'; }
   } else {
-    if(body) body.style.gridTemplateColumns = '';
+    if(body) { body.style.gridTemplateColumns = ''; body.style.maxWidth = ''; body.style.margin = ''; }
     if(sidebar) sidebar.style.display = '';
-    if(main) main.style.borderRight = '';
+    if(main) { main.style.borderRight = ''; main.style.maxWidth = ''; }
   }
   if(step === 1) renderCartItems();
   if(step === 3) setupPaymentStep();
