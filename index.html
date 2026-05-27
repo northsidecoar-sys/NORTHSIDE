@@ -1632,24 +1632,40 @@ window.sendWhatsapp = async function(id) {
   if(hasSizes && _selSize)text+='\nTalle: '+_selSize;
   if(hasColors && _selColor)text+='\nColor: '+_selColor;
   text+='\n¿Hay stock disponible?';
-  // Save order if user is logged in
-  if(currentUser) {
-    try {
-      await addDoc(collection(db, 'orders'), {
-        uid: currentUser.uid,
-        userName: currentUser.displayName || '',
-        userEmail: currentUser.email || '',
+  // Guardar pedido en Firebase SIEMPRE (con o sin login)
+  try {
+    const orderId = 'WA-' + Date.now() + '-' + Math.random().toString(36).substr(2,5).toUpperCase();
+    await addDoc(collection(db, 'orders'), {
+      orderId,
+      orderType: 'whatsapp_consulta',
+      uid: currentUser ? currentUser.uid : null,
+      userName: currentUser ? (currentUser.displayName || currentUser.email) : 'Visitante',
+      userEmail: currentUser ? currentUser.email : '',
+      productId: p.id,
+      productName: p.name,
+      category: p.cat || '',
+      size: _selSize || '',
+      color: _selColor || '',
+      price: p.price,
+      total: p.price,
+      quantity: 1,
+      imgUrl: (p.imgs && p.imgs.length > 0) ? p.imgs[0].url : '',
+      payment: 'consulta_whatsapp',
+      shipping: null,
+      status: 'pendiente',
+      createdAt: Date.now(),
+      items: [{
         productId: p.id,
-        productName: p.name,
+        name: p.name,
+        category: p.cat || '',
         size: _selSize || '',
         color: _selColor || '',
         price: p.price,
-        imgUrl: (p.imgs && p.imgs.length > 0) ? p.imgs[0].url : '',
-        status: 'pendiente',
-        createdAt: Date.now()
-      });
-    } catch(e) { console.error('Error saving order:', e); }
-  }
+        qty: 1,
+        imgUrl: (p.imgs && p.imgs.length > 0) ? p.imgs[0].url : ''
+      }]
+    });
+  } catch(e) { console.error('Error saving order:', e); }
   window.open('https://wa.me/'+num+'?text='+encodeURIComponent(text),'_blank');
 };
 window.prevDetailImg = () => { const p=products.find(x=>x.id===openProductId); if(!p||!p.imgs||p.imgs.length<2)return; detailActiveImg=(detailActiveImg-1+p.imgs.length)%p.imgs.length; updateDetailGallery(p); };
@@ -3050,22 +3066,42 @@ window.finalizarCompra = async function() {
     text += '\nTotal: $' + Number(total).toLocaleString('es-AR');
   }
 
-  // Save order if logged in
-  if(currentUser) {
-    try {
-      await addDoc(collection(db, 'orders'), {
-        uid: currentUser.uid,
-        userName: currentUser.displayName || '',
-        userEmail: currentUser.email || '',
-        items: cart,
-        shipping: selectedShipping,
-        payment: selectedPayment,
-        subtotal, shippingCost, transferDiscount, total,
-        status: 'pendiente',
-        createdAt: Date.now()
-      });
-    } catch(e) { console.error('Error saving order:', e); }
-  }
+  // Guardar pedido en Firebase SIEMPRE (con o sin login)
+  try {
+    const orderId = 'CH-' + Date.now() + '-' + Math.random().toString(36).substr(2,5).toUpperCase();
+    // Nombre del cliente para efectivo
+    const clienteNombre = selectedPayment === 'efectivo'
+      ? (document.getElementById('efectivoNombre') ? document.getElementById('efectivoNombre').value.trim() : '')
+      : (currentUser ? (currentUser.displayName || currentUser.email) : 'Visitante');
+    const clienteEmail = currentUser ? currentUser.email : '';
+    await addDoc(collection(db, 'orders'), {
+      orderId,
+      orderType: 'checkout_carrito',
+      uid: currentUser ? currentUser.uid : null,
+      userName: clienteNombre || 'Visitante',
+      userEmail: clienteEmail,
+      items: cart.map(function(item) {
+        return {
+          productId: item.productId,
+          name: item.name,
+          size: item.size,
+          color: item.color,
+          price: item.price,
+          qty: item.qty,
+          imgUrl: item.imgUrl || ''
+        };
+      }),
+      shipping: selectedShipping,
+      payment: selectedPayment,
+      subtotal,
+      shippingCost,
+      transferDiscount,
+      total,
+      quantity: cart.reduce(function(s,i){ return s + i.qty; }, 0),
+      status: 'pendiente',
+      createdAt: Date.now()
+    });
+  } catch(e) { console.error('Error saving order:', e); }
 
   const num = waConfig.number || '5491100000000';
   window.open('https://wa.me/' + num + '?text=' + encodeURIComponent(text), '_blank');
