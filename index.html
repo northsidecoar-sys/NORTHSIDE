@@ -759,6 +759,18 @@
           <div id="shippingLoading" class="checkout-loading" style="display:none">Calculando opciones...</div>
           <div id="shippingError" class="checkout-error" style="display:none"></div>
           <div class="shipping-options" id="shippingOptions"></div>
+          <!-- ADDRESS FORM -->
+          <div id="addressSection" style="display:none;margin-top:1.2rem;padding-top:1.2rem;border-top:1px solid var(--border)">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.8rem"><div style="font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted)">Dirección de entrega</div><button onclick="window.prefillAddress()" style="background:none;border:none;color:var(--warm);font-size:0.68rem;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;font-family:DM Sans,sans-serif;text-decoration:underline">Usar dirección guardada</button></div>
+            <div style="display:grid;grid-template-columns:2fr 1fr;gap:0.5rem;margin-bottom:0.5rem">
+              <input type="text" id="addressStreet" placeholder="Calle *">
+              <input type="text" id="addressNum" placeholder="Número *">
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-bottom:0.5rem">
+              <input type="text" id="addressFloor" placeholder="Piso / Depto (opcional)">
+              <input type="text" id="addressCity" placeholder="Ciudad / Barrio *">
+            </div>
+          </div>
           <div id="shippingFormActions" style="display:none;margin-top:1rem">
             <button class="btn-next-step" onclick="window.saveShipping()">Guardar entrega →</button>
           </div>
@@ -1866,7 +1878,7 @@ const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 let currentUser = null;
 
-onAuthStateChanged(auth, function(user) {
+onAuthStateChanged(auth, async function(user) {
   currentUser = user;
   const area = document.getElementById('authArea');
   if(!area) return;
@@ -1878,6 +1890,8 @@ onAuthStateChanged(auth, function(user) {
         '<button class="btn-logout" onclick="window.logoutGoogle()">Salir</button>' +
         '<button class="btn-login" onclick="window.showOrders()" style="margin-left:4px">Mis consultas</button>' +
       '</div>';
+    // Prefill address if available
+    setTimeout(window.prefillAddress, 500);
   } else {
     area.innerHTML = '<button class="btn-login" onclick="window.loginGoogle()"><svg viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>Iniciar sesión</button>';
   }
@@ -2530,6 +2544,19 @@ function renderCheckoutStep(step) {
     const panel = document.getElementById('checkout-step-' + i);
     if(panel) panel.style.display = i===step ? 'block' : 'none';
   }
+  // On step 4: make main full width, hide sidebar
+  var body = document.querySelector('.checkout-body');
+  var sidebar = document.querySelector('.checkout-summary');
+  var main = document.querySelector('.checkout-main');
+  if(step === 4) {
+    if(body) body.style.gridTemplateColumns = '1fr';
+    if(sidebar) sidebar.style.display = 'none';
+    if(main) main.style.borderRight = 'none';
+  } else {
+    if(body) body.style.gridTemplateColumns = '';
+    if(sidebar) sidebar.style.display = '';
+    if(main) main.style.borderRight = '';
+  }
   if(step === 1) renderCartItems();
   if(step === 3) setupPaymentStep();
   updateStickyTotal();
@@ -2570,6 +2597,44 @@ window.changeQty = function(idx, delta) {
 window.removeCartItem = function(idx) {
   cart.splice(idx, 1);
   saveCart(); updateCartBadge(); renderCartItems(); renderSummary();
+};
+
+
+// ── SAVED ADDRESS ─────────────────────────────────────
+async function loadSavedAddress() {
+  if(!currentUser) return;
+  try {
+    const { getDoc: gd, doc: d2 } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+    // Use existing doc/getDoc - we have them imported
+  } catch(e) {}
+}
+
+window.prefillAddress = async function() {
+  if(!currentUser) return;
+  try {
+    const userRef = doc(db, 'users', currentUser.uid);
+    const snap = await (async () => {
+      const { getDoc } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+      return getDoc(userRef);
+    })();
+    if(snap && snap.exists && snap.exists()) {
+      const data = snap.data();
+      if(data.address) {
+        const a = data.address;
+        const st = document.getElementById('addressStreet');
+        const nu = document.getElementById('addressNum');
+        const fl = document.getElementById('addressFloor');
+        const ci = document.getElementById('addressCity');
+        const cp = document.getElementById('cpInput');
+        if(st && a.street) st.value = a.street;
+        if(nu && a.num) nu.value = a.num;
+        if(fl && a.floor) fl.value = a.floor;
+        if(ci && a.city) ci.value = a.city;
+        if(cp && a.cp) cp.value = a.cp;
+        showToast('✓ Dirección cargada de tu cuenta');
+      }
+    }
+  } catch(e) { console.log('No saved address:', e); }
 };
 
 // ── SHIPPING CALCULATOR ───────────────────────────────
@@ -2622,6 +2687,8 @@ window.calcularEnvio = async function() {
   // Free shipping zones
   if(zona === 'GRATIS') {
     optEl.innerHTML = '';
+    var addrSec = document.getElementById('addressSection');
+    if(addrSec) addrSec.style.display = 'block';
     const freeDiv = buildShippingOption('express', '🛵', 'Envío Gratis a tu zona', 0, 1, 2, true);
     optEl.appendChild(freeDiv);
     actEl.style.display = 'block';
@@ -2651,8 +2718,10 @@ window.calcularEnvio = async function() {
     if(!tarifas) tarifas = fallbackRates[zona] || fallbackRates['INTERIOR_LEJOS'];
 
     const subtotal = getCartTotal();
-    const envioGratis = subtotal >= 150000;
+    const envioGratis = (zona === 'GRATIS');
     optEl.innerHTML = '';
+    var addrSec = document.getElementById('addressSection');
+    if(addrSec) addrSec.style.display = 'block';
 
     // Express (AMBA only)
     if(tarifas.express) {
@@ -2728,11 +2797,30 @@ window.pickShipping = function(el, id, precio, name, date, gratis) {
 
 window.saveShipping = function() {
   if(!selectedShipping) { showToast('Seleccioná una opción de envío'); return; }
+  var street = document.getElementById('addressStreet') ? document.getElementById('addressStreet').value.trim() : '';
+  var num = document.getElementById('addressNum') ? document.getElementById('addressNum').value.trim() : '';
+  var floor = document.getElementById('addressFloor') ? document.getElementById('addressFloor').value.trim() : '';
+  var city = document.getElementById('addressCity') ? document.getElementById('addressCity').value.trim() : '';
+  if(!street || !num || !city) {
+    showToast('Completá la dirección completa antes de continuar');
+    return;
+  }
+  selectedShipping.address = street + ' ' + num + (floor ? ' ' + floor : '') + ', ' + city;
+  // Save address for logged-in users
+  if(currentUser) {
+    try {
+      setDoc(doc(db, 'users', currentUser.uid), {
+        address: { street, num, floor, city, cp: document.getElementById('cpInput') ? document.getElementById('cpInput').value : '' }
+      }, { merge: true });
+    } catch(e) {}
+  }
   document.getElementById('shippingOptions').style.display = 'none';
   document.getElementById('shippingFormActions').style.display = 'none';
   document.querySelector('.shipping-input-row').style.display = 'none';
+  var addrSection = document.getElementById('addressSection');
+  if(addrSection) addrSection.style.display = 'none';
   document.getElementById('shippingSummaryName').textContent = selectedShipping.name;
-  document.getElementById('shippingSummaryDate').textContent = selectedShipping.date;
+  document.getElementById('shippingSummaryDate').textContent = selectedShipping.date + ' · ' + selectedShipping.address;
   document.getElementById('shippingSummary').classList.add('show');
   document.getElementById('shippingNextActions').style.display = 'block';
   renderSummary();
@@ -2946,7 +3034,7 @@ window.finalizarCompra = async function() {
   cart.forEach(function(item) {
     text += '• ' + item.name + ' — Talle: ' + item.size + ' — Color: ' + item.color + ' — $' + Number(item.price).toLocaleString('es-AR') + '\n';
   });
-  text += '\nEnvío: ' + (selectedShipping ? selectedShipping.name : '—');
+  text += '\nEnvío: ' + (selectedShipping ? selectedShipping.name : '—') + (selectedShipping && selectedShipping.address ? ' — ' + selectedShipping.address : '');
   if(selectedPayment === 'efectivo') {
     const nombre = document.getElementById('efectivoNombre') ? document.getElementById('efectivoNombre').value.trim() : '';
     const dir = document.getElementById('efectivoDireccion') ? document.getElementById('efectivoDireccion').value.trim() : '';
@@ -3129,7 +3217,7 @@ function renderTicker(text) {
   track.innerHTML = html;
 
   // Duration based on total items so speed stays constant regardless of copies
-  const duration = Math.max(25, items.length * 12);
+  const duration = Math.max(40, items.length * 18);
   track.style.animationDuration = duration + 's';
 
   // Load saved ticker text into admin field
