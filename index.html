@@ -186,6 +186,16 @@
   .alias-label{font-size:0.68rem;letter-spacing:0.1em;text-transform:uppercase;opacity:0.6;}
   .alias-value{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:0.08em;}
   .alias-amount{font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--warm);}
+
+  /* CUOTAS */
+  .cuota-btn{background:var(--bg2);border:1px solid var(--border);padding:0.35rem 0.7rem;font-size:0.7rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;letter-spacing:0.04em;white-space:nowrap;}
+  .cuota-btn:hover{border-color:var(--black);}
+  .cuota-btn.selected{background:var(--black);color:var(--bg);border-color:var(--black);}
+  .cuotas-info-box{background:var(--bg2);border:1px solid var(--border);padding:1rem;margin-bottom:1rem;}
+  .cuotas-info-row{display:flex;justify-content:space-between;align-items:baseline;padding:0.4rem 0;border-bottom:1px solid var(--border);font-size:0.82rem;}
+  .cuotas-info-row:last-child{border-bottom:none;font-weight:500;}
+  .cuotas-info-label{color:var(--muted);}
+  .cuotas-info-value{font-family:'Bebas Neue',sans-serif;font-size:1rem;}
   /* SHIPPING CALCULATOR */
   .shipping-calc { margin-top:1.5rem; }
   .shipping-input-row { display:flex;gap:0.5rem;margin-bottom:1rem; }
@@ -800,16 +810,24 @@
           <div class="payment-options">
             <label class="payment-option" onclick="window.selectPayment('transferencia',this)">
               <input type="radio" name="payment" value="transferencia">
-              <div>
+              <div style="width:100%">
                 <div class="payment-option-label">💸 Transferencia bancaria</div>
-                <div class="payment-option-sub" id="transferSubLabel">20% de descuento · Alias: NORTHSIDE.CO</div>
+                <div class="payment-option-sub" id="transferSubLabel">20% OFF · Alias: NORTHSIDE.CO</div>
+                <div id="transferCuotasPreview" style="display:none;margin-top:0.5rem;padding-top:0.5rem;border-top:1px solid var(--border)">
+                  <div style="font-size:0.68rem;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.4rem">Seleccioná cuotas</div>
+                  <div id="transferCuotasOpts" style="display:flex;flex-wrap:wrap;gap:0.4rem"></div>
+                </div>
               </div>
             </label>
             <label class="payment-option" onclick="window.selectPayment('mercadopago',this)">
               <input type="radio" name="payment" value="mercadopago">
-              <div>
+              <div style="width:100%">
                 <div class="payment-option-label">💳 Galicia o Mercado Pago</div>
-                <div class="payment-option-sub">Cuotas sin interés · Alias: NORTHSIDE.CO</div>
+                <div class="payment-option-sub">20% OFF · Cuotas sin interés · Alias: NORTHSIDE.CO</div>
+                <div id="mpCuotasPreview" style="display:none;margin-top:0.5rem;padding-top:0.5rem;border-top:1px solid var(--border)">
+                  <div style="font-size:0.68rem;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.4rem">Seleccioná cuotas</div>
+                  <div id="mpCuotasOpts" style="display:flex;flex-wrap:wrap;gap:0.4rem"></div>
+                </div>
               </div>
             </label>
             <label class="payment-option" onclick="window.selectPayment('efectivo',this)">
@@ -850,6 +868,11 @@
             <div class="info-card-value" id="step4TransSaving">—</div>
           </div>
         </div>
+        <div class="cuotas-info-box" id="step4TransCuotas" style="display:none">
+          <div class="cuotas-info-row"><span class="cuotas-info-label">Plan elegido</span><span class="cuotas-info-value" id="step4TransCuotasPlan">—</span></div>
+          <div class="cuotas-info-row"><span class="cuotas-info-label">Monto por cuota</span><span class="cuotas-info-value" id="step4TransCuotasMonto">—</span></div>
+          <div class="cuotas-info-row"><span class="cuotas-info-label" style="font-weight:500">Total</span><span class="cuotas-info-value" id="step4TransCuotasTotal">—</span></div>
+        </div>
         <div class="comprobante-box">
           <div class="comprobante-title">📎 Comprobante de pago</div>
           <div class="comprobante-warning">⚠️ Si no subís el comprobante, el pedido no se realizará.</div>
@@ -874,9 +897,14 @@
             <div class="info-card-value">NORTHSIDE.CO</div>
           </div>
           <div class="info-card light">
-            <div class="info-card-label">Total a pagar</div>
+            <div class="info-card-label">Total con 20% OFF</div>
             <div class="info-card-value" id="step4MPTotal">$0</div>
           </div>
+        </div>
+        <div class="cuotas-info-box" id="step4MPCuotas" style="display:none">
+          <div class="cuotas-info-row"><span class="cuotas-info-label">Plan elegido</span><span class="cuotas-info-value" id="step4MPCuotasPlan">—</span></div>
+          <div class="cuotas-info-row"><span class="cuotas-info-label">Monto por cuota</span><span class="cuotas-info-value" id="step4MPCuotasMonto">—</span></div>
+          <div class="cuotas-info-row"><span class="cuotas-info-label" style="font-weight:500">Total</span><span class="cuotas-info-value" id="step4MPCuotasTotal">—</span></div>
         </div>
         <a href="https://link.mercadopago.com.ar/thenorthside" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:0.6rem;background:#009ee3;color:#fff;text-decoration:none;padding:0.9rem 1.2rem;font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:600;letter-spacing:0.05em;margin-bottom:1rem;transition:opacity 0.2s;" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
           <svg width="20" height="20" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="20" cy="20" r="20" fill="#fff"/><text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" font-size="18" fill="#009ee3" font-weight="bold">MP</text></svg>
@@ -2879,18 +2907,38 @@ window.goPayTab = function() {
   if(selectedPayment === 'transferencia') {
     var panelT = document.getElementById('payDetailTransferencia4');
     if(panelT) panelT.style.display = 'block';
-    var pct = paymentConfig.transferPct || 0;
-    var tot = pct > 0 ? Math.round(subtotal * (1 - pct/100)) : subtotal;
-    var sav = pct > 0 ? Math.round(subtotal * pct/100) : 0;
+    var pct = paymentConfig.transferPct || 20;
+    var tot = Math.round(subtotal * (1 - pct/100));
+    var sav = Math.round(subtotal * pct/100);
     var totEl = document.getElementById('step4TransTotal');
     var savEl = document.getElementById('step4TransSaving');
     if(totEl) totEl.textContent = '$' + Number(tot).toLocaleString('es-AR');
-    if(savEl) savEl.textContent = sav > 0 ? '$' + Number(sav).toLocaleString('es-AR') : '—';
+    if(savEl) savEl.textContent = '$' + Number(sav).toLocaleString('es-AR');
+    // Show cuotas breakdown if >1 cuota selected
+    var cuotasBox = document.getElementById('step4TransCuotas');
+    if(cuotasBox && selectedCuotas > 1) {
+      cuotasBox.style.display = 'block';
+      var montoCuota = Math.ceil(tot / selectedCuotas);
+      document.getElementById('step4TransCuotasPlan').textContent = selectedCuotas + ' cuotas sin interés';
+      document.getElementById('step4TransCuotasMonto').textContent = '$' + Number(montoCuota).toLocaleString('es-AR');
+      document.getElementById('step4TransCuotasTotal').textContent = '$' + Number(tot).toLocaleString('es-AR');
+    }
   } else if(selectedPayment === 'mercadopago') {
     var panelMP = document.getElementById('payDetailMercadopago4');
     if(panelMP) panelMP.style.display = 'block';
+    var pctMP = paymentConfig.transferPct || 20;
+    var totMP = Math.round(subtotal * (1 - pctMP/100));
     var totElMP = document.getElementById('step4MPTotal');
-    if(totElMP) totElMP.textContent = '$' + Number(subtotal).toLocaleString('es-AR');
+    if(totElMP) totElMP.textContent = '$' + Number(totMP).toLocaleString('es-AR');
+    // Show cuotas breakdown if >1 cuota selected
+    var cuotasBoxMP = document.getElementById('step4MPCuotas');
+    if(cuotasBoxMP && selectedCuotas > 1) {
+      cuotasBoxMP.style.display = 'block';
+      var montoCuotaMP = Math.ceil(totMP / selectedCuotas);
+      document.getElementById('step4MPCuotasPlan').textContent = selectedCuotas + ' cuotas sin interés';
+      document.getElementById('step4MPCuotasMonto').textContent = '$' + Number(montoCuotaMP).toLocaleString('es-AR');
+      document.getElementById('step4MPCuotasTotal').textContent = '$' + Number(totMP).toLocaleString('es-AR');
+    }
   } else if(selectedPayment === 'efectivo') {
     var panelEf = document.getElementById('payDetailEfectivo4');
     if(panelEf) panelEf.style.display = 'block';
@@ -2964,18 +3012,60 @@ function setupPaymentStep() {
   }
 }
 
+var selectedCuotas = 1;
+
 window.selectPayment = function(type, el) {
   document.querySelectorAll('.payment-option').forEach(function(o){ o.classList.remove('selected'); });
   el.classList.add('selected');
   selectedPayment = type;
-  // saving shown in goPayTab
+  selectedCuotas = 1;
+
+  var tPrev = document.getElementById('transferCuotasPreview');
+  var mPrev = document.getElementById('mpCuotasPreview');
+  if(tPrev) tPrev.style.display = 'none';
+  if(mPrev) mPrev.style.display = 'none';
+
+  var subtotal = getCartTotal() + shippingCost;
+  var pct = paymentConfig.transferPct || 20;
+
+  if(type === 'transferencia') {
+    if(tPrev) tPrev.style.display = 'block';
+    renderCuotasBtns('transferCuotasOpts', subtotal, pct, false);
+  } else if(type === 'mercadopago') {
+    if(mPrev) mPrev.style.display = 'block';
+    renderCuotasBtns('mpCuotasOpts', subtotal, pct, true);
+  }
+  renderSummary();
+};
+
+function renderCuotasBtns(containerId, subtotal, discountPct, isMp) {
+  var container = document.getElementById(containerId);
+  if(!container) return;
+  var finalPrice = Math.round(subtotal * (1 - discountPct/100));
+  var cuotasMax = paymentConfig.cuotas || 6;
+  var opts = [1];
+  for(var i=2; i<=cuotasMax; i++) opts.push(i);
+  container.innerHTML = opts.map(function(n) {
+    var montoCuota = Math.ceil(finalPrice / n);
+    var label = n === 1
+      ? '1 pago $' + Number(finalPrice).toLocaleString('es-AR')
+      : n + 'x $' + Number(montoCuota).toLocaleString('es-AR') + (isMp ? ' s/i' : '');
+    return '<button class="cuota-btn' + (n===1?' selected':'') + '" onclick="window.pickCuotas(this,' + n + ')">' + label + '</button>';
+  }).join('');
+}
+
+window.pickCuotas = function(btn, n) {
+  var container = btn.parentNode;
+  container.querySelectorAll('.cuota-btn').forEach(function(b){ b.classList.remove('selected'); });
+  btn.classList.add('selected');
+  selectedCuotas = n;
   renderSummary();
 };
 
 // ── SUMMARY SIDEBAR ───────────────────────────────────
 function renderSummary() {
   const subtotal = getCartTotal();
-  const transferDiscount = selectedPayment === 'transferencia' && paymentConfig.transferPct > 0
+  const transferDiscount = (selectedPayment === 'transferencia' || selectedPayment === 'mercadopago') && paymentConfig.transferPct > 0
     ? Math.round((subtotal + shippingCost) * paymentConfig.transferPct / 100) : 0;
   const total = subtotal + shippingCost - transferDiscount;
 
@@ -3011,7 +3101,7 @@ function renderSummary() {
 
 function updateStickyTotal() {
   const subtotal = getCartTotal();
-  const transferDiscount = selectedPayment === 'transferencia' && paymentConfig.transferPct > 0
+  const transferDiscount = (selectedPayment === 'transferencia' || selectedPayment === 'mercadopago') && paymentConfig.transferPct > 0
     ? Math.round((subtotal + shippingCost) * paymentConfig.transferPct / 100) : 0;
   const total = subtotal + shippingCost - transferDiscount;
   const el = document.getElementById('checkoutStickyTotal');
@@ -3045,7 +3135,7 @@ window.finalizarCompra = async function() {
     }
   }
   const subtotal = getCartTotal();
-  const transferDiscount = selectedPayment === 'transferencia' && paymentConfig.transferPct > 0
+  const transferDiscount = (selectedPayment === 'transferencia' || selectedPayment === 'mercadopago') && paymentConfig.transferPct > 0
     ? Math.round((subtotal + shippingCost) * paymentConfig.transferPct / 100) : 0;
   const total = subtotal + shippingCost - transferDiscount;
 
@@ -3066,7 +3156,10 @@ window.finalizarCompra = async function() {
     text += '\nLocalidad: ' + dir;
     if(nota) text += '\nAclaraciones: ' + nota;
   } else {
-    text += '\nPago: ' + selectedPayment + (selectedPayment === 'transferencia' ? ' — Alias: NORTHSIDE.CO — Total: $' + Number(total).toLocaleString('es-AR') : '');
+    var pctFinal = (selectedPayment==='transferencia'||selectedPayment==='mercadopago') ? (paymentConfig.transferPct||20) : 0;
+    var totalConDescuento = pctFinal > 0 ? Math.round((getCartTotal()+shippingCost)*(1-pctFinal/100)) : total;
+    var cuotasText = selectedCuotas > 1 ? ' — ' + selectedCuotas + ' cuotas de $' + Number(Math.ceil(totalConDescuento/selectedCuotas)).toLocaleString('es-AR') : '';
+    text += '\nPago: ' + selectedPayment + (pctFinal>0 ? ' — 20% OFF — Total: $' + Number(totalConDescuento).toLocaleString('es-AR') : '') + cuotasText + (selectedPayment==='transferencia'||selectedPayment==='mercadopago' ? ' — Alias: NORTHSIDE.CO' : '');
     text += '\nTotal: $' + Number(total).toLocaleString('es-AR');
   }
 
