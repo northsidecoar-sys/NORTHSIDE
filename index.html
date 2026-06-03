@@ -3,7 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NORTHSIDE</title>
+<title>NORTHSIDE | Ropa Streetwear Argentina</title>
+<meta name="description" content="Tienda online de ropa streetwear. Baggies, buzos, camperas y más. Envío a todo Argentina. Belgrano, Palermo y Tigre con envío gratis.">
+<meta name="keywords" content="ropa streetwear argentina, baggies, buzos oversize, ropa urbana, northside">
+<meta name="author" content="Northside">
+<meta name="robots" content="index, follow">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="NORTHSIDE">
+<meta property="og:title" content="NORTHSIDE | Ropa Streetwear Argentina">
+<meta property="og:description" content="Ropa streetwear. Baggies, buzos, camperas. Envío a todo Argentina.">
+<meta property="og:image" content="https://res.cloudinary.com/dtbhcilrt/image/upload/northside/og-image.jpg">
+<meta property="og:url" content="https://northside.vercel.app">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="NORTHSIDE | Ropa Streetwear">
+<meta name="twitter:description" content="Ropa streetwear. Baggies, buzos, camperas. Envío a todo Argentina.">
+<meta name="twitter:image" content="https://res.cloudinary.com/dtbhcilrt/image/upload/northside/og-image.jpg">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%231a1612'/><text y='.9em' font-size='80' fill='%23f5f3ee' font-family='sans-serif' font-weight='bold'>N</text></svg>">
+<link rel="canonical" href="https://northside.vercel.app">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
 <style>
   :root{--bg:#f7f3ee;--bg2:#ede8e0;--bg3:#e4ddd3;--black:#1a1612;--muted:#9e9188;--border:#d6cfc6;--warm:#8b6f52;--whatsapp:#25D366;}
@@ -37,6 +53,53 @@
 
 
 
+
+
+
+
+  /* LOADING OVERLAY */
+  .loading-overlay{display:none;position:fixed;inset:0;background:rgba(26,22,18,0.75);z-index:700;flex-direction:column;align-items:center;justify-content:center;gap:1rem;}
+  .loading-overlay.open{display:flex;}
+  .loading-spinner{width:40px;height:40px;border:3px solid rgba(245,243,238,0.3);border-top-color:#f5f3ee;border-radius:50%;animation:spin 0.8s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .loading-msg{color:#f5f3ee;font-size:0.8rem;letter-spacing:0.12em;text-transform:uppercase;}
+  /* ORDER TRACKING */
+  .order-status-bar{display:flex;justify-content:space-between;position:relative;margin:1.5rem 0;padding:0 1rem;}
+  .order-status-bar::before{content:'';position:absolute;top:14px;left:1rem;right:1rem;height:2px;background:var(--border);z-index:0;}
+  .status-step{display:flex;flex-direction:column;align-items:center;gap:0.4rem;z-index:1;flex:1;}
+  .status-dot{width:28px;height:28px;border-radius:50%;border:2px solid var(--border);background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:0.75rem;transition:all 0.3s;}
+  .status-dot.done{background:var(--black);border-color:var(--black);color:var(--bg);}
+  .status-dot.active{background:var(--warm);border-color:var(--warm);color:#fff;}
+  .status-label{font-size:0.6rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);text-align:center;max-width:60px;}
+  .status-label.active{color:var(--black);font-weight:600;}
+  @media(max-width:600px){.status-label{font-size:0.52rem;max-width:45px;}}
+  /* COUPON */
+  .coupon-row{display:flex;gap:0.5rem;margin-top:1rem;}
+  .coupon-row input{flex:1;}
+  .btn-apply-coupon{background:var(--black);color:var(--bg);border:none;padding:0 1rem;font-family:'DM Sans',sans-serif;font-size:0.72rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;white-space:nowrap;transition:opacity 0.2s;}
+  .btn-apply-coupon:hover{opacity:0.75;}
+  .coupon-result{font-size:0.72rem;margin-top:0.4rem;padding:0.4rem 0.7rem;}
+  .coupon-result.ok{background:#d1fae5;color:#065f46;border:1px solid #6ee7b7;}
+  .coupon-result.error{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5;}
+  .coupon-applied-badge{display:inline-flex;align-items:center;gap:0.4rem;background:#d1fae5;color:#065f46;font-size:0.68rem;font-weight:500;padding:0.25rem 0.6rem;border:1px solid #6ee7b7;margin-top:0.3rem;}
+  .coupon-applied-badge button{background:none;border:none;color:#065f46;cursor:pointer;font-size:0.75rem;padding:0;margin-left:0.2rem;font-weight:700;}
+  /* CONFIRM DIALOG */
+  .confirm-overlay{display:none;position:fixed;inset:0;background:rgba(26,22,18,0.6);z-index:600;align-items:center;justify-content:center;padding:1rem;}
+  .confirm-overlay.open{display:flex;}
+  .confirm-box{background:var(--bg);border:1px solid var(--border);padding:2rem;max-width:360px;width:100%;text-align:center;}
+  .confirm-title{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:0.08em;margin-bottom:0.6rem;}
+  .confirm-msg{font-size:0.82rem;color:var(--muted);margin-bottom:1.5rem;line-height:1.5;}
+  .confirm-actions{display:flex;gap:0.6rem;}
+  .btn-confirm-yes{flex:1;background:var(--black);color:var(--bg);border:none;padding:0.75rem;font-family:'DM Sans',sans-serif;font-size:0.78rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;transition:opacity 0.2s;}
+  .btn-confirm-yes:hover{opacity:0.75;}
+  .btn-confirm-no{flex:1;background:none;border:1px solid var(--border);color:var(--black);padding:0.75rem;font-family:'DM Sans',sans-serif;font-size:0.78rem;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;transition:all 0.2s;}
+  .btn-confirm-no:hover{border-color:var(--black);}
+  /* SOLD OUT */
+  .badge-agotado{position:absolute;top:10px;left:10px;background:rgba(26,22,18,0.85);color:#f5f3ee;font-size:0.62rem;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;padding:0.3rem 0.6rem;z-index:3;}
+  .product-card.agotado .card-gallery{opacity:0.5;}
+  .product-card.agotado .btn-ver{opacity:0.4;cursor:not-allowed;pointer-events:none;}
+  .size-btn.agotado{opacity:0.35;cursor:not-allowed;text-decoration:line-through;pointer-events:none;}
+  .size-btn.agotado::after{content:" ✕";font-size:0.6rem;}
   /* CART DRAWER */
   .cart-drawer-overlay{display:none;position:fixed;inset:0;background:rgba(26,22,18,0.5);z-index:300;}
   .cart-drawer-overlay.open{display:block;}
@@ -187,15 +250,6 @@
   .alias-value{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:0.08em;}
   .alias-amount{font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--warm);}
 
-  /* CUOTAS */
-  .cuota-btn{background:var(--bg2);border:1px solid var(--border);padding:0.35rem 0.7rem;font-size:0.7rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;letter-spacing:0.04em;white-space:nowrap;}
-  .cuota-btn:hover{border-color:var(--black);}
-  .cuota-btn.selected{background:var(--black);color:var(--bg);border-color:var(--black);}
-  .cuotas-info-box{background:var(--bg2);border:1px solid var(--border);padding:1rem;margin-bottom:1rem;}
-  .cuotas-info-row{display:flex;justify-content:space-between;align-items:baseline;padding:0.4rem 0;border-bottom:1px solid var(--border);font-size:0.82rem;}
-  .cuotas-info-row:last-child{border-bottom:none;font-weight:500;}
-  .cuotas-info-label{color:var(--muted);}
-  .cuotas-info-value{font-family:'Bebas Neue',sans-serif;font-size:1rem;}
   /* SHIPPING CALCULATOR */
   .shipping-calc { margin-top:1.5rem; }
   .shipping-input-row { display:flex;gap:0.5rem;margin-bottom:1rem; }
@@ -658,6 +712,24 @@
   }
 </style>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+
+  <!-- STRUCTURED DATA (JSON-LD) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "OnlineStore",
+    "name": "NORTHSIDE",
+    "description": "Tienda online de ropa streetwear argentina",
+    "url": "https://northside.vercel.app",
+    "logo": "https://res.cloudinary.com/dtbhcilrt/image/upload/northside/logo.png",
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "contactType": "customer service",
+      "availableLanguage": "Spanish"
+    },
+    "sameAs": ["https://www.instagram.com/thenorthside.ar"]
+  }
+  </script>
 </head>
 <body>
 
@@ -813,21 +885,15 @@
               <div style="width:100%">
                 <div class="payment-option-label">💸 Transferencia bancaria</div>
                 <div class="payment-option-sub" id="transferSubLabel">20% OFF · Alias: NORTHSIDE.CO</div>
-                <div id="transferCuotasPreview" style="display:none;margin-top:0.5rem;padding-top:0.5rem;border-top:1px solid var(--border)">
-                  <div style="font-size:0.68rem;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.4rem">Seleccioná cuotas</div>
-                  <div id="transferCuotasOpts" style="display:flex;flex-wrap:wrap;gap:0.4rem"></div>
-                </div>
+                
               </div>
             </label>
             <label class="payment-option" onclick="window.selectPayment('mercadopago',this)">
               <input type="radio" name="payment" value="mercadopago">
               <div style="width:100%">
                 <div class="payment-option-label">💳 Galicia o Mercado Pago</div>
-                <div class="payment-option-sub">20% OFF · Cuotas sin interés · Alias: NORTHSIDE.CO</div>
-                <div id="mpCuotasPreview" style="display:none;margin-top:0.5rem;padding-top:0.5rem;border-top:1px solid var(--border)">
-                  <div style="font-size:0.68rem;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.4rem">Seleccioná cuotas</div>
-                  <div id="mpCuotasOpts" style="display:flex;flex-wrap:wrap;gap:0.4rem"></div>
-                </div>
+                <div class="payment-option-sub">20% OFF · Alias: NORTHSIDE.CO</div>
+                
               </div>
             </label>
             <label class="payment-option" onclick="window.selectPayment('efectivo',this)">
@@ -868,11 +934,7 @@
             <div class="info-card-value" id="step4TransSaving">—</div>
           </div>
         </div>
-        <div class="cuotas-info-box" id="step4TransCuotas" style="display:none">
-          <div class="cuotas-info-row"><span class="cuotas-info-label">Plan elegido</span><span class="cuotas-info-value" id="step4TransCuotasPlan">—</span></div>
-          <div class="cuotas-info-row"><span class="cuotas-info-label">Monto por cuota</span><span class="cuotas-info-value" id="step4TransCuotasMonto">—</span></div>
-          <div class="cuotas-info-row"><span class="cuotas-info-label" style="font-weight:500">Total</span><span class="cuotas-info-value" id="step4TransCuotasTotal">—</span></div>
-        </div>
+        
         <div class="comprobante-box">
           <div class="comprobante-title">📎 Comprobante de pago</div>
           <div class="comprobante-warning">⚠️ Si no subís el comprobante, el pedido no se realizará.</div>
@@ -901,11 +963,7 @@
             <div class="info-card-value" id="step4MPTotal">$0</div>
           </div>
         </div>
-        <div class="cuotas-info-box" id="step4MPCuotas" style="display:none">
-          <div class="cuotas-info-row"><span class="cuotas-info-label">Plan elegido</span><span class="cuotas-info-value" id="step4MPCuotasPlan">—</span></div>
-          <div class="cuotas-info-row"><span class="cuotas-info-label">Monto por cuota</span><span class="cuotas-info-value" id="step4MPCuotasMonto">—</span></div>
-          <div class="cuotas-info-row"><span class="cuotas-info-label" style="font-weight:500">Total</span><span class="cuotas-info-value" id="step4MPCuotasTotal">—</span></div>
-        </div>
+        
         <a href="https://link.mercadopago.com.ar/thenorthside" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:0.6rem;background:#009ee3;color:#fff;text-decoration:none;padding:0.9rem 1.2rem;font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:600;letter-spacing:0.05em;margin-bottom:1rem;transition:opacity 0.2s;" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
           <svg width="20" height="20" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="20" cy="20" r="20" fill="#fff"/><text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" font-size="18" fill="#009ee3" font-weight="bold">MP</text></svg>
           Pagar con Mercado Pago
@@ -953,6 +1011,7 @@
       <div id="summaryItems"></div>
       <div class="summary-line"><span>Subtotal</span><span id="summarySubtotal">$0</span></div>
       <div class="summary-line" id="summaryShippingLine" style="display:none"><span>Envío</span><span id="summaryShipping">—</span></div>
+      <div class="summary-line" id="summaryCouponLine" style="display:none"><span style="color:#065f46">Cupón descuento</span><span style="color:#065f46" id="summaryCouponAmt">—</span></div>
       <div class="summary-line" id="summaryDiscountLine" style="display:none"><span style="color:#065f46">Descuento transferencia</span><span style="color:#065f46" id="summaryDiscount">—</span></div>
       <div class="summary-line total"><span>Total</span><span class="summary-total-price" id="summaryTotal">$0</span></div>
     </div>
@@ -1117,18 +1176,16 @@
             <input type="number" id="payTransferPct" placeholder="Ej: 20" min="0" max="99">
           </div>
           <div>
-            <label style="margin-top:0">Cantidad de cuotas</label>
-            <input type="number" id="payCuotas" placeholder="Ej: 6" min="0" max="24">
+            
           </div>
         </div>
-        <label>Texto cuotas sin interés (opcional)</label>
-        <input type="text" id="payCuotasLabel" placeholder="Ej: sin interés">
+        
         <button class="btn-primary" style="margin-top:0.8rem" onclick="window.savePaymentConfig()">Guardar medios de pago</button>
       </div>
       <div style="margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid var(--border)">
         <label style="margin-top:0">Ticker (barra de texto animada)</label>
         <p style="font-size:0.72rem;color:var(--muted);margin-bottom:0.6rem">Separá cada mensaje con // — se repiten en loop</p>
-        <textarea id="tickerText" placeholder="Ej: 20% OFF por transferencia // Envío gratis +$150.000 // 6 cuotas sin interés"></textarea>
+        <textarea id="tickerText" placeholder="Ej: 20% OFF por transferencia // Envío gratis a Palermo y Belgrano"></textarea>
         <button class="btn-primary" style="margin-top:0.8rem" onclick="window.saveTickerConfig()">Guardar ticker</button>
       </div>
     </div>
@@ -1243,12 +1300,38 @@
   </div>
   <div class="cart-drawer-body" id="cartDrawerBody"></div>
   <div class="cart-drawer-footer" id="cartDrawerFooter" style="display:none">
-    <div class="cart-subtotal">
+    <div class="coupon-row">
+      <input type="text" id="drawerCouponInput" placeholder="Código de descuento" style="font-size:0.8rem;text-transform:uppercase">
+      <button class="btn-apply-coupon" onclick="window.applyCoupon()">Aplicar</button>
+    </div>
+    <div id="couponResult"></div>
+    <div class="cart-subtotal" style="margin-top:0.8rem">
       <span class="cart-subtotal-label">Subtotal</span>
       <span class="cart-subtotal-price" id="cartDrawerSubtotal">$0</span>
     </div>
-    <button class="btn-checkout-drawer" onclick="window.closeCartDrawer();window.openCheckout();">Ir al checkout →</button>
+    <div id="couponDiscountLine" style="display:none;justify-content:space-between;font-size:0.78rem;color:#065f46;margin-bottom:0.4rem">
+      <span>Descuento cupón</span><span id="couponDiscountAmt"></span>
+    </div>
+    <button class="btn-checkout-drawer" onclick="window.closeCartDrawer();window.openCheckout();">Ir a pagar →</button>
     <button class="btn-keep-shopping" onclick="window.closeCartDrawer()">Seguir comprando</button>
+  </div>
+</div>
+
+<!-- LOADING OVERLAY -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-spinner"></div>
+  <div class="loading-msg" id="loadingMsg">Procesando...</div>
+</div>
+
+<!-- CONFIRM DIALOG -->
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-box">
+    <div class="confirm-title" id="confirmTitle">¿Eliminar producto?</div>
+    <div class="confirm-msg" id="confirmMsg">¿Seguro que querés eliminar este producto del carrito?</div>
+    <div class="confirm-actions">
+      <button class="btn-confirm-no" onclick="window.closeConfirm()">Cancelar</button>
+      <button class="btn-confirm-yes" id="confirmYesBtn" onclick="window.confirmYes()">Eliminar</button>
+    </div>
   </div>
 </div>
 
@@ -1496,8 +1579,17 @@ function renderGrid() {
     } else {
       priceHtml = '<div class="product-price">$' + Number(p.price).toLocaleString('es-AR') + '</div>';
     }
-    return '<div class="product-card' + (imgs.length === 2 ? ' has-two-imgs' : '') + '" onclick="window.openProduct(' + p.id + ')" data-pid="' + p.id + '">' +
-      '<div class="card-gallery">' + gal + '</div>' +
+    // Check if ALL sizes are sold out
+    var allSoldOut = false;
+    if(p.stock && Object.keys(p.stock).length > 0) {
+      var sizes = (p.sizes||'').split(',').map(function(s){ return s.trim(); }).filter(Boolean);
+      if(sizes.length > 0) {
+        allSoldOut = sizes.every(function(s){ return (parseInt(p.stock[s])||0) === 0; });
+      }
+    }
+    var soldOutBadge = allSoldOut ? '<div class="badge-agotado">Agotado</div>' : '';
+    return '<div class="product-card' + (imgs.length === 2 ? ' has-two-imgs' : '') + (allSoldOut ? ' agotado' : '') + '" onclick="' + (allSoldOut ? '' : 'window.openProduct(' + p.id + ')') + '" data-pid="' + p.id + '">' +
+      '<div class="card-gallery" style="position:relative">' + soldOutBadge + gal + '</div>' +
       '<div class="product-info">' +
         '<div class="product-cat">' + p.cat + '</div>' +
         '<div class="product-name">' + p.name + '</div>' +
@@ -1572,12 +1664,18 @@ window.openProduct = id => {
   document.getElementById('viewDetail').classList.add('active');
   window.scrollTo(0, 0);
   history.pushState({ view: 'detail', productId: id }, '', '#producto-' + id);
+  document.title = p.name + ' | NORTHSIDE';
+  var ogTitle = document.querySelector('meta[property="og:title"]');
+  if(ogTitle) ogTitle.setAttribute('content', p.name + ' | NORTHSIDE');
+  var ogImg = document.querySelector('meta[property="og:image"]');
+  if(ogImg && p.imgs && p.imgs.length > 0) ogImg.setAttribute('content', p.imgs[0].url||'');
 };
 window.showHome = (pushState) => {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.getElementById('viewHome').classList.add('active');
   openProductId = null;
   if(pushState !== false) history.pushState({ view: 'home' }, '', window.location.pathname);
+  document.title = 'NORTHSIDE | Ropa Streetwear Argentina';
 };
 function renderDetail(p) {
   const imgs = p.imgs || [];
@@ -1630,7 +1728,7 @@ function renderDetail(p) {
     })() +
     (p.desc ? '<div class="detail-desc" style="white-space:pre-line">' + p.desc.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</div>' : '') +
     (colors.length > 0 ? '<label class="select-label">Color: <span id="selectedColorLabel">—</span></label><div class="colors-grid">' + colors.map((c,i) => '<button class="color-btn" onclick="window.selectColor(' + i + ')" title="' + c.name + '"><div class="color-circle" style="background:' + c.hex + '"></div><span class="color-btn-label">' + c.name + '</span></button>').join('') + '</div>' : '') +
-    (sizes.length > 0 ? '<label class="select-label">Talle: <span id="selectedSizeLabel">—</span> <button class="btn-size-guide" onclick="window.openSizeGuide()">¿Cuál es mi talle?</button></label><div class="sizes-grid">' + sizes.map(function(s,i){ return '<button class="size-btn" onclick="window.selectSize(' + i + ',\'' + s + '\')">' + s + '</button>'; }).join('') + '</div><div id="stockAlertEl"></div>' : '') +
+    (sizes.length > 0 ? '<label class="select-label">Talle: <span id="selectedSizeLabel">—</span> <button class="btn-size-guide" onclick="window.openSizeGuide()">¿Cuál es mi talle?</button></label><div class="sizes-grid">' + sizes.map(function(s,i){ var sStock = (p.stock && p.stock[s] !== undefined) ? parseInt(p.stock[s])||0 : Infinity; var isSoldOut = sStock === 0; return '<button class="size-btn' + (isSoldOut ? ' agotado' : '') + '" onclick="' + (isSoldOut ? '' : 'window.selectSize(' + i + ',\'' + s + '\')') + '">' + s + '</button>'; }).join('') + '</div><div id="stockAlertEl"></div>' : '') +
     '<div class="transfer-highlight" id="transferHighlight"></div>' +
     '<div class="select-alert" id="selectAlert">Por favor seleccioná talle y color antes de continuar.</div>' +
     '<button data-pid="' + p.id + '" onclick="window.addToCartFromDetail(parseInt(this.dataset.pid))" style="width:100%;background:var(--black);color:var(--bg);border:none;padding:0.9rem;font-family:DM Sans,sans-serif;font-size:0.82rem;font-weight:500;letter-spacing:0.08em;cursor:pointer;text-transform:uppercase;margin-bottom:0.6rem;transition:opacity 0.2s">🛒 Agregar al carrito</button>' +
@@ -1716,8 +1814,7 @@ window.openAdmin = () => {
   document.getElementById('waNumber').value = waConfig.number;
   document.getElementById('waMsg').value = waConfig.msg;
   document.getElementById('payTransferPct').value = paymentConfig.transferPct || '';
-  document.getElementById('payCuotas').value = paymentConfig.cuotas || '';
-  document.getElementById('payCuotasLabel').value = paymentConfig.cuotasLabel || 'sin interés';
+
 };
 window.closeAdmin = () => document.getElementById('adminOverlay').classList.remove('open');
 window.closeAdminOutside = e => { if(e.target===document.getElementById('adminOverlay')) window.closeAdmin(); };
@@ -2126,6 +2223,7 @@ window.showOrders = async function() {
     ordersHtml += '<span class="order-card-date">' + date + '</span>';
     ordersHtml += '<span class="order-status ' + statusClass + '">' + statusLabel + '</span>';
     ordersHtml += '</div>';
+    ordersHtml += renderOrderStatusBar(o.status || 'pendiente');
     ordersHtml += '<div class="order-card-body">';
     // Handle both single product orders and cart orders
     if(o.items && o.items.length > 0) {
@@ -2184,8 +2282,11 @@ async function renderAdminOrders() {
     }
     html += '<div class="admin-order-detail" style="margin-bottom:0.5rem">' + date + '</div>';
     html += '<div class="admin-order-actions">';
-    html += '<button class="btn-status' + confirmActive + '" data-docid="' + o._docId + '" data-status="confirmado" onclick="window.setOrderStatus(this)">✓ Confirmar</button>';
-    html += '<button class="btn-status' + cancelActive + '" data-docid="' + o._docId + '" data-status="cancelado" onclick="window.setOrderStatus(this)">✕ Cancelar</button>';
+    var statuses = [['pagado','💳 Pagado'],['preparando','📦 Preparando'],['enviado','🚚 Enviado'],['entregado','✅ Entregado'],['cancelado','❌ Cancelar']];
+    statuses.forEach(function(st) {
+      var isActive = o.status === st[0];
+      html += '<button class="btn-status' + (isActive?' active-confirm':'') + '" data-docid="' + o._docId + '" data-status="' + st[0] + '" onclick="window.setOrderStatus(this)">' + st[1] + '</button>';
+    });
     html += '</div>';
     html += '</div>';
   });
@@ -2461,6 +2562,132 @@ function updateTransferHighlight(price) {
 
 
 
+
+
+// ── LOADING OVERLAY ────────────────────────────────────
+var _isProcessing = false;
+
+function showLoading(msg) {
+  _isProcessing = true;
+  document.getElementById('loadingMsg').textContent = msg || 'Procesando...';
+  document.getElementById('loadingOverlay').classList.add('open');
+}
+
+function hideLoading() {
+  _isProcessing = false;
+  document.getElementById('loadingOverlay').classList.remove('open');
+}
+
+// ── ORDER TRACKING ─────────────────────────────────────
+var ORDER_STATUSES = ['pendiente','pagado','preparando','enviado','entregado','cancelado'];
+var STATUS_LABELS  = ['Pendiente','Pagado','Preparando','Enviado','Entregado','Cancelado'];
+var STATUS_ICONS   = ['⏳','💳','📦','🚚','✅','❌'];
+
+function renderOrderStatusBar(currentStatus) {
+  var idx = ORDER_STATUSES.indexOf(currentStatus);
+  if(currentStatus === 'cancelado') idx = ORDER_STATUSES.length - 1;
+  var html = '<div class="order-status-bar">';
+  ORDER_STATUSES.forEach(function(s, i) {
+    if(s === 'cancelado') return; // show at end only if cancelled
+    var isDone   = i < idx;
+    var isActive = i === idx;
+    html += '<div class="status-step">';
+    html += '<div class="status-dot' + (isDone?' done':isActive?' active':'') + '">' + STATUS_ICONS[i] + '</div>';
+    html += '<div class="status-label' + (isActive?' active':'') + '">' + STATUS_LABELS[i] + '</div>';
+    html += '</div>';
+  });
+  if(currentStatus === 'cancelado') {
+    html += '<div class="status-step"><div class="status-dot active">❌</div><div class="status-label active">Cancelado</div></div>';
+  }
+  html += '</div>';
+  return html;
+}
+
+// ── COUPONS ────────────────────────────────────────────
+var appliedCoupon = null; // { code, type:'pct'|'fixed', value, description }
+
+async function loadCoupons() {
+  // Coupons stored in Firestore collection 'coupons'
+  // Each doc: { code, type:'pct'|'fixed', value, active:true, expires:null|timestamp }
+  return; // loaded on demand
+}
+
+window.applyCoupon = async function() {
+  const input = document.getElementById('drawerCouponInput');
+  const resultEl = document.getElementById('couponResult');
+  const code = input ? input.value.trim().toUpperCase() : '';
+
+  if(!code) { showToast('Ingresá un código de cupón'); return; }
+
+  resultEl.textContent = 'Verificando...';
+  resultEl.className = 'coupon-result';
+  resultEl.style.display = 'block';
+
+  try {
+    const snap = await getDocs(collection(db, 'coupons'));
+    let found = null;
+    snap.forEach(function(d) {
+      if(d.id.toUpperCase() === code) found = { ...d.data(), id: d.id };
+    });
+
+    if(!found) {
+      resultEl.textContent = '❌ Código inválido';
+      resultEl.className = 'coupon-result error';
+      appliedCoupon = null;
+      return;
+    }
+    if(!found.active) {
+      resultEl.textContent = '❌ Este cupón ya no está activo';
+      resultEl.className = 'coupon-result error';
+      appliedCoupon = null;
+      return;
+    }
+    if(found.expires && Date.now() > found.expires) {
+      resultEl.textContent = '❌ Este cupón expiró';
+      resultEl.className = 'coupon-result error';
+      appliedCoupon = null;
+      return;
+    }
+
+    appliedCoupon = found;
+    const subtotal = getCartTotal();
+    const discount = found.type === 'pct'
+      ? Math.round(subtotal * found.value / 100)
+      : Math.min(found.value, subtotal);
+
+    resultEl.textContent = '✅ Cupón aplicado: -$' + Number(discount).toLocaleString('es-AR');
+    resultEl.className = 'coupon-result ok';
+    renderCartDrawer();
+    showToast('✅ Cupón "' + code + '" aplicado');
+  } catch(e) {
+    resultEl.textContent = '❌ Error al verificar el cupón';
+    resultEl.className = 'coupon-result error';
+    console.error('Coupon error:', e);
+  }
+};
+
+window.removeCoupon = function() {
+  appliedCoupon = null;
+  const input = document.getElementById('drawerCouponInput');
+  const resultEl = document.getElementById('couponResult');
+  if(input) input.value = '';
+  if(resultEl) { resultEl.textContent = ''; resultEl.style.display = 'none'; }
+  renderCartDrawer();
+  showToast('Cupón eliminado');
+};
+
+function getCouponDiscount() {
+  if(!appliedCoupon) return 0;
+  const subtotal = getCartTotal();
+  return appliedCoupon.type === 'pct'
+    ? Math.round(subtotal * appliedCoupon.value / 100)
+    : Math.min(appliedCoupon.value, subtotal);
+}
+
+function getCartTotalWithCoupon() {
+  return Math.max(0, getCartTotal() - getCouponDiscount());
+}
+
 // ── CART DRAWER ───────────────────────────────────────
 window.openCartDrawer = function() {
   renderCartDrawer();
@@ -2511,18 +2738,41 @@ function renderCartDrawer() {
   }).join('');
 
   if(subtotalEl) subtotalEl.textContent = '$' + Number(getCartTotal()).toLocaleString('es-AR');
+  // Show coupon discount if applied
+  var discLine = document.getElementById('couponDiscountLine');
+  var discAmt = document.getElementById('couponDiscountAmt');
+  var couponDiscount = getCouponDiscount();
+  if(discLine) discLine.style.display = couponDiscount > 0 ? 'flex' : 'none';
+  if(discAmt) discAmt.textContent = '-$' + Number(couponDiscount).toLocaleString('es-AR');
   if(footer) footer.style.display = 'block';
 }
 
 window.drawerChangeQty = function(idx, delta) {
+  if(delta > 0) {
+    const item = cart[idx];
+    const p = products.find(function(x){ return x.id === item.productId; });
+    const available = p ? getAvailableStock(p, item.size) : Infinity;
+    if(available !== Infinity && item.qty >= available) {
+      showToast('⚠️ Stock máximo disponible: ' + available + ' unidades');
+      return;
+    }
+  }
   cart[idx].qty += delta;
   if(cart[idx].qty <= 0) cart.splice(idx, 1);
   saveCart(); updateCartBadge(); renderCartDrawer();
 };
 
 window.drawerRemove = function(idx) {
-  cart.splice(idx, 1);
-  saveCart(); updateCartBadge(); renderCartDrawer();
+  var item = cart[idx];
+  var name = item ? item.name : 'este producto';
+  window.showConfirm(
+    '¿Eliminar producto?',
+    '¿Seguro que querés eliminar "' + name + '" del carrito?',
+    function() {
+      cart.splice(idx, 1);
+      saveCart(); updateCartBadge(); renderCartDrawer();
+    }
+  );
 };
 
 // ── CART ──────────────────────────────────────────────
@@ -2537,7 +2787,57 @@ function getCartTotal() {
   return cart.reduce(function(sum, item){ return sum + item.price * item.qty; }, 0);
 }
 
+
+
+// ── CONFIRM DIALOG ─────────────────────────────────────
+var _confirmCallback = null;
+
+window.showConfirm = function(title, msg, onYes) {
+  _confirmCallback = onYes;
+  document.getElementById('confirmTitle').textContent = title || '¿Eliminar?';
+  document.getElementById('confirmMsg').textContent = msg || '¿Estás seguro?';
+  document.getElementById('confirmOverlay').classList.add('open');
+};
+
+window.closeConfirm = function() {
+  document.getElementById('confirmOverlay').classList.remove('open');
+  _confirmCallback = null;
+};
+
+window.confirmYes = function() {
+  document.getElementById('confirmOverlay').classList.remove('open');
+  if(_confirmCallback) { _confirmCallback(); _confirmCallback = null; }
+};
+
+// ── STOCK VALIDATION ──────────────────────────────────
+function getAvailableStock(product, size) {
+  if(!product.stock || Object.keys(product.stock).length === 0) return Infinity; // no stock set = unlimited
+  const stockQty = product.stock[size];
+  if(stockQty === undefined) return Infinity; // size not in stock map = unlimited
+  return parseInt(stockQty) || 0;
+}
+
+function getCartQtyForSize(productId, size, color) {
+  const item = cart.find(function(i){
+    return i.productId === productId && i.size === size && i.color === color;
+  });
+  return item ? item.qty : 0;
+}
+
+function isProductSoldOut(product, size) {
+  const stock = getAvailableStock(product, size);
+  return stock === 0;
+}
 function addToCart(productId, name, size, color, price, imgUrl) {
+  const p = products.find(function(x){ return x.id === productId; });
+  const available = p ? getAvailableStock(p, size) : Infinity;
+  const inCart = getCartQtyForSize(productId, size, color);
+
+  if(available !== Infinity && inCart >= available) {
+    showToast('⚠️ No hay más stock disponible para este talle');
+    return false;
+  }
+
   const existing = cart.find(function(i){
     return i.productId === productId && i.size === size && i.color === color;
   });
@@ -2545,6 +2845,7 @@ function addToCart(productId, name, size, color, price, imgUrl) {
   else { cart.push({ productId, name, size, color, price, imgUrl, qty: 1 }); }
   saveCart();
   updateCartBadge();
+  return true;
 }
 
 function updateCartBadge() {
@@ -2637,14 +2938,31 @@ function renderCartItems() {
 }
 
 window.changeQty = function(idx, delta) {
+  if(delta > 0) {
+    const item = cart[idx];
+    const p = products.find(function(x){ return x.id === item.productId; });
+    const available = p ? getAvailableStock(p, item.size) : Infinity;
+    if(available !== Infinity && item.qty >= available) {
+      showToast('⚠️ Stock máximo disponible: ' + available + ' unidades');
+      return;
+    }
+  }
   cart[idx].qty += delta;
   if(cart[idx].qty <= 0) cart.splice(idx, 1);
   saveCart(); updateCartBadge(); renderCartItems(); renderSummary();
 };
 
 window.removeCartItem = function(idx) {
-  cart.splice(idx, 1);
-  saveCart(); updateCartBadge(); renderCartItems(); renderSummary();
+  var item = cart[idx];
+  var name = item ? item.name : 'este producto';
+  window.showConfirm(
+    '¿Eliminar producto?',
+    '¿Seguro que querés eliminar "' + name + '" del carrito?',
+    function() {
+      cart.splice(idx, 1);
+      saveCart(); updateCartBadge(); renderCartItems(); renderSummary();
+    }
+  );
 };
 
 
@@ -2914,32 +3232,14 @@ window.goPayTab = function() {
     var savEl = document.getElementById('step4TransSaving');
     if(totEl) totEl.textContent = '$' + Number(tot).toLocaleString('es-AR');
     if(savEl) savEl.textContent = '$' + Number(sav).toLocaleString('es-AR');
-    // Show cuotas breakdown if >1 cuota selected
-    var cuotasBox = document.getElementById('step4TransCuotas');
-    if(cuotasBox && selectedCuotas > 1) {
-      cuotasBox.style.display = 'block';
-      var montoCuota = Math.ceil(tot / selectedCuotas);
-      document.getElementById('step4TransCuotasPlan').textContent = selectedCuotas + ' cuotas sin interés';
-      document.getElementById('step4TransCuotasMonto').textContent = '$' + Number(montoCuota).toLocaleString('es-AR');
-      document.getElementById('step4TransCuotasTotal').textContent = '$' + Number(tot).toLocaleString('es-AR');
-    }
-  } else if(selectedPayment === 'mercadopago') {
+      } else if(selectedPayment === 'mercadopago') {
     var panelMP = document.getElementById('payDetailMercadopago4');
     if(panelMP) panelMP.style.display = 'block';
     var pctMP = paymentConfig.transferPct || 20;
     var totMP = Math.round(subtotal * (1 - pctMP/100));
     var totElMP = document.getElementById('step4MPTotal');
     if(totElMP) totElMP.textContent = '$' + Number(totMP).toLocaleString('es-AR');
-    // Show cuotas breakdown if >1 cuota selected
-    var cuotasBoxMP = document.getElementById('step4MPCuotas');
-    if(cuotasBoxMP && selectedCuotas > 1) {
-      cuotasBoxMP.style.display = 'block';
-      var montoCuotaMP = Math.ceil(totMP / selectedCuotas);
-      document.getElementById('step4MPCuotasPlan').textContent = selectedCuotas + ' cuotas sin interés';
-      document.getElementById('step4MPCuotasMonto').textContent = '$' + Number(montoCuotaMP).toLocaleString('es-AR');
-      document.getElementById('step4MPCuotasTotal').textContent = '$' + Number(totMP).toLocaleString('es-AR');
-    }
-  } else if(selectedPayment === 'efectivo') {
+      } else if(selectedPayment === 'efectivo') {
     var panelEf = document.getElementById('payDetailEfectivo4');
     if(panelEf) panelEf.style.display = 'block';
     var totalEl = document.getElementById('efectivoTotalAmount');
@@ -3012,62 +3312,25 @@ function setupPaymentStep() {
   }
 }
 
-var selectedCuotas = 1;
-
 window.selectPayment = function(type, el) {
   document.querySelectorAll('.payment-option').forEach(function(o){ o.classList.remove('selected'); });
   el.classList.add('selected');
   selectedPayment = type;
-  selectedCuotas = 1;
 
-  var tPrev = document.getElementById('transferCuotasPreview');
-  var mPrev = document.getElementById('mpCuotasPreview');
-  if(tPrev) tPrev.style.display = 'none';
-  if(mPrev) mPrev.style.display = 'none';
-
-  var subtotal = getCartTotal() + shippingCost;
-  var pct = paymentConfig.transferPct || 20;
-
-  if(type === 'transferencia') {
-    if(tPrev) tPrev.style.display = 'block';
-    renderCuotasBtns('transferCuotasOpts', subtotal, pct, false);
-  } else if(type === 'mercadopago') {
-    if(mPrev) mPrev.style.display = 'block';
-    renderCuotasBtns('mpCuotasOpts', subtotal, pct, true);
-  }
   renderSummary();
 };
 
-function renderCuotasBtns(containerId, subtotal, discountPct, isMp) {
-  var container = document.getElementById(containerId);
-  if(!container) return;
-  var finalPrice = Math.round(subtotal * (1 - discountPct/100));
-  var cuotasMax = paymentConfig.cuotas || 6;
-  var opts = [1];
-  for(var i=2; i<=cuotasMax; i++) opts.push(i);
-  container.innerHTML = opts.map(function(n) {
-    var montoCuota = Math.ceil(finalPrice / n);
-    var label = n === 1
-      ? '1 pago $' + Number(finalPrice).toLocaleString('es-AR')
-      : n + 'x $' + Number(montoCuota).toLocaleString('es-AR') + (isMp ? ' s/i' : '');
-    return '<button class="cuota-btn' + (n===1?' selected':'') + '" onclick="window.pickCuotas(this,' + n + ')">' + label + '</button>';
-  }).join('');
-}
 
-window.pickCuotas = function(btn, n) {
-  var container = btn.parentNode;
-  container.querySelectorAll('.cuota-btn').forEach(function(b){ b.classList.remove('selected'); });
-  btn.classList.add('selected');
-  selectedCuotas = n;
-  renderSummary();
-};
+
+
 
 // ── SUMMARY SIDEBAR ───────────────────────────────────
 function renderSummary() {
   const subtotal = getCartTotal();
+  const couponDiscount = getCouponDiscount();
   const transferDiscount = (selectedPayment === 'transferencia' || selectedPayment === 'mercadopago') && paymentConfig.transferPct > 0
-    ? Math.round((subtotal + shippingCost) * paymentConfig.transferPct / 100) : 0;
-  const total = subtotal + shippingCost - transferDiscount;
+    ? Math.round((subtotal + shippingCost - couponDiscount) * paymentConfig.transferPct / 100) : 0;
+  const total = subtotal + shippingCost - couponDiscount - transferDiscount;
 
   const itemsEl = document.getElementById('summaryItems');
   if(itemsEl) {
@@ -3092,6 +3355,13 @@ function renderSummary() {
     discLine.style.display = transferDiscount > 0 ? 'flex' : 'none';
     discEl.textContent = '-$' + Number(transferDiscount).toLocaleString('es-AR');
   }
+  // Coupon discount line
+  var couponLine = document.getElementById('summaryCouponLine');
+  var couponEl = document.getElementById('summaryCouponAmt');
+  if(couponLine && couponEl) {
+    couponLine.style.display = couponDiscount > 0 ? 'flex' : 'none';
+    couponEl.textContent = '-$' + Number(couponDiscount).toLocaleString('es-AR');
+  }
 
   const totEl = document.getElementById('summaryTotal');
   if(totEl) totEl.textContent = '$' + Number(total).toLocaleString('es-AR');
@@ -3101,9 +3371,10 @@ function renderSummary() {
 
 function updateStickyTotal() {
   const subtotal = getCartTotal();
+  const couponDiscount = getCouponDiscount();
   const transferDiscount = (selectedPayment === 'transferencia' || selectedPayment === 'mercadopago') && paymentConfig.transferPct > 0
-    ? Math.round((subtotal + shippingCost) * paymentConfig.transferPct / 100) : 0;
-  const total = subtotal + shippingCost - transferDiscount;
+    ? Math.round((subtotal + shippingCost - couponDiscount) * paymentConfig.transferPct / 100) : 0;
+  const total = subtotal + shippingCost - couponDiscount - transferDiscount;
   const el = document.getElementById('checkoutStickyTotal');
   if(el) el.textContent = '$' + Number(total).toLocaleString('es-AR');
 }
@@ -3115,7 +3386,19 @@ window.toggleCheckoutSummary = function() {
 
 // ── FINALIZAR ─────────────────────────────────────────
 window.finalizarCompra = async function() {
+  if(_isProcessing) { showToast('⏳ Ya estamos procesando tu pedido, esperá...'); return; }
   if(!selectedPayment) { showToast('Seleccioná un método de pago'); return; }
+  // Validate stock for all cart items before finalizing
+  var stockError = null;
+  cart.forEach(function(item) {
+    if(stockError) return;
+    var p = products.find(function(x){ return x.id === item.productId; });
+    var available = p ? getAvailableStock(p, item.size) : Infinity;
+    if(available !== Infinity && item.qty > available) {
+      stockError = item.name + ' (Talle ' + item.size + '): solo quedan ' + available + ' unidades';
+    }
+  });
+  if(stockError) { showToast('⚠️ Stock insuficiente: ' + stockError); return; }
   // Check comprobante for transfer/mp
   if(selectedPayment === 'transferencia' && !comprobanteUrl) {
     showToast('⚠️ Subí el comprobante de transferencia para continuar');
@@ -3135,15 +3418,19 @@ window.finalizarCompra = async function() {
     }
   }
   const subtotal = getCartTotal();
+  const couponDiscount = getCouponDiscount();
   const transferDiscount = (selectedPayment === 'transferencia' || selectedPayment === 'mercadopago') && paymentConfig.transferPct > 0
-    ? Math.round((subtotal + shippingCost) * paymentConfig.transferPct / 100) : 0;
-  const total = subtotal + shippingCost - transferDiscount;
+    ? Math.round((subtotal + shippingCost - couponDiscount) * paymentConfig.transferPct / 100) : 0;
+  const total = subtotal + shippingCost - couponDiscount - transferDiscount;
 
   let text = (waConfig.msg || 'Hola! Quiero hacer un pedido:') + '\n\n';
   // Products
   cart.forEach(function(item) {
     text += '• ' + item.name + ' — Talle: ' + item.size + ' — Color: ' + item.color + ' — $' + Number(item.price).toLocaleString('es-AR') + '\n';
   });
+  if(appliedCoupon) {
+    text += '\nCupón aplicado: ' + appliedCoupon.id + ' (-$' + Number(getCouponDiscount()).toLocaleString('es-AR') + ')';
+  }
   text += '\nEnvío: ' + (selectedShipping ? selectedShipping.name : '—') + (selectedShipping && selectedShipping.address ? ' — ' + selectedShipping.address : '');
   if(selectedPayment === 'efectivo') {
     const nombre = document.getElementById('efectivoNombre') ? document.getElementById('efectivoNombre').value.trim() : '';
@@ -3158,8 +3445,7 @@ window.finalizarCompra = async function() {
   } else {
     var pctFinal = (selectedPayment==='transferencia'||selectedPayment==='mercadopago') ? (paymentConfig.transferPct||20) : 0;
     var totalConDescuento = pctFinal > 0 ? Math.round((getCartTotal()+shippingCost)*(1-pctFinal/100)) : total;
-    var cuotasText = selectedCuotas > 1 ? ' — ' + selectedCuotas + ' cuotas de $' + Number(Math.ceil(totalConDescuento/selectedCuotas)).toLocaleString('es-AR') : '';
-    text += '\nPago: ' + selectedPayment + (pctFinal>0 ? ' — 20% OFF — Total: $' + Number(totalConDescuento).toLocaleString('es-AR') : '') + cuotasText + (selectedPayment==='transferencia'||selectedPayment==='mercadopago' ? ' — Alias: NORTHSIDE.CO' : '');
+    text += '\nPago: ' + selectedPayment + (pctFinal>0 ? ' — 20% OFF — Total: $' + Number(totalConDescuento).toLocaleString('es-AR') + ' — Alias: NORTHSIDE.CO' : '');
     text += '\nTotal: $' + Number(total).toLocaleString('es-AR');
   }
 
@@ -3200,8 +3486,9 @@ window.finalizarCompra = async function() {
     });
   } catch(e) { console.error('Error saving order:', e); }
 
+  showLoading('Registrando pedido...');
   const num = waConfig.number || '5491100000000';
-  window.open('https://wa.me/' + num + '?text=' + encodeURIComponent(text), '_blank');
+  try {
 };
 
 
@@ -3216,6 +3503,18 @@ window.addToCartFromDetail = function(id) {
     return;
   }
   if(alertEl) alertEl.classList.remove('show');
+  // Check if size is sold out
+  if(isProductSoldOut(p, _selSize || '')) {
+    if(alertEl){ alertEl.textContent = 'Este talle está agotado.'; alertEl.classList.add('show'); }
+    return;
+  }
+  // Stock check
+  const available = getAvailableStock(p, _selSize || '');
+  const inCart = getCartQtyForSize(p.id, _selSize || '', _selColor || '');
+  if(available !== Infinity && inCart >= available) {
+    if(alertEl){ alertEl.textContent = '⚠️ No hay más stock para este talle. Disponible: ' + available + ' unidades.'; alertEl.classList.add('show'); }
+    return;
+  }
   const imgUrl = p.imgs && p.imgs.length > 0 ? (p.imgs[0].url||p.imgs[0].data||'') : '';
   addToCart(p.id, p.name, _selSize || '—', _selColor || '—', p.price, imgUrl);
   showToast('✓ Agregado al carrito');
@@ -3263,7 +3562,7 @@ window.calcDiscount = function(priceId, origPriceId, discountId, previewId) {
 
 
 // ── PAYMENT CONFIG ────────────────────────────────────
-let paymentConfig = { transferPct: 0, cuotas: 0, cuotasLabel: 'sin interés' };
+let paymentConfig = { transferPct: 0 };
 
 async function loadPaymentConfig() {
   try {
@@ -3286,23 +3585,13 @@ function getPaymentHTML(price, large) {
       html += '<div class="card-payment-line">$<strong>' + transferPrice.toLocaleString('es-AR') + '</strong> por transferencia</div>';
     }
   }
-  if(paymentConfig.cuotas > 0) {
-    const cuotaPrice = Math.round(price / paymentConfig.cuotas);
-    const label = paymentConfig.cuotasLabel || 'sin interés';
-    if(large) {
-      html += '<div class="payment-line">' + paymentConfig.cuotas + ' x $<strong>' + cuotaPrice.toLocaleString('es-AR') + '</strong> ' + label + '</div>';
-    } else {
-      html += '<div class="card-payment-line">' + paymentConfig.cuotas + ' x $<strong>' + cuotaPrice.toLocaleString('es-AR') + '</strong> ' + label + '</div>';
-    }
-  }
+
   return html;
 }
 
 window.savePaymentConfig = async function() {
   const transferPct = parseInt(document.getElementById('payTransferPct').value) || 0;
-  const cuotas = parseInt(document.getElementById('payCuotas').value) || 0;
-  const cuotasLabel = document.getElementById('payCuotasLabel').value.trim() || 'sin interés';
-  paymentConfig = { transferPct, cuotas, cuotasLabel };
+  paymentConfig = { transferPct };
   try {
     await setDoc(doc(db, 'config', 'payment'), paymentConfig);
     showToast('✓ Medios de pago guardados');
