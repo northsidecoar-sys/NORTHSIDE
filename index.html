@@ -3495,6 +3495,9 @@ window.finalizarCompra = async function() {
       transferDiscount,
       couponDiscount: getCouponDiscount(),
       total,
+      // Save comprobante URL (base64 or cloudinary URL)
+      comprobanteUrl: (selectedPayment === 'transferencia' ? comprobanteUrl : null) ||
+                      (selectedPayment === 'mercadopago' ? comprobanteUrlMP : null) || null,
       status: 'pendiente',
       createdAt: Date.now()
     });
