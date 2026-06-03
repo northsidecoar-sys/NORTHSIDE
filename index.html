@@ -59,7 +59,7 @@
 
 
   /* WA FLOATING BUTTON */
-  .wa-float{position:fixed;bottom:1.5rem;right:1.5rem;z-index:200;display:flex;align-items:center;gap:0.5rem;cursor:pointer;}
+  .wa-float{position:fixed;bottom:1.5rem;right:1.5rem;z-index:250;display:flex;align-items:center;gap:0.5rem;cursor:pointer;}
   .wa-float-icon{width:54px;height:54px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(37,211,102,0.4);transition:transform 0.2s,box-shadow 0.2s;}
   .wa-float-icon:hover{transform:scale(1.08);box-shadow:0 6px 24px rgba(37,211,102,0.5);}
   .wa-float-tooltip{background:rgba(26,22,18,0.88);color:#f5f3ee;font-size:0.72rem;font-weight:500;letter-spacing:0.06em;padding:0.4rem 0.8rem;border-radius:4px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity 0.2s;transform:translateX(-8px);transition:opacity 0.2s,transform 0.2s;}
@@ -1343,7 +1343,7 @@
 </div>
 
 <!-- WA FLOATING BUTTON -->
-<div class="wa-float" onclick="window.open('https://wa.me/' + (waConfig.number||'5491100000000') + '?text=Hola!%20Tengo%20una%20consulta%20puntual.', '_blank')" title="Consultas puntuales">
+<div class="wa-float" id="waFloatBtn" title="Consultas puntuales" style="cursor:pointer">
   <div class="wa-float-tooltip">Consultas puntuales</div>
   <div class="wa-float-icon">
     <svg width="28" height="28" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
@@ -1451,6 +1451,14 @@ async function loadWaConfig() {
   snap.forEach(d => {
     if (d.id === 'whatsapp') waConfig = d.data();
   });
+  // Set WA button href after config loads
+  const waBtn = document.getElementById('waFloatBtn');
+  if(waBtn) {
+    waBtn.onclick = function() {
+      const num = (waConfig && waConfig.number) ? waConfig.number : '5491100000000';
+      window.open('https://wa.me/' + num + '?text=Hola!%20Tengo%20una%20consulta%20puntual.', '_blank');
+    };
+  }
 }
 
 async function saveWaFirebase() {
@@ -1599,9 +1607,18 @@ function renderGrid() {
     // Check if ALL sizes are sold out
     var allSoldOut = false;
     if(p.stock && Object.keys(p.stock).length > 0) {
+      var stockKeys = Object.keys(p.stock);
       var sizes = (p.sizes||'').split(',').map(function(s){ return s.trim(); }).filter(Boolean);
-      if(sizes.length > 0) {
-        allSoldOut = sizes.every(function(s){ return (parseInt(p.stock[s])||0) === 0; });
+      if(sizes.length > 0 && stockKeys.length > 0) {
+        // Check if every size has 0 stock across ALL key formats (size-only or size/color)
+        allSoldOut = sizes.every(function(sz) {
+          // Check direct key (e.g. 'S')
+          if(p.stock[sz] !== undefined) return (parseInt(p.stock[sz])||0) === 0;
+          // Check any composite key that starts with this size (e.g. 'S / Negro', 'S / Azul')
+          var compositeKeys = stockKeys.filter(function(k){ return k === sz || k.startsWith(sz + ' /'); });
+          if(compositeKeys.length === 0) return false; // no stock info = not sold out
+          return compositeKeys.every(function(k){ return (parseInt(p.stock[k])||0) === 0; });
+        });
       }
     }
     var soldOutBadge = allSoldOut ? '<div class="badge-agotado">Agotado</div>' : '';
