@@ -375,7 +375,7 @@
   .btn-size-guide{background:none;border:none;color:var(--warm);font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;text-decoration:underline;font-family:'DM Sans',sans-serif;padding:0;margin-left:0.5rem;}
 
   /* STOCK ALERT */
-  .stock-alert{display:inline-flex;align-items:center;gap:0.4rem;background:#fff3cd;border:1px solid #ffc107;color:#856404;font-size:0.72rem;font-weight:500;letter-spacing:0.05em;padding:0.35rem 0.7rem;margin-bottom:1rem;}
+  .stock-alert{display:flex;align-items:center;gap:0.4rem;background:#fff3cd;border:1px solid #ffc107;color:#856404;font-size:0.75rem;font-weight:500;letter-spacing:0.05em;padding:0.4rem 0.8rem;margin-bottom:0.8rem;border-radius:4px;}
   .stock-alert::before{content:"⚡";font-size:0.8rem;}
 
   /* TRANSFER DISCOUNT LIVE */
@@ -1754,8 +1754,23 @@ function renderDetail(p) {
 }
 
 let _selSize = null, _selColor = null;
-window.selectSize = (i,val) => { _selSize=val; document.querySelectorAll('.size-btn').forEach((b,j)=>b.classList.toggle('selected',j===i)); const l=document.getElementById('selectedSizeLabel'); if(l)l.textContent=val; };
-window.selectColor = i => { const p=products.find(x=>x.id===openProductId); if(!p)return; _selColor=p.colors[i].name; document.querySelectorAll('.color-btn').forEach((b,j)=>b.classList.toggle('selected',j===i)); const l=document.getElementById('selectedColorLabel'); if(l)l.textContent=_selColor; };
+window.selectSize = function(i, val) {
+  _selSize = val;
+  document.querySelectorAll('.size-btn').forEach(function(b,j){ b.classList.toggle('selected', j===i); });
+  const l = document.getElementById('selectedSizeLabel'); if(l) l.textContent = val;
+  const p = products.find(function(x){ return x.id === openProductId; });
+  if(p) { updateStockAlert(p); updateTransferHighlight(p.price); }
+};
+window.selectColor = function(i) {
+  const p = products.find(x => x.id === openProductId);
+  if(!p) return;
+  _selColor = p.colors[i].name;
+  document.querySelectorAll('.color-btn').forEach((b,j) => b.classList.toggle('selected', j===i));
+  const l = document.getElementById('selectedColorLabel');
+  if(l) l.textContent = _selColor;
+  // Update stock display when color changes
+  if(p) { updateStockAlert(p); updateTransferHighlight(p.price); }
+};
 window.sendWhatsapp = async function(id) {
   const p=products.find(x=>x.id===id); if(!p)return;
   const hasSizes=(p.sizes||'').trim().length>0;
@@ -2551,18 +2566,27 @@ window.closeSizeGuide = function(e) {
 };
 
 // ── STOCK ALERT ───────────────────────────────────────
-function getStockAlert(p, size) {
+function getStockAlert(p, size, color) {
   if(!p.stock || !size) return '';
-  const qty = p.stock[size];
-  if(qty !== undefined && qty <= 2 && qty > 0) {
-    return '<div class="stock-alert">¡Últim' + (qty === 1 ? 'a' : 'as') + ' ' + qty + ' unidad' + (qty === 1 ? '' : 'es') + ' disponible' + (qty === 1 ? '' : 's') + '!</div>';
+  // Try size+color key first (e.g. "S / Negro"), then just size
+  var key = (color && p.colors && p.colors.length > 0) ? (size + ' / ' + color) : size;
+  var qty = p.stock[key];
+  // Fallback to size-only key
+  if(qty === undefined) qty = p.stock[size];
+  if(qty === undefined) return '';
+  qty = parseInt(qty);
+  if(qty === 0) {
+    return '<div class="stock-alert" style="background:#fee2e2;color:#991b1b;border-color:#fca5a5">⚠️ Sin stock para este talle</div>';
   }
-  return '';
+  if(qty <= 2) {
+    return '<div class="stock-alert">⚡ ¡Últim' + (qty===1?'a':'as') + ' ' + qty + ' unidad' + (qty===1?'':'es') + '!</div>';
+  }
+  return '<div style="font-size:0.72rem;color:#065f46;background:#d1fae5;border:1px solid #6ee7b7;padding:0.3rem 0.7rem;margin-bottom:0.6rem">✅ Stock disponible: ' + qty + ' unidades</div>';
 }
 
 function updateStockAlert(p) {
   const el = document.getElementById('stockAlertEl');
-  if(el) el.innerHTML = getStockAlert(p, _selSize);
+  if(el) el.innerHTML = getStockAlert(p, _selSize, _selColor);
 }
 
 // ── TRANSFER DISCOUNT LIVE ────────────────────────────
