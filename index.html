@@ -18,7 +18,7 @@
 <meta name="twitter:title" content="NORTHSIDE | Ropa Streetwear">
 <meta name="twitter:description" content="Ropa streetwear. Baggies, buzos, camperas. Envío a todo Argentina.">
 <meta name="twitter:image" content="https://res.cloudinary.com/dtbhcilrt/image/upload/northside/og-image.jpg">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%231a1612'/><text y='.9em' font-size='80' fill='%23f5f3ee' font-family='sans-serif' font-weight='bold'>N</text></svg>">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='10' fill='%230a0d1a'/><text x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-size='68' fill='white' font-family='Arial Black,sans-serif' font-weight='900'>N</text></svg>">
 <link rel="canonical" href="https://northside.vercel.app">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
 <style>
@@ -3450,9 +3450,12 @@ window.finalizarCompra = async function() {
   }
 
   // Guardar pedido en Firebase SIEMPRE (con o sin login)
+
+  showLoading('Registrando pedido...');
+  const num = waConfig.number || '5491100000000';
   try {
+    // Save to Firebase
     const orderId = 'CH-' + Date.now() + '-' + Math.random().toString(36).substr(2,5).toUpperCase();
-    // Nombre del cliente para efectivo
     const clienteNombre = selectedPayment === 'efectivo'
       ? (document.getElementById('efectivoNombre') ? document.getElementById('efectivoNombre').value.trim() : '')
       : (currentUser ? (currentUser.displayName || currentUser.email) : 'Visitante');
@@ -3479,16 +3482,23 @@ window.finalizarCompra = async function() {
       subtotal,
       shippingCost,
       transferDiscount,
+      couponDiscount: getCouponDiscount(),
       total,
-      quantity: cart.reduce(function(s,i){ return s + i.qty; }, 0),
       status: 'pendiente',
       createdAt: Date.now()
     });
-  } catch(e) { console.error('Error saving order:', e); }
-
-  showLoading('Registrando pedido...');
-  const num = waConfig.number || '5491100000000';
-  try {
+    window.open('https://wa.me/' + num + '?text=' + encodeURIComponent(text), '_blank');
+    appliedCoupon = null;
+    cart = [];
+    saveCart();
+    updateCartBadge();
+    showToast('✅ Pedido enviado correctamente');
+  } catch(e) {
+    console.error('Error finalizando:', e);
+    showToast('⚠️ Hubo un error, intenta de nuevo');
+  } finally {
+    hideLoading();
+  }
 };
 
 
