@@ -2773,9 +2773,9 @@ window.drawerChangeQty = function(idx, delta) {
   if(delta > 0) {
     const item = cart[idx];
     const p = products.find(function(x){ return x.id === item.productId; });
-    const available = p ? getAvailableStock(p, item.size) : Infinity;
+    const available = p ? getAvailableStock(p, item.size, item.color) : Infinity;
     if(available !== Infinity && item.qty >= available) {
-      showToast('⚠️ Stock máximo disponible: ' + available + ' unidades');
+      showToast('No hay stock disponible para este producto en el talle seleccionado.');
       return;
     }
   }
@@ -2834,22 +2834,23 @@ window.confirmYes = function() {
 // ── STOCK VALIDATION ──────────────────────────────────
 function getAvailableStock(product, size, color) {
   if(!product.stock || Object.keys(product.stock).length === 0) return Infinity; // no stock set = unlimited
-  // Try composite key first (e.g. "S / Negro"), then size-only key (e.g. "S")
-  var compositeKey = (color && color !== '—') ? (size + ' / ' + color) : null;
+  var stockKeys = Object.keys(product.stock);
+  // Normalize: if no size, use 'Único' (how ventas_ropa stores no-size products)
+  var sz = size || 'Único';
+  // Try composite key first (e.g. "S / Negro")
+  var compositeKey = (color && color !== '—') ? (sz + ' / ' + color) : null;
   if(compositeKey && product.stock[compositeKey] !== undefined) {
     return parseInt(product.stock[compositeKey]) || 0;
   }
-  var stockQty = product.stock[size];
-  if(stockQty === undefined) {
-    // If stock object exists but has no key matching this size at all → 0 (not unlimited)
-    // Check if any key starts with this size — if yes, means stock is color-based
-    var hasColorKeys = Object.keys(product.stock).some(function(k) {
-      return k.startsWith(size + ' /');
-    });
-    if(hasColorKeys) return 0; // size exists but specific color combo not found = 0
-    return Infinity; // size not tracked at all = unlimited
+  // Try size-only key (e.g. "S" or "Único")
+  if(product.stock[sz] !== undefined) {
+    return parseInt(product.stock[sz]) || 0;
   }
-  return parseInt(stockQty) || 0;
+  // Check if stock uses composite keys for this size
+  var hasColorKeys = stockKeys.some(function(k){ return k === sz || k.startsWith(sz + ' /'); });
+  if(hasColorKeys) return 0; // size tracked but this color combo has 0 stock
+  // Size not in stock map at all = unlimited for this size
+  return Infinity;
 }
 
 function getCartQtyForSize(productId, size, color) {
@@ -2976,9 +2977,9 @@ window.changeQty = function(idx, delta) {
   if(delta > 0) {
     const item = cart[idx];
     const p = products.find(function(x){ return x.id === item.productId; });
-    const available = p ? getAvailableStock(p, item.size) : Infinity;
+    const available = p ? getAvailableStock(p, item.size, item.color) : Infinity;
     if(available !== Infinity && item.qty >= available) {
-      showToast('⚠️ Stock máximo disponible: ' + available + ' unidades');
+      showToast('No hay stock disponible para este producto en el talle seleccionado.');
       return;
     }
   }
@@ -3428,9 +3429,9 @@ window.finalizarCompra = async function() {
   cart.forEach(function(item) {
     if(stockError) return;
     var p = products.find(function(x){ return x.id === item.productId; });
-    var available = p ? getAvailableStock(p, item.size) : Infinity;
+    var available = p ? getAvailableStock(p, item.size, item.color) : Infinity;
     if(available !== Infinity && item.qty > available) {
-      stockError = item.name + ' (Talle ' + item.size + '): solo quedan ' + available + ' unidades';
+      stockError = item.name + ' — Talle ' + item.size + ': solo quedan ' + available + ' unidades';
     }
   });
   if(stockError) { showToast('⚠️ Stock insuficiente: ' + stockError); return; }
