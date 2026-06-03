@@ -630,7 +630,7 @@
   .loading-bar{width:120px;height:2px;background:var(--border);}
   .loading-bar-fill{height:100%;background:var(--warm);width:0%;animation:load 1.5s ease forwards;}
   @keyframes load{to{width:100%;}}
-  .toast{position:fixed;bottom:2rem;right:2rem;background:var(--black);color:var(--bg);padding:0.7rem 1.2rem;font-size:0.8rem;font-weight:500;letter-spacing:0.05em;z-index:999;opacity:0;transform:translateY(8px);transition:all 0.3s;pointer-events:none;}
+  .toast{position:fixed;bottom:2rem;right:2rem;background:var(--black);color:var(--bg);padding:0.8rem 1.3rem;font-size:0.8rem;font-weight:500;letter-spacing:0.05em;z-index:999;opacity:0;transform:translateY(12px);transition:opacity 0.28s ease,transform 0.28s ease;pointer-events:none;border-radius:2px;max-width:90vw;}
   .toast.show{opacity:1;transform:translateY(0);}
   .empty-state{grid-column:1/-1;padding:5rem 2rem;text-align:center;background:var(--bg);}
   .empty-state p{color:var(--muted);font-size:0.85rem;letter-spacing:0.12em;text-transform:uppercase;}
@@ -2015,7 +2015,18 @@ window.saveEdit = async () => {
 function showToast(msg){
   const t=document.getElementById('toast');
   t.textContent=msg;t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),3000);
+  clearTimeout(t._timer);
+  t._timer=setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+// Cart-specific toast with checkmark and product name
+function showCartToast(productName) {
+  const t = document.getElementById('toast');
+  t.innerHTML = '<span style="color:#6ee7b7;margin-right:0.4rem">✓</span>' +
+    (productName ? ('<strong>' + productName + '</strong> agregado al carrito') : 'Producto agregado al carrito');
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(function(){ t.classList.remove('show'); }, 3500);
 }
 
 
@@ -3550,9 +3561,11 @@ window.addToCartFromDetail = function(id) {
     return;
   }
   const imgUrl = p.imgs && p.imgs.length > 0 ? (p.imgs[0].url||p.imgs[0].data||'') : '';
-  addToCart(p.id, p.name, _selSize || '—', _selColor || '—', p.price, imgUrl);
-  showToast('✓ Agregado al carrito');
-  window.openCartDrawer();
+  const added = addToCart(p.id, p.name, _selSize || '—', _selColor || '—', p.price, imgUrl);
+  if(added !== false) {
+    window.showHome(true);          // close detail, back to catalogue
+    showCartToast(p.name);          // floating success notification
+  }
 };
 
 // ── BROWSER HISTORY ───────────────────────────────────
