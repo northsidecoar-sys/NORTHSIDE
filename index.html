@@ -1765,7 +1765,7 @@ function renderDetail(p) {
     })() +
     (p.desc ? '<div class="detail-desc" style="white-space:pre-line">' + p.desc.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</div>' : '') +
     (colors.length > 0 ? '<label class="select-label">Color: <span id="selectedColorLabel">—</span></label><div class="colors-grid">' + colors.map((c,i) => '<button class="color-btn" onclick="window.selectColor(' + i + ')" title="' + c.name + '"><div class="color-circle" style="background:' + c.hex + '"></div><span class="color-btn-label">' + c.name + '</span></button>').join('') + '</div>' : '') +
-    (sizes.length > 0 ? '<label class="select-label">Talle: <span id="selectedSizeLabel">—</span> <button class="btn-size-guide" onclick="window.openSizeGuide()">¿Cuál es mi talle?</button></label><div class="sizes-grid">' + sizes.map(function(s,i){ var sStock = (p.stock && p.stock[s] !== undefined) ? parseInt(p.stock[s])||0 : Infinity; var isSoldOut = sStock === 0; return '<button class="size-btn' + (isSoldOut ? ' agotado' : '') + '" onclick="' + (isSoldOut ? '' : 'window.selectSize(' + i + ',\'' + s + '\')') + '">' + s + '</button>'; }).join('') + '</div><div id="stockAlertEl"></div>' : '') +
+    (sizes.length > 0 ? '<label class="select-label">Talle: <span id="selectedSizeLabel">—</span> <button class="btn-size-guide" onclick="window.openSizeGuide()">¿Cuál es mi talle?</button></label><div class="sizes-grid">' + sizes.map(function(s,i){ var cl = _selColor||''; var avail = getAvailableStock(p, s, cl); var isSoldOut = (avail === 0); return '<button class="size-btn' + (isSoldOut ? ' agotado' : '') + '" onclick="' + (isSoldOut ? '' : 'window.selectSize(' + i + ',\'' + s + '\')') + '">' + s + '</button>'; }).join('') + '</div><div id="stockAlertEl"></div>' : '') +
     '<div class="transfer-highlight" id="transferHighlight"></div>' +
     '<div class="select-alert" id="selectAlert">Por favor seleccioná talle y color antes de continuar.</div>' +
     '<button data-pid="' + p.id + '" onclick="window.addToCartFromDetail(parseInt(this.dataset.pid))" style="width:100%;background:var(--black);color:var(--bg);border:none;padding:0.9rem;font-family:DM Sans,sans-serif;font-size:0.82rem;font-weight:500;letter-spacing:0.08em;cursor:pointer;text-transform:uppercase;margin-bottom:0.6rem;transition:opacity 0.2s">🛒 Agregar al carrito</button>' +
@@ -2832,10 +2832,23 @@ window.confirmYes = function() {
 };
 
 // ── STOCK VALIDATION ──────────────────────────────────
-function getAvailableStock(product, size) {
+function getAvailableStock(product, size, color) {
   if(!product.stock || Object.keys(product.stock).length === 0) return Infinity; // no stock set = unlimited
-  const stockQty = product.stock[size];
-  if(stockQty === undefined) return Infinity; // size not in stock map = unlimited
+  // Try composite key first (e.g. "S / Negro"), then size-only key (e.g. "S")
+  var compositeKey = (color && color !== '—') ? (size + ' / ' + color) : null;
+  if(compositeKey && product.stock[compositeKey] !== undefined) {
+    return parseInt(product.stock[compositeKey]) || 0;
+  }
+  var stockQty = product.stock[size];
+  if(stockQty === undefined) {
+    // If stock object exists but has no key matching this size at all → 0 (not unlimited)
+    // Check if any key starts with this size — if yes, means stock is color-based
+    var hasColorKeys = Object.keys(product.stock).some(function(k) {
+      return k.startsWith(size + ' /');
+    });
+    if(hasColorKeys) return 0; // size exists but specific color combo not found = 0
+    return Infinity; // size not tracked at all = unlimited
+  }
   return parseInt(stockQty) || 0;
 }
 
@@ -2846,17 +2859,17 @@ function getCartQtyForSize(productId, size, color) {
   return item ? item.qty : 0;
 }
 
-function isProductSoldOut(product, size) {
-  const stock = getAvailableStock(product, size);
+function isProductSoldOut(product, size, color) {
+  const stock = getAvailableStock(product, size, color);
   return stock === 0;
 }
 function addToCart(productId, name, size, color, price, imgUrl) {
   const p = products.find(function(x){ return x.id === productId; });
-  const available = p ? getAvailableStock(p, size) : Infinity;
+  const available = p ? getAvailableStock(p, size, color) : Infinity;
   const inCart = getCartQtyForSize(productId, size, color);
 
   if(available !== Infinity && inCart >= available) {
-    showToast('⚠️ No hay más stock disponible para este talle');
+    showToast('No hay stock disponible para este producto en el talle seleccionado.');
     return false;
   }
 
@@ -3543,28 +3556,38 @@ window.addToCartFromDetail = function(id) {
   const hasSizes = (p.sizes||'').trim().length > 0;
   const hasColors = (p.colors||[]).length > 0;
   const alertEl = document.getElementById('selectAlert');
-  if((hasSizes && !_selSize) || (hasColors && !_selColor)) {
-    if(alertEl){ alertEl.textContent = 'Seleccioná talle y color antes de agregar.'; alertEl.classList.add('show'); }
+
+  // Validate selection
+  if(hasSizes && !_selSize) {
+    if(alertEl){ alertEl.textContent = 'Seleccioná un talle antes de agregar.'; alertEl.classList.add('show'); }
+    return;
+  }
+  if(hasColors && !_selColor) {
+    if(alertEl){ alertEl.textContent = 'Seleccioná un color antes de agregar.'; alertEl.classList.add('show'); }
     return;
   }
   if(alertEl) alertEl.classList.remove('show');
-  // Check if size is sold out
-  if(isProductSoldOut(p, _selSize || '')) {
-    if(alertEl){ alertEl.textContent = 'Este talle está agotado.'; alertEl.classList.add('show'); }
+
+  const sz = _selSize || '';
+  const cl = _selColor || '';
+
+  // Stock check with both size+color
+  if(isProductSoldOut(p, sz, cl)) {
+    showToast('No hay stock disponible para este producto en el talle seleccionado.');
     return;
   }
-  // Stock check
-  const available = getAvailableStock(p, _selSize || '');
-  const inCart = getCartQtyForSize(p.id, _selSize || '', _selColor || '');
+  const available = getAvailableStock(p, sz, cl);
+  const inCart = getCartQtyForSize(p.id, sz, cl);
   if(available !== Infinity && inCart >= available) {
-    if(alertEl){ alertEl.textContent = '⚠️ No hay más stock para este talle. Disponible: ' + available + ' unidades.'; alertEl.classList.add('show'); }
+    showToast('No hay stock disponible para este producto en el talle seleccionado.');
     return;
   }
+
   const imgUrl = p.imgs && p.imgs.length > 0 ? (p.imgs[0].url||p.imgs[0].data||'') : '';
-  const added = addToCart(p.id, p.name, _selSize || '—', _selColor || '—', p.price, imgUrl);
+  const added = addToCart(p.id, p.name, sz || '—', cl || '—', p.price, imgUrl);
   if(added !== false) {
-    window.showHome(true);          // close detail, back to catalogue
-    showCartToast(p.name);          // floating success notification
+    window.showHome(true);
+    showCartToast(p.name);
   }
 };
 
