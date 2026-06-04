@@ -1415,23 +1415,6 @@ async function loadProducts() {
   const snap = await getDocs(collection(db, 'products'));
   products = snap.docs.map(d => ({ ...d.data(), _docId: d.id }));
   window._nsProducts = products.filter(function(x){ return x != null; }); // expose for hash handler
-  // If URL is /producto/ID (new tab), open that product
-  var initPath = window.location.pathname;
-  if(initPath.startsWith('/producto/')) {
-    var initPid = parseInt(initPath.replace('/producto/',''));
-    if(!isNaN(initPid)) {
-      var initP = products.find(function(x){ return x.id === initPid; });
-      if(initP) {
-        openProductId = initP.id;
-        detailActiveImg = 0;
-        renderDetail(initP);
-        document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
-        document.getElementById('viewDetail').classList.add('active');
-        document.title = initP.name + ' | NORTHSIDE';
-        history.replaceState({ view: 'detail', productId: initP.id }, '', '/producto/' + initP.id);
-      }
-    }
-  }
 
 
   products.sort((a,b) => (a.order||0) - (b.order||0));
@@ -4049,9 +4032,27 @@ async function init() {
   renderGrid();
   renderBanner();
   updateCartBadge();
-  // Make sure only home is visible on load
-  document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
-  document.getElementById('viewHome').classList.add('active');
+  // If URL is /producto/ID, open that product; otherwise show home
+  var initPath = window.location.pathname;
+  if(initPath.startsWith('/producto/')) {
+    var initPid = parseInt(initPath.replace('/producto/',''));
+    var initP = !isNaN(initPid) ? products.find(function(x){ return x.id === initPid; }) : null;
+    if(initP) {
+      openProductId = initP.id;
+      detailActiveImg = 0;
+      renderDetail(initP);
+      document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
+      document.getElementById('viewDetail').classList.add('active');
+      document.title = initP.name + ' | NORTHSIDE';
+      history.replaceState({ view: 'detail', productId: initP.id }, '', '/producto/' + initP.id);
+    } else {
+      document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
+      document.getElementById('viewHome').classList.add('active');
+    }
+  } else {
+    document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
+    document.getElementById('viewHome').classList.add('active');
+  }
   document.getElementById('loadingScreen').classList.add('hidden');
 }
 
