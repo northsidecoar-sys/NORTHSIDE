@@ -1610,7 +1610,7 @@ function renderGrid() {
       }
     }
     var soldOutBadge = allSoldOut ? '<div class="badge-agotado">Agotado</div>' : '';
-    return '<a href="' + window.location.origin + window.location.pathname + '#producto-' + p.id + '" class="product-card' + (imgs.length === 2 ? ' has-two-imgs' : '') + (allSoldOut ? ' agotado' : '') + '" data-pid="' + p.id + '" style="display:block;text-decoration:none;color:inherit" onclick="if(!event.ctrlKey&&!event.metaKey&&event.button!==1){event.preventDefault();window.openProduct(' + p.id + ')}">' +
+    return '<div class="product-card' + (imgs.length === 2 ? ' has-two-imgs' : '') + (allSoldOut ? ' agotado' : '') + '" data-pid="' + p.id + '" onclick="window.openProduct(' + p.id + ')" onmousedown="if(event.button===1){event.preventDefault();window.openProductNewTab(' + p.id + ')}">' +
       '<div class="card-gallery" style="position:relative">' + soldOutBadge + gal + '</div>' +
       '<div class="product-info">' +
         '<div class="product-cat">' + p.cat + '</div>' +
@@ -1695,7 +1695,8 @@ window.openProduct = id => {
 
 // Middle click opens product in new tab
 window.openProductNewTab = function(id) {
-  window.open(window.location.origin + window.location.pathname + '#producto-' + id, '_blank');
+  var url = window.location.origin + window.location.pathname + '?p=' + id;
+  window.open(url, '_blank');
 };
 window.showHome = (pushState) => {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
@@ -4073,9 +4074,15 @@ window.handleCardAuxClick = function(e, id) {
 
 // ── OPEN PRODUCT FROM URL HASH (new tab via middle-click) ─
 (function() {
-  var h = window.location.hash;
-  if(!h || !h.startsWith('#producto-')) return;
-  var pid = h.replace('#producto-', '');
+  // Check query param ?p=ID (used by middle-click new tab)
+  var params = new URLSearchParams(window.location.search);
+  var pid = params.get('p');
+  if(!pid) {
+    // Fallback: check hash
+    var h = window.location.hash;
+    if(!h || !h.startsWith('#producto-')) return;
+    pid = h.replace('#producto-', '');
+  }
 
   // Wait for loading screen to hide (products loaded), then open
   var attempts = 0;
