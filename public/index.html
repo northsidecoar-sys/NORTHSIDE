@@ -1610,7 +1610,7 @@ function renderGrid() {
       }
     }
     var soldOutBadge = allSoldOut ? '<div class="badge-agotado">Agotado</div>' : '';
-    return '<a href="#producto-' + p.id + '" class="product-card' + (imgs.length === 2 ? ' has-two-imgs' : '') + (allSoldOut ? ' agotado' : '') + '" onclick="window.handleCardClick(event,' + p.id + ')" data-pid="' + p.id + '" style="display:block;text-decoration:none;color:inherit">' +
+    return '<a href="#producto-' + p.id + '" class="product-card' + (imgs.length === 2 ? ' has-two-imgs' : '') + (allSoldOut ? ' agotado' : '') + '" data-pid="' + p.id + '" style="display:block;text-decoration:none;color:inherit">' +
       '<div class="card-gallery" style="position:relative">' + soldOutBadge + gal + '</div>' +
       '<div class="product-info">' +
         '<div class="product-cat">' + p.cat + '</div>' +
@@ -1625,6 +1625,17 @@ function renderGrid() {
       '</div>' +
     '</a>';
   }).join('');
+
+  // Add left-click SPA navigation to all cards (middle-click handled natively by <a> href)
+  grid.querySelectorAll('.product-card').forEach(function(card) {
+    card.addEventListener('click', function(e) {
+      // Let middle-click and ctrl/cmd-click pass through (browser handles via href)
+      if(e.button === 1 || e.ctrlKey || e.metaKey) return;
+      e.preventDefault();
+      var pid = parseInt(card.dataset.pid);
+      if(!isNaN(pid)) window.openProduct(pid);
+    });
+  });
 
   // Long press on mobile: hold to see second image
   grid.querySelectorAll('.product-card').forEach(function(card) {
