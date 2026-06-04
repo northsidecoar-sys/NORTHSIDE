@@ -376,7 +376,7 @@
 
   /* STOCK ALERT */
   .stock-alert{display:flex;align-items:center;gap:0.4rem;background:#fff3cd;border:1px solid #ffc107;color:#856404;font-size:0.75rem;font-weight:500;letter-spacing:0.05em;padding:0.4rem 0.8rem;margin-bottom:0.8rem;border-radius:4px;}
-  .stock-alert::before{content:"⚡";font-size:0.8rem;}
+  .stock-alert::before{content:"";}
 
   /* TRANSFER DISCOUNT LIVE */
   .transfer-highlight{background:#d1fae5;border:1px solid #6ee7b7;color:#065f46;font-size:0.75rem;font-weight:500;padding:0.4rem 0.8rem;margin-bottom:1rem;display:none;letter-spacing:0.03em;}
@@ -2555,7 +2555,7 @@ function getStockAlert(p, size, color) {
     return '<div class="stock-alert" style="background:#fee2e2;color:#991b1b;border-color:#fca5a5">Sin stock para este talle — podés seleccionarlo pero no se agregará al carrito</div>';
   }
   if(qty <= 2) {
-    return '<div class="stock-alert">⚡ ¡Últim' + (qty===1?'a':'as') + ' ' + qty + ' unidad' + (qty===1?'':'es') + '!</div>';
+    return '<div class="stock-alert">¡Últim' + (qty===1?'a':'as') + ' ' + qty + ' unidad' + (qty===1?'':'es') + '!</div>';
   }
   return '<div style="font-size:0.72rem;color:#065f46;background:#d1fae5;border:1px solid #6ee7b7;padding:0.3rem 0.7rem;margin-bottom:0.6rem">✅ ' + qty + ' unidades disponibles</div>';
 }
