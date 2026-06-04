@@ -1422,8 +1422,15 @@ async function loadProducts() {
   if(openPid) {
     var openP = products.find(function(x){ return String(x.id) === openPid; });
     if(openP) {
-      // Open product immediately, no delay needed since we're inside module
-      window.openProduct(openP.id);
+      // Directly show product without triggering history navigation
+      openProductId = openP.id;
+      detailActiveImg = 0;
+      renderDetail(openP);
+      document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
+      document.getElementById('viewDetail').classList.add('active');
+      window.scrollTo(0,0);
+      history.replaceState({ view: 'detail', productId: openP.id }, '', '#producto-' + openP.id);
+      document.title = openP.name + ' | NORTHSIDE';
     }
   }
   products.sort((a,b) => (a.order||0) - (b.order||0));
