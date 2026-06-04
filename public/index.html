@@ -3,6 +3,7 @@
 <head>
 <!-- v202606040832 -->
 <meta charset="UTF-8">
+  <!-- NS-VERSION: 1780606652 -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NORTHSIDE | Ropa Streetwear Argentina</title>
 <meta name="description" content="Tienda online de ropa streetwear. Baggies, buzos, camperas y más. Envío a todo Argentina. Belgrano, Palermo y Tigre con envío gratis.">
@@ -1413,7 +1414,7 @@ let uploading = false;
 async function loadProducts() {
   const snap = await getDocs(collection(db, 'products'));
   products = snap.docs.map(d => ({ ...d.data(), _docId: d.id }));
-  window._nsProducts = products; // expose for hash handler
+  window._nsProducts = products.filter(function(x){ return x != null; }); // expose for hash handler
   products.sort((a,b) => (a.order||0) - (b.order||0));
 }
 
@@ -4106,11 +4107,8 @@ window.handleCardAuxClick = function(e, id) {
       var attempts = 0;
       var iv = setInterval(function() {
         attempts++;
-        if(window.openProduct && window._nsProducts) {
+        if(window.openProduct) {
           clearInterval(iv);
-          if(!window._nsProducts.find(function(x){ return String(x.id) === pid; })) {
-            window._nsProducts.push(p);
-          }
           window.openProduct(p.id);
         }
         if(attempts > 100) clearInterval(iv);
@@ -4119,17 +4117,18 @@ window.handleCardAuxClick = function(e, id) {
     }
   } catch(e){}
 
-  // Fallback: wait for Firebase to load products
+  // Fallback: wait for Firebase to load then open
   var attempts2 = 0;
   var iv2 = setInterval(function() {
     attempts2++;
     var prods = window._nsProducts;
-    if(prods && prods.length > 0) {
+    if(prods && prods.length > 0 && window.openProduct) {
       clearInterval(iv2);
-      var p2 = prods.find(function(x){ return String(x.id) === pid; });
-      if(p2 && window.openProduct) window.openProduct(p2.id);
+      var prods2 = prods.filter(function(x){ return x != null; });
+      var p2 = prods2.find(function(x){ return String(x.id) === pid; });
+      if(p2) window.openProduct(p2.id);
     }
-    if(attempts2 > 100) clearInterval(iv2);
+    if(attempts2 > 150) clearInterval(iv2);
   }, 100);
 })();
 
