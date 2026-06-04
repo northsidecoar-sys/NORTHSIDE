@@ -1415,6 +1415,23 @@ async function loadProducts() {
   const snap = await getDocs(collection(db, 'products'));
   products = snap.docs.map(d => ({ ...d.data(), _docId: d.id }));
   window._nsProducts = products.filter(function(x){ return x != null; }); // expose for hash handler
+  // If URL is /producto/ID (new tab), open that product
+  var initPath = window.location.pathname;
+  if(initPath.startsWith('/producto/')) {
+    var initPid = parseInt(initPath.replace('/producto/',''));
+    if(!isNaN(initPid)) {
+      var initP = products.find(function(x){ return x.id === initPid; });
+      if(initP) {
+        openProductId = initP.id;
+        detailActiveImg = 0;
+        renderDetail(initP);
+        document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
+        document.getElementById('viewDetail').classList.add('active');
+        document.title = initP.name + ' | NORTHSIDE';
+        history.replaceState({ view: 'detail', productId: initP.id }, '', '/producto/' + initP.id);
+      }
+    }
+  }
 
 
   products.sort((a,b) => (a.order||0) - (b.order||0));
@@ -1613,7 +1630,7 @@ function renderGrid() {
       }
     }
     var soldOutBadge = allSoldOut ? '<div class="badge-agotado">Agotado</div>' : '';
-    return '<div class="product-card' + (imgs.length === 2 ? ' has-two-imgs' : '') + (allSoldOut ? ' agotado' : '') + '" data-pid="' + p.id + '" onclick="window.openProduct(' + p.id + ')">' +
+    return '<a class="product-card' + (imgs.length === 2 ? ' has-two-imgs' : '') + (allSoldOut ? ' agotado' : '') + '" href="/producto/' + p.id + '" data-pid="' + p.id + '" onclick="if(!event.ctrlKey&&!event.metaKey){event.preventDefault();window.openProduct(' + p.id + ')}">' +
       '<div class="card-gallery" style="position:relative">' + soldOutBadge + gal + '</div>' +
       '<div class="product-info">' +
         '<div class="product-cat">' + p.cat + '</div>' +
@@ -1626,7 +1643,7 @@ function renderGrid() {
           '<button class="btn-ver" onclick="event.stopPropagation();window.openProduct(' + p.id + ')">Ver producto</button>' +
         '</div>' +
       '</div>' +
-    '</div>';
+    '</a>';
   }).join('');
 
   // Long press on mobile: hold to see second image
@@ -1688,7 +1705,7 @@ window.openProduct = id => {
   document.getElementById('viewHome').classList.remove('active');
   document.getElementById('viewDetail').classList.add('active');
   window.scrollTo(0, 0);
-  history.pushState({ view: 'detail', productId: id }, '', '#producto-' + id);
+  history.pushState({ view: 'detail', productId: id }, '', '/producto/' + id);
   document.title = p.name + ' | NORTHSIDE';
   var ogTitle = document.querySelector('meta[property="og:title"]');
   if(ogTitle) ogTitle.setAttribute('content', p.name + ' | NORTHSIDE');
@@ -3616,10 +3633,10 @@ window.addToCartFromDetail = function(id) {
 window.addEventListener('popstate', function(e) {
   const state = e.state;
   if(!state) {
-    // Check URL hash on load
-    var hash = window.location.hash;
-    if(hash && hash.startsWith('#producto-')) {
-      var pid = parseInt(hash.replace('#producto-',''));
+    // Check if URL is /producto/ID (new tab opened via ctrl+click)
+    var path = window.location.pathname;
+    if(path.startsWith('/producto/')) {
+      var pid = parseInt(path.replace('/producto/',''));
       if(!isNaN(pid)) { window.openProduct(pid); return; }
     }
     window.showHome(false); return;
