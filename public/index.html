@@ -1695,10 +1695,9 @@ window.openProduct = id => {
 
 // Middle click opens product in new tab
 window.openProductNewTab = function(id) {
-  // Save product data so new tab can show it instantly
   var p = products.find(function(x){ return x.id == id; });
   if(p) {
-    try { sessionStorage.setItem('ns_open_product_' + id, JSON.stringify(p)); } catch(e){}
+    try { localStorage.setItem('ns_open_product_' + id, JSON.stringify(p)); } catch(e){}
   }
   var url = window.location.origin + window.location.pathname + '?p=' + id;
   window.open(url, '_blank');
@@ -4094,11 +4093,12 @@ window.handleCardAuxClick = function(e, id) {
   var pid = params.get('p');
   if(!pid) return;
 
-  // Try sessionStorage first (instant - data saved by opener tab)
+  // Try localStorage first (shared across tabs - saved by opener)
   try {
-    var cached = sessionStorage.getItem('ns_open_product_' + pid);
+    var cached = localStorage.getItem('ns_open_product_' + pid);
     if(cached) {
       var p = JSON.parse(cached);
+      localStorage.removeItem('ns_open_product_' + pid); // clean up
       var attempts = 0;
       var iv = setInterval(function() {
         attempts++;
@@ -4108,7 +4108,6 @@ window.handleCardAuxClick = function(e, id) {
             window._nsProducts.push(p);
           }
           window.openProduct(p.id);
-          try { sessionStorage.removeItem('ns_open_product_' + pid); } catch(e){}
         }
         if(attempts > 100) clearInterval(iv);
       }, 50);
