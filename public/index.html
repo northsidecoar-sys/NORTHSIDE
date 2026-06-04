@@ -2900,13 +2900,15 @@ window.openCheckout = function() {
   renderCheckoutStep(1);
   renderSummary();
   window.scrollTo(0,0);
-  history.pushState({ view: 'checkout' }, '', '#checkout');
+  history.replaceState({ view: 'checkout', step: 1 }, '', '#checkout-1');
 };
 
 window.goCheckoutStep = function(step) {
   currentCheckoutStep = step;
   renderCheckoutStep(step);
   window.scrollTo(0,0);
+  // Push a history entry for each checkout step so browser back works correctly
+  history.pushState({ view: 'checkout', step: step }, '', '#checkout-' + step);
 };
 
 function renderCheckoutStep(step) {
@@ -3594,9 +3596,20 @@ window.addToCartFromDetail = function(id) {
 // ── BROWSER HISTORY ───────────────────────────────────
 window.addEventListener('popstate', function(e) {
   const state = e.state;
-  if(state && state.view === 'checkout') {
-    window.openCheckout();
-  } else if(!state || state.view === 'home') {
+  if(!state) { window.showHome(false); return; }
+
+  if(state.view === 'checkout' && state.step) {
+    // Browser back/forward between checkout steps
+    const step = state.step;
+    if(step < 1) { window.showHome(false); return; }
+    // Make sure checkout view is active
+    document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
+    document.getElementById('viewCheckout').classList.add('active');
+    currentCheckoutStep = step;
+    renderCheckoutStep(step);
+    renderSummary();
+    window.scrollTo(0, 0);
+  } else if(state.view === 'home' || !state.view) {
     window.showHome(false);
   } else if(state.view === 'detail' && state.productId) {
     const p = products.find(function(x){ return x.id === state.productId; });
@@ -3607,9 +3620,13 @@ window.addEventListener('popstate', function(e) {
       document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
       document.getElementById('viewDetail').classList.add('active');
       window.scrollTo(0, 0);
+    } else {
+      window.showHome(false);
     }
   } else if(state.view === 'orders') {
     window.showOrders();
+  } else {
+    window.showHome(false);
   }
 });
 
