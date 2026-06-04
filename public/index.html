@@ -742,15 +742,6 @@
   </script>
 </head>
 <body>
-<script>
-// If opening a specific product via ?p=ID, keep loading screen until product opens
-if(new URLSearchParams(window.location.search).get('p')) {
-  document.addEventListener('DOMContentLoaded', function() {
-    var home = document.getElementById('viewHome');
-    if(home) home.style.visibility = 'hidden';
-  });
-}
-</script>
 
 <!-- LOADING -->
 <div class="loading-screen" id="loadingScreen">
@@ -1433,8 +1424,6 @@ async function loadProducts() {
     if(openP) {
       // Open product immediately, no delay needed since we're inside module
       window.openProduct(openP.id);
-      // Clean URL without reload
-      history.replaceState({view:'detail', productId: openP.id}, '', window.location.pathname + '#producto-' + openP.id);
     }
   }
   products.sort((a,b) => (a.order||0) - (b.order||0));
@@ -1705,10 +1694,7 @@ window.openProduct = id => {
   const p = products.find(x => x.id === id); if (!p) return;
   openProductId = id; detailActiveImg = 0;
   renderDetail(p);
-  // Restore visibility in case it was hidden for new-tab loading
-  var homeEl = document.getElementById('viewHome');
-  if(homeEl) homeEl.style.visibility = '';
-  homeEl.classList.remove('active');
+  document.getElementById('viewHome').classList.remove('active');
   document.getElementById('viewDetail').classList.add('active');
   window.scrollTo(0, 0);
   history.pushState({ view: 'detail', productId: id }, '', '#producto-' + id);
