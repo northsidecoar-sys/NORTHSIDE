@@ -1620,7 +1620,7 @@ function renderGrid() {
       }
     }
     var soldOutBadge = allSoldOut ? '<div class="badge-agotado">Agotado</div>' : '';
-    return '<div class="product-card' + (imgs.length === 2 ? ' has-two-imgs' : '') + (allSoldOut ? ' agotado' : '') + '" onclick="window.openProduct(' + p.id + ')" onauxclick="window.openProductNewTab(' + p.id + ')" data-pid="' + p.id + '">' +
+    return '<a href="#producto-' + p.id + '" class="product-card' + (imgs.length === 2 ? ' has-two-imgs' : '') + (allSoldOut ? ' agotado' : '') + '" onclick="window.handleCardClick(event,' + p.id + ')" data-pid="' + p.id + '" style="display:block;text-decoration:none;color:inherit">' +
       '<div class="card-gallery" style="position:relative">' + soldOutBadge + gal + '</div>' +
       '<div class="product-info">' +
         '<div class="product-cat">' + p.cat + '</div>' +
@@ -1633,7 +1633,7 @@ function renderGrid() {
           '<button class="btn-ver" onclick="event.stopPropagation();window.openProduct(' + p.id + ')">Ver producto</button>' +
         '</div>' +
       '</div>' +
-    '</div>';
+    '</a>';
   }).join('');
 
   // Long press on mobile: hold to see second image
@@ -4065,11 +4065,10 @@ init();
 
 // ── CARD CLICK HANDLERS ───────────────────────────────────
 window.handleCardClick = function(e, id) {
-  if(e.ctrlKey || e.metaKey) {
-    e.preventDefault();
-    window.openProductNewTab(id);
-    return;
-  }
+  // Ctrl+click or Meta+click: let browser handle natively (opens new tab via href)
+  if(e.ctrlKey || e.metaKey) return;
+  // Normal click: prevent href navigation, use SPA
+  e.preventDefault();
   window.openProduct(id);
 };
 
