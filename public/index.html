@@ -1623,7 +1623,7 @@ function renderGrid() {
           '<button class="btn-ver" onclick="event.stopPropagation();window.openProduct(' + p.id + ')">Ver producto</button>' +
         '</div>' +
       '</div>' +
-    '</a>';
+    '</div>';
   }).join('');
 
   // Long press on mobile: hold to see second image
@@ -1698,6 +1698,17 @@ window.openProductNewTab = function(id) {
   var url = window.location.origin + window.location.pathname + '?p=' + id;
   window.open(url, '_blank');
 };
+
+// Middle-click on product cards - document level delegation
+document.addEventListener('mousedown', function(e) {
+  if(e.button !== 1) return; // only middle click
+  var card = e.target.closest('[data-pid]');
+  if(!card) return;
+  e.preventDefault();
+  var pid = card.dataset.pid;
+  var url = window.location.origin + window.location.pathname + '?p=' + pid;
+  window.open(url, '_blank');
+});
 window.showHome = (pushState) => {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.getElementById('viewHome').classList.add('active');
@@ -4108,6 +4119,6 @@ window.handleCardAuxClick = function(e, id) {
   }, 100);
 })();
 
-</script> 
+</script>
 </body>
 </html>
