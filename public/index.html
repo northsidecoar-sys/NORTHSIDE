@@ -1546,15 +1546,16 @@ window.filterCat = function(cat) {
   history.pushState({ view: 'home' }, '', window.location.pathname);
   renderFilters();
   renderGrid();
-  // Open product from hash if page was opened via middle-click
+  // Open product from hash if page was opened via middle-click (new tab)
   (function(){
     var h = window.location.hash;
-    if(h && h.startsWith('#producto-')) {
-      var pid = parseInt(h.replace('#producto-',''));
-      if(!isNaN(pid)) {
-        var p = products.find(function(x){ return x.id === pid; });
-        if(p) window.openProduct(pid);
-      }
+    if(!h || !h.startsWith('#producto-')) return;
+    var pid = parseInt(h.replace('#producto-',''));
+    if(isNaN(pid)) return;
+    // Products are already loaded at this point - open directly
+    var p = products.find(function(x){ return x.id === pid; });
+    if(p) {
+      setTimeout(function(){ window.openProduct(pid); }, 50);
     }
   })();
 };
