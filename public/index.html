@@ -1610,7 +1610,7 @@ function renderGrid() {
       }
     }
     var soldOutBadge = allSoldOut ? '<div class="badge-agotado">Agotado</div>' : '';
-    return '<div class="product-card' + (imgs.length === 2 ? ' has-two-imgs' : '') + (allSoldOut ? ' agotado' : '') + '" data-pid="' + p.id + '" onclick="window.openProduct(' + p.id + ')" onauxclick="if(event.button===1){event.preventDefault();window.openProductNewTab(' + p.id + ')}">' +
+    return '<div class="product-card' + (imgs.length === 2 ? ' has-two-imgs' : '') + (allSoldOut ? ' agotado' : '') + '" data-pid="' + p.id + '" onclick="if(event.ctrlKey||event.metaKey){event.preventDefault();window.openProductNewTab(' + p.id + ')}else{window.openProduct(' + p.id + ')}" onauxclick="event.preventDefault();window.openProductNewTab(' + p.id + ')">' +
       '<div class="card-gallery" style="position:relative">' + soldOutBadge + gal + '</div>' +
       '<div class="product-info">' +
         '<div class="product-cat">' + p.cat + '</div>' +
