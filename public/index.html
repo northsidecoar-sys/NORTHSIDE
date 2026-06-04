@@ -958,35 +958,20 @@
 
       <!-- MERCADO PAGO -->
       <div id="payDetailMercadopago4" style="display:none">
-        <div class="payment-grid-2">
-          <div class="info-card dark">
-            <div class="info-card-label">Alias</div>
-            <div class="info-card-value">NORTHSIDE.CO</div>
+        <div style="background:var(--bg2);border:1px solid var(--border);padding:1.2rem;margin-bottom:1rem;">
+          <div style="display:flex;align-items:center;gap:0.8rem;margin-bottom:0.6rem">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="#009ee3"><circle cx="12" cy="12" r="12" fill="#009ee3"/><text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" font-size="9" fill="white" font-weight="bold">MP</text></svg>
+            <div>
+              <div style="font-size:0.85rem;font-weight:600">Mercado Pago</div>
+              <div style="font-size:0.72rem;color:var(--muted)">Tarjeta, cuotas, billetera virtual</div>
+            </div>
           </div>
-          <div class="info-card light">
-            <div class="info-card-label">Total con 20% OFF</div>
-            <div class="info-card-value" id="step4MPTotal">$0</div>
-          </div>
+          <div style="font-size:0.78rem;color:var(--muted)">Al confirmar vas a ser redirigido a la página segura de Mercado Pago para completar el pago.</div>
+          <div style="margin-top:0.5rem;font-size:0.82rem;font-weight:500">Total: <span id="step4MPTotal" style="font-family:'Bebas Neue',sans-serif;font-size:1rem">$0</span></div>
         </div>
         
-        <a href="https://link.mercadopago.com.ar/thenorthside" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:0.6rem;background:#009ee3;color:#fff;text-decoration:none;padding:0.9rem 1.2rem;font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:600;letter-spacing:0.05em;margin-bottom:1rem;transition:opacity 0.2s;" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
-          <svg width="20" height="20" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="20" cy="20" r="20" fill="#fff"/><text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" font-size="18" fill="#009ee3" font-weight="bold">MP</text></svg>
-          Pagar con Mercado Pago
-        </a>
-        <div class="comprobante-box">
-          <div class="comprobante-title">📎 Comprobante de pago</div>
-          <div class="comprobante-warning">⚠️ Si no subís el comprobante, el pedido no se realizará.</div>
-          <div class="comprobante-upload-area">
-            <input type="file" id="comprobanteFileMP" accept="image/*,application/pdf" onchange="window.handleComprobanteMP(event)">
-            <div class="comprobante-upload-icon">📄</div>
-            <div class="comprobante-upload-txt">Tocá para subir foto o PDF del comprobante</div>
-          </div>
-          <div class="comprobante-preview" id="comprobantePreviewMP">
-            <img id="comprobanteImgMP" src="" alt="Comprobante">
-            <div class="comprobante-preview-name" id="comprobanteNameMP"></div>
-            <button class="btn-rm-comprobante" onclick="window.removeComprobanteMP()">✕ Sacar</button>
-          </div>
-        </div>
+
+
       </div>
 
       <!-- EFECTIVO -->
