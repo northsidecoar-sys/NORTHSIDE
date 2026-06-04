@@ -875,7 +875,7 @@
           </div>
         </div>
         <div id="shippingNextActions" style="display:none;margin-top:1.5rem">
-          <button class="btn-next-step" onclick="window.goCheckoutStep(3)">Continuar con el pago →</button>
+          <button class="btn-next-step" onclick="window.goCheckoutStep(3)">Continuar →</button>
           <button class="btn-back-step" onclick="window.goCheckoutStep(1)">← Volver al carrito</button>
         </div>
       </div>
@@ -887,20 +887,18 @@
         <!-- METHOD SELECTION -->
         <div id="payTabMetodo">
           <div class="payment-options">
-            <label class="payment-option" onclick="window.selectPayment('transferencia',this)">
-              <input type="radio" name="payment" value="transferencia">
-              <div style="width:100%">
-                <div class="payment-option-label">💸 Transferencia bancaria</div>
-                <div class="payment-option-sub" id="transferSubLabel">20% OFF · Alias: NORTHSIDE.CO</div>
-                
-              </div>
-            </label>
             <label class="payment-option" onclick="window.selectPayment('mercadopago',this)">
               <input type="radio" name="payment" value="mercadopago">
-              <div style="width:100%">
-                <div class="payment-option-label">💳 Galicia o Mercado Pago</div>
-                <div class="payment-option-sub">20% OFF · Alias: NORTHSIDE.CO</div>
-                
+              <div>
+                <div class="payment-option-label">💳 Mercado Pago</div>
+                <div class="payment-option-sub">Tarjeta, cuotas, billetera — pago seguro</div>
+              </div>
+            </label>
+            <label class="payment-option" onclick="window.selectPayment('transferencia',this)">
+              <input type="radio" name="payment" value="transferencia">
+              <div>
+                <div class="payment-option-label">💸 Transferencia bancaria</div>
+                <div class="payment-option-sub" id="transferSubLabel">20% OFF · Alias: NORTHSIDE.CO</div>
               </div>
             </label>
             <label class="payment-option" onclick="window.selectPayment('efectivo',this)">
@@ -912,7 +910,7 @@
             </label>
           </div>
           <div style="margin-top:1rem">
-            <button class="btn-next-step" onclick="window.goPayTab()">Continuar con el pago →</button>
+            <button class="btn-next-step" onclick="window.goPayTab()">Continuar →</button>
             <button class="btn-back-step" onclick="window.goCheckoutStep(2)">← Volver a entrega</button>
           </div>
         </div>
@@ -3435,7 +3433,8 @@ window.toggleCheckoutSummary = function() {
 window.finalizarCompra = async function() {
   if(_isProcessing) { showToast('⏳ Ya estamos procesando tu pedido, esperá...'); return; }
   if(!selectedPayment) { showToast('Seleccioná un método de pago'); return; }
-  // Validate stock for all cart items before finalizing
+
+  // Validate stock
   var stockError = null;
   cart.forEach(function(item) {
     if(stockError) return;
@@ -3446,120 +3445,124 @@ window.finalizarCompra = async function() {
     }
   });
   if(stockError) { showToast('⚠️ Stock insuficiente: ' + stockError); return; }
-  // Check comprobante for transfer/mp
+
+  // Comprobante required for transferencia
   if(selectedPayment === 'transferencia' && !comprobanteUrl) {
     showToast('⚠️ Subí el comprobante de transferencia para continuar');
     return;
   }
-  if(selectedPayment === 'mercadopago' && !comprobanteUrlMP) {
-    showToast('⚠️ Subí el comprobante de pago para continuar');
-    return;
-  }
-  // Validate efectivo fields
+
+  // Efectivo validation
   if(selectedPayment === 'efectivo') {
-    const nombre = document.getElementById('efectivoNombre') ? document.getElementById('efectivoNombre').value.trim() : '';
-    const dir = document.getElementById('efectivoDireccion') ? document.getElementById('efectivoDireccion').value.trim() : '';
+    var nombre = document.getElementById('efectivoNombre') ? document.getElementById('efectivoNombre').value.trim() : '';
+    var dir = document.getElementById('efectivoDireccion') ? document.getElementById('efectivoDireccion').value.trim() : '';
     if(!nombre || !dir) {
       showToast('⚠️ Completá nombre y localidad para continuar');
       return;
     }
   }
-  const subtotal = getCartTotal();
-  const couponDiscount = getCouponDiscount();
-  const transferDiscount = (selectedPayment === 'transferencia' || selectedPayment === 'mercadopago') && paymentConfig.transferPct > 0
-    ? Math.round((subtotal + shippingCost - couponDiscount) * paymentConfig.transferPct / 100) : 0;
-  const total = subtotal + shippingCost - couponDiscount - transferDiscount;
 
-  let text = (waConfig.msg || 'Hola! Quiero hacer un pedido:') + '\n\n';
-  // Products
-  cart.forEach(function(item) {
-    text += '• ' + item.name + ' — Talle: ' + item.size + ' — Color: ' + item.color + ' — $' + Number(item.price).toLocaleString('es-AR') + '\n';
-  });
-  if(appliedCoupon) {
-    text += '\nCupón aplicado: ' + appliedCoupon.id + ' (-$' + Number(getCouponDiscount()).toLocaleString('es-AR') + ')';
-  }
-  text += '\nEnvío: ' + (selectedShipping ? selectedShipping.name : '—') + (selectedShipping && selectedShipping.address ? ' — ' + selectedShipping.address : '');
-  if(selectedPayment === 'efectivo') {
-    const nombre = document.getElementById('efectivoNombre') ? document.getElementById('efectivoNombre').value.trim() : '';
-    const dir = document.getElementById('efectivoDireccion') ? document.getElementById('efectivoDireccion').value.trim() : '';
-    const nota = document.getElementById('efectivoNota') ? document.getElementById('efectivoNota').value.trim() : '';
-    text += '\nPago: Efectivo';
-    text += '\nTotal a pagar: $' + Number(total).toLocaleString('es-AR');
-    text += '\n\n— DATOS DEL COMPRADOR —';
-    text += '\nNombre: ' + nombre;
-    text += '\nLocalidad: ' + dir;
-    if(nota) text += '\nAclaraciones: ' + nota;
-  } else {
-    var pctFinal = (selectedPayment==='transferencia'||selectedPayment==='mercadopago') ? (paymentConfig.transferPct||20) : 0;
-    var totalConDescuento = pctFinal > 0 ? Math.round((getCartTotal()+shippingCost)*(1-pctFinal/100)) : total;
-    text += '\nPago: ' + selectedPayment + (pctFinal>0 ? ' — 20% OFF — Total: $' + Number(totalConDescuento).toLocaleString('es-AR') + ' — Alias: NORTHSIDE.CO' : '');
-    text += '\nTotal: $' + Number(total).toLocaleString('es-AR');
-  }
+  _isProcessing = true;
+  showLoading('Procesando pedido...');
 
-  // Guardar pedido en Firebase SIEMPRE (con o sin login)
-
-  showLoading('Registrando pedido...');
-  const num = waConfig.number || '5491100000000';
   try {
-    // Save to Firebase
-    const orderId = 'CH-' + Date.now() + '-' + Math.random().toString(36).substr(2,5).toUpperCase();
-    const clienteNombre = selectedPayment === 'efectivo'
+    // Build order ID
+    var orderId = 'CH-' + Date.now() + '-' + Math.random().toString(36).substr(2,5).toUpperCase();
+    var subtotal = getCartTotal();
+    var couponDiscount = getCouponDiscount();
+    var pct = (selectedPayment === 'transferencia') && paymentConfig.transferPct > 0 ? paymentConfig.transferPct : 0;
+    var transferDiscount = Math.round((subtotal + shippingCost - couponDiscount) * pct / 100);
+    var total = subtotal + shippingCost - couponDiscount - transferDiscount;
+
+    var clienteNombre = selectedPayment === 'efectivo'
       ? (document.getElementById('efectivoNombre') ? document.getElementById('efectivoNombre').value.trim() : '')
       : (currentUser ? (currentUser.displayName || currentUser.email) : 'Visitante');
-    const clienteEmail = currentUser ? currentUser.email : '';
-    await addDoc(collection(db, 'orders'), {
-      orderId,
+    var clienteEmail = currentUser ? currentUser.email : '';
+
+    // Save order to Firebase first
+    var orderData = {
+      orderId: orderId,
       orderType: 'checkout_carrito',
       uid: currentUser ? currentUser.uid : null,
       userName: clienteNombre || 'Visitante',
       userEmail: clienteEmail,
       items: cart.map(function(item) {
-        return {
-          productId: item.productId,
-          name: item.name,
-          size: item.size,
-          color: item.color,
-          price: item.price,
-          qty: item.qty,
-          imgUrl: item.imgUrl || ''
-        };
+        return { productId: item.productId, name: item.name, size: item.size, color: item.color, price: item.price, qty: item.qty, imgUrl: item.imgUrl || '' };
       }),
       shipping: selectedShipping,
       payment: selectedPayment,
-      subtotal,
-      shippingCost,
-      transferDiscount,
-      couponDiscount: getCouponDiscount(),
-      total,
-      // Save comprobante URL (base64 or cloudinary URL)
-      comprobanteUrl: (selectedPayment === 'transferencia' ? comprobanteUrl : null) ||
-                      (selectedPayment === 'mercadopago' ? comprobanteUrlMP : null) || null,
+      subtotal: subtotal,
+      shippingCost: shippingCost,
+      transferDiscount: transferDiscount,
+      couponDiscount: couponDiscount,
+      total: total,
+      comprobanteUrl: (selectedPayment === 'transferencia' ? comprobanteUrl : null) || null,
       status: 'pendiente',
       createdAt: Date.now()
-    });
-    // Order saved to Firebase - no WhatsApp redirect
+    };
+
+    try {
+      await addDoc(collection(db, 'orders'), orderData);
+    } catch(e) { console.error('Error saving order:', e); }
+
+    // ── MERCADO PAGO: redirect to Checkout Pro ────────────
+    if(selectedPayment === 'mercadopago') {
+      hideLoading();
+      showLoading('Redirigiendo a Mercado Pago...');
+      try {
+        var res = await fetch('/api/create-preference', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            orderId: orderId,
+            items: cart.map(function(item) {
+              return { productId: item.productId, name: item.name, size: item.size, color: item.color, price: item.price, qty: item.qty, imgUrl: item.imgUrl || '' };
+            }),
+            payer: { name: clienteNombre, email: clienteEmail }
+          })
+        });
+        var data = await res.json();
+        if(data.init_point) {
+          // Clear cart before redirect
+          appliedCoupon = null;
+          cart = [];
+          saveCart();
+          updateCartBadge();
+          window.location.href = data.init_point;
+          return;
+        } else {
+          throw new Error(data.error || 'No se pudo crear la preferencia de pago');
+        }
+      } catch(e) {
+        hideLoading();
+        console.error('MP error:', e);
+        showToast('❌ Error con Mercado Pago: ' + e.message);
+        _isProcessing = false;
+        return;
+      }
+    }
+
+    // ── TRANSFERENCIA / EFECTIVO: confirm and clear ───────
     appliedCoupon = null;
     cart = [];
     saveCart();
     updateCartBadge();
     showToast('✅ Pedido confirmado correctamente');
-    // Show order confirmation
     setTimeout(function() {
       document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
       document.getElementById('viewHome').classList.add('active');
-      var ordNum = orderId || '';
-      alert('✅ Pedido confirmado\n\nNúmero de pedido: ' + ordNum + '\n\nNos contactaremos pronto para coordinar la entrega.');
-      cart = [];
-      saveCart();
-      updateCartBadge();
+      alert('✅ Pedido confirmado\n\nNúmero de pedido: ' + orderId + '\n\nNos contactaremos pronto para coordinar la entrega.');
     }, 500);
+
   } catch(e) {
     console.error('Error finalizando:', e);
     showToast('⚠️ Hubo un error, intenta de nuevo');
   } finally {
     hideLoading();
+    _isProcessing = false;
   }
 };
+;
 
 
 window.addToCartFromDetail = function(id) {
@@ -4008,6 +4011,30 @@ async function init() {
 
 init();
 </script>
-<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js">
+// ── MP RETURN HANDLER ─────────────────────────────────────
+(function() {
+  var params = new URLSearchParams(window.location.search);
+  var mpStatus = params.get('mp');
+  if(mpStatus === 'success') {
+    setTimeout(function() {
+      showToast('✅ Pago aprobado por Mercado Pago');
+    }, 800);
+    // Clean URL
+    history.replaceState({}, '', window.location.pathname);
+  } else if(mpStatus === 'failure') {
+    setTimeout(function() {
+      showToast('❌ El pago no fue aprobado. Podés intentar de nuevo.');
+    }, 800);
+    history.replaceState({}, '', window.location.pathname);
+  } else if(mpStatus === 'pending') {
+    setTimeout(function() {
+      showToast('⏳ Pago pendiente — te avisamos cuando se confirme.');
+    }, 800);
+    history.replaceState({}, '', window.location.pathname);
+  }
+})();
+
+</script>
 </body>
 </html>
