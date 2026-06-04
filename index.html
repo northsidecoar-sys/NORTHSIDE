@@ -1765,7 +1765,7 @@ function renderDetail(p) {
     })() +
     (p.desc ? '<div class="detail-desc" style="white-space:pre-line">' + p.desc.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</div>' : '') +
     (colors.length > 0 ? '<label class="select-label">Color: <span id="selectedColorLabel">—</span></label><div class="colors-grid">' + colors.map((c,i) => '<button class="color-btn" onclick="window.selectColor(' + i + ')" title="' + c.name + '"><div class="color-circle" style="background:' + c.hex + '"></div><span class="color-btn-label">' + c.name + '</span></button>').join('') + '</div>' : '') +
-    (sizes.length > 0 ? '<label class="select-label">Talle: <span id="selectedSizeLabel">—</span> <button class="btn-size-guide" onclick="window.openSizeGuide()">¿Cuál es mi talle?</button></label><div class="sizes-grid">' + sizes.map(function(s,i){ var cl = _selColor||''; var avail = getAvailableStock(p, s, cl); var isSoldOut = (avail === 0); return '<button class="size-btn' + (isSoldOut ? ' agotado' : '') + '" onclick="window.selectSize(' + i + ',\'' + s + '\')">' + s + '</button>'; }).join('') + '</div><div id="stockAlertEl"></div>' : '') +
+    (sizes.length > 0 ? '<label class="select-label">Talle: <span id="selectedSizeLabel">—</span> <button class="btn-size-guide" onclick="window.openSizeGuide()">¿Cuál es mi talle?</button></label><div class="sizes-grid">' + sizes.map(function(s,i){ return '<button class="size-btn" onclick="window.selectSize(' + i + ',\'' + s + '\')">' + s + '</button>'; }).join('') + '</div><div id="stockAlertEl"></div>' : '') +
     '<div class="transfer-highlight" id="transferHighlight"></div>' +
     '<div class="select-alert" id="selectAlert">Por favor seleccioná talle y color antes de continuar.</div>' +
     '<button data-pid="' + p.id + '" onclick="window.addToCartFromDetail(parseInt(this.dataset.pid))" style="width:100%;background:var(--black);color:var(--bg);border:none;padding:0.9rem;font-family:DM Sans,sans-serif;font-size:0.82rem;font-weight:500;letter-spacing:0.08em;cursor:pointer;text-transform:uppercase;margin-bottom:0.6rem;transition:opacity 0.2s">🛒 Agregar al carrito</button>' +
@@ -2563,8 +2563,21 @@ function getStockAlert(p, size, color) {
 function updateStockAlert(p) {
   const el = document.getElementById('stockAlertEl');
   if(!el) return;
-  // Only show stock info AFTER a size has been selected
-  if(!_selSize) { el.innerHTML = ''; return; }
+  var hasSizes  = (p.sizes||'').trim().length > 0;
+  var hasColors = (p.colors||[]).length > 0;
+  // Neither selected yet → nothing
+  if(!_selSize && !_selColor) { el.innerHTML = ''; return; }
+  // Only size selected, product has colors → prompt for color
+  if(_selSize && hasColors && !_selColor) {
+    el.innerHTML = '<div style="font-size:0.72rem;color:var(--muted);padding:0.3rem 0">Seleccioná un color para continuar</div>';
+    return;
+  }
+  // Only color selected, product has sizes → prompt for size
+  if(_selColor && hasSizes && !_selSize) {
+    el.innerHTML = '<div style="font-size:0.72rem;color:var(--muted);padding:0.3rem 0">Seleccioná un talle para continuar</div>';
+    return;
+  }
+  // Both selected (or product has only one dimension) → show stock
   el.innerHTML = getStockAlert(p, _selSize, _selColor);
 }
 
