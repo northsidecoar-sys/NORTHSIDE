@@ -4085,8 +4085,13 @@ window.handleCardAuxClick = function(e, id) {
     var prods = window._nsProducts;
     if(prods && prods.length > 0) {
       clearInterval(interval);
-      var p = prods.find(function(x){ return x.id === pid; });
-      if(p && window.openProduct) window.openProduct(pid);
+      // Try both number and string comparison
+      var p = prods.find(function(x){ return x.id == pid || String(x.id) === String(pid); });
+      if(p && window.openProduct) {
+        window.openProduct(p.id); // use actual product id, not parsed hash
+      } else {
+        console.log('Product not found for pid:', pid, 'Available ids:', prods.map(function(x){return x.id;}));
+      }
     }
     if(attempts > 50) clearInterval(interval); // stop after 5s
   }, 100);
