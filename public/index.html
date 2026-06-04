@@ -4,7 +4,7 @@
 <!-- v202606040832 -->
 <meta charset="UTF-8">
   <!-- NS-VERSION: 1780606652 -->
-<meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NORTHSIDE | Ropa Streetwear Argentina</title>
 <meta name="description" content="Tienda online de ropa streetwear. Baggies, buzos, camperas y más. Envío a todo Argentina. Belgrano, Palermo y Tigre con envío gratis.">
 <meta name="keywords" content="ropa streetwear argentina, baggies, buzos oversize, ropa urbana, northside">
@@ -1415,6 +1415,8 @@ async function loadProducts() {
   const snap = await getDocs(collection(db, 'products'));
   products = snap.docs.map(d => ({ ...d.data(), _docId: d.id }));
   window._nsProducts = products.filter(function(x){ return x != null; }); // expose for hash handler
+  // Signal that products are ready
+  document.dispatchEvent(new CustomEvent('ns_products_ready'));
   products.sort((a,b) => (a.order||0) - (b.order||0));
 }
 
@@ -4098,38 +4100,44 @@ window.handleCardAuxClick = function(e, id) {
   var pid = params.get('p');
   if(!pid) return;
 
-  // Try localStorage first (shared across tabs - saved by opener)
-  try {
-    var cached = localStorage.getItem('ns_open_product_' + pid);
-    if(cached) {
-      var p = JSON.parse(cached);
-      localStorage.removeItem('ns_open_product_' + pid); // clean up
-      var attempts = 0;
-      var iv = setInterval(function() {
-        attempts++;
+  function tryOpenProduct(pid) {
+    // Try localStorage first
+    try {
+      var cached = localStorage.getItem('ns_open_product_' + pid);
+      if(cached) {
+        var p = JSON.parse(cached);
         if(window.openProduct) {
-          clearInterval(iv);
+          try { localStorage.removeItem('ns_open_product_' + pid); } catch(e){}
           window.openProduct(p.id);
+          return true;
         }
-        if(attempts > 100) clearInterval(iv);
-      }, 50);
-      return;
-    }
-  } catch(e){}
-
-  // Fallback: wait for Firebase to load then open
-  var attempts2 = 0;
-  var iv2 = setInterval(function() {
-    attempts2++;
+      }
+    } catch(e){}
+    // Try _nsProducts
     var prods = window._nsProducts;
-    if(prods && prods.length > 0 && window.openProduct) {
-      clearInterval(iv2);
-      var prods2 = prods.filter(function(x){ return x != null; });
-      var p2 = prods2.find(function(x){ return String(x.id) === pid; });
-      if(p2) window.openProduct(p2.id);
+    if(prods && window.openProduct) {
+      var found = prods.filter(function(x){ return x!=null; }).find(function(x){ return String(x.id)===pid; });
+      if(found) { window.openProduct(found.id); return true; }
     }
-    if(attempts2 > 150) clearInterval(iv2);
+    return false;
+  }
+
+  // Try immediately
+  if(tryOpenProduct(pid)) return;
+
+  // Listen for products ready event (fired after Firebase loads + _nsProducts set)
+  document.addEventListener('ns_products_ready', function() {
+    setTimeout(function() { tryOpenProduct(pid); }, 100);
+  });
+
+  // Also poll as fallback
+  var attempts = 0;
+  var iv = setInterval(function() {
+    attempts++;
+    if(tryOpenProduct(pid)) { clearInterval(iv); return; }
+    if(attempts > 100) clearInterval(iv);
   }, 100);
+
 })();
 
 </script>
