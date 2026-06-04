@@ -1415,8 +1415,17 @@ async function loadProducts() {
   const snap = await getDocs(collection(db, 'products'));
   products = snap.docs.map(d => ({ ...d.data(), _docId: d.id }));
   window._nsProducts = products.filter(function(x){ return x != null; }); // expose for hash handler
-  // Signal that products are ready
-  document.dispatchEvent(new CustomEvent('ns_products_ready'));
+
+  // Open product from URL if opened via Ctrl+Click new tab (?p=ID)
+  var urlParams = new URLSearchParams(window.location.search);
+  var openPid = urlParams.get('p');
+  if(openPid) {
+    var openP = products.find(function(x){ return String(x.id) === openPid; });
+    if(openP) {
+      // Small delay to let the DOM finish rendering
+      setTimeout(function(){ window.openProduct(openP.id); }, 200);
+    }
+  }
   products.sort((a,b) => (a.order||0) - (b.order||0));
 }
 
@@ -4094,51 +4103,7 @@ window.handleCardAuxClick = function(e, id) {
 };
 
 
-// ── OPEN PRODUCT FROM URL (new tab via ctrl+click) ────────
-(function() {
-  var params = new URLSearchParams(window.location.search);
-  var pid = params.get('p');
-  if(!pid) return;
-
-  function tryOpenProduct(pid) {
-    // Try localStorage first
-    try {
-      var cached = localStorage.getItem('ns_open_product_' + pid);
-      if(cached) {
-        var p = JSON.parse(cached);
-        if(window.openProduct) {
-          try { localStorage.removeItem('ns_open_product_' + pid); } catch(e){}
-          window.openProduct(p.id);
-          return true;
-        }
-      }
-    } catch(e){}
-    // Try _nsProducts
-    var prods = window._nsProducts;
-    if(prods && window.openProduct) {
-      var found = prods.filter(function(x){ return x!=null; }).find(function(x){ return String(x.id)===pid; });
-      if(found) { window.openProduct(found.id); return true; }
-    }
-    return false;
-  }
-
-  // Try immediately
-  if(tryOpenProduct(pid)) return;
-
-  // Listen for products ready event (fired after Firebase loads + _nsProducts set)
-  document.addEventListener('ns_products_ready', function() {
-    setTimeout(function() { tryOpenProduct(pid); }, 100);
-  });
-
-  // Also poll as fallback
-  var attempts = 0;
-  var iv = setInterval(function() {
-    attempts++;
-    if(tryOpenProduct(pid)) { clearInterval(iv); return; }
-    if(attempts > 100) clearInterval(iv);
-  }, 100);
-
-})();
+// Product URL handler moved inside module (after Firebase load)
 
 </script>
 </body>
