@@ -488,7 +488,7 @@
   .filter-btn{background:transparent;border:1px solid var(--border);color:var(--muted);padding:0.35rem 1rem;font-family:'DM Sans',sans-serif;font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;white-space:nowrap;transition:all 0.2s;}
   .filter-btn:hover,.filter-btn.active{border-color:var(--black);color:var(--black);background:var(--bg2);}
   .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1px;background:var(--border);}
-  .product-card{background:var(--bg);overflow:hidden;cursor:pointer;transition:opacity 0.15s;}
+  .product-card{background:var(--bg);overflow:hidden;cursor:pointer;transition:opacity 0.15s;display:block;}
   .product-card:hover{opacity:0.92;}
   .card-gallery{position:relative;aspect-ratio:3/4;background:var(--bg2);overflow:hidden;}
   /* old gallery rule removed */
@@ -1610,7 +1610,7 @@ function renderGrid() {
       }
     }
     var soldOutBadge = allSoldOut ? '<div class="badge-agotado">Agotado</div>' : '';
-    return '<div class="product-card' + (imgs.length === 2 ? ' has-two-imgs' : '') + (allSoldOut ? ' agotado' : '') + '" data-pid="' + p.id + '" onclick="window.openProduct(' + p.id + ')" onmousedown="if(event.button===1){event.preventDefault();window.openProductNewTab(' + p.id + ')}">' +
+    return '<div class="product-card' + (imgs.length === 2 ? ' has-two-imgs' : '') + (allSoldOut ? ' agotado' : '') + '" data-pid="' + p.id + '" onclick="window.openProduct(' + p.id + ')" onauxclick="if(event.button===1){event.preventDefault();window.openProductNewTab(' + p.id + ')}">' +
       '<div class="card-gallery" style="position:relative">' + soldOutBadge + gal + '</div>' +
       '<div class="product-info">' +
         '<div class="product-cat">' + p.cat + '</div>' +
