@@ -106,8 +106,8 @@
   .badge-agotado{position:absolute;top:10px;left:10px;background:rgba(26,22,18,0.85);color:#f5f3ee;font-size:0.62rem;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;padding:0.3rem 0.6rem;z-index:3;}
   .product-card.agotado .card-gallery{opacity:0.5;}
   .product-card.agotado .btn-ver{opacity:0.4;cursor:not-allowed;pointer-events:none;}
-  .size-btn.agotado{opacity:0.55;cursor:pointer;text-decoration:line-through;color:var(--muted);}
-  .size-btn.agotado::after{content:" sin stock";font-size:0.55rem;}
+  .size-btn.agotado{opacity:0.5;cursor:pointer;text-decoration:line-through;color:var(--muted);}
+  .size-btn.agotado::after{content:"";font-size:0;}
   /* CART DRAWER */
   .cart-drawer-overlay{display:none;position:fixed;inset:0;background:rgba(26,22,18,0.5);z-index:300;}
   .cart-drawer-overlay.open{display:block;}
@@ -2562,7 +2562,10 @@ function getStockAlert(p, size, color) {
 
 function updateStockAlert(p) {
   const el = document.getElementById('stockAlertEl');
-  if(el) el.innerHTML = getStockAlert(p, _selSize, _selColor);
+  if(!el) return;
+  // Only show stock info AFTER a size has been selected
+  if(!_selSize) { el.innerHTML = ''; return; }
+  el.innerHTML = getStockAlert(p, _selSize, _selColor);
 }
 
 // ── TRANSFER DISCOUNT LIVE ────────────────────────────
