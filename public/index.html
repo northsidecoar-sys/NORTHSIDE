@@ -1413,6 +1413,7 @@ let uploading = false;
 async function loadProducts() {
   const snap = await getDocs(collection(db, 'products'));
   products = snap.docs.map(d => ({ ...d.data(), _docId: d.id }));
+  window._nsProducts = products; // expose for hash handler
   products.sort((a,b) => (a.order||0) - (b.order||0));
 }
 
@@ -4077,14 +4078,15 @@ window.handleCardAuxClick = function(e, id) {
   var pid = parseInt(h.replace('#producto-', ''));
   if(isNaN(pid)) return;
 
-  // Poll until products array is populated
+  // Poll until products are loaded (use window._nsProducts since this runs outside module)
   var attempts = 0;
   var interval = setInterval(function() {
     attempts++;
-    if(products && products.length > 0) {
+    var prods = window._nsProducts;
+    if(prods && prods.length > 0) {
       clearInterval(interval);
-      var p = products.find(function(x){ return x.id === pid; });
-      if(p) window.openProduct(pid);
+      var p = prods.find(function(x){ return x.id === pid; });
+      if(p && window.openProduct) window.openProduct(pid);
     }
     if(attempts > 50) clearInterval(interval); // stop after 5s
   }, 100);
