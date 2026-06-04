@@ -1629,6 +1629,17 @@ function renderGrid() {
     '</a>';
   }).join('');
 
+  // Middle click: explicitly open href in new tab
+  grid.querySelectorAll('.product-card').forEach(function(card) {
+    card.addEventListener('mousedown', function(e) {
+      if(e.button === 1) {
+        e.preventDefault();
+        e.stopPropagation();
+        window.open(card.href, '_blank');
+      }
+    });
+  });
+
   // Long press on mobile: hold to see second image
   grid.querySelectorAll('.product-card').forEach(function(card) {
     const galEl = card.querySelector('.card-gallery');
