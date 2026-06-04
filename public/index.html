@@ -1546,18 +1546,6 @@ window.filterCat = function(cat) {
   history.pushState({ view: 'home' }, '', window.location.pathname);
   renderFilters();
   renderGrid();
-  // Open product from hash if page was opened via middle-click (new tab)
-  (function(){
-    var h = window.location.hash;
-    if(!h || !h.startsWith('#producto-')) return;
-    var pid = parseInt(h.replace('#producto-',''));
-    if(isNaN(pid)) return;
-    // Products are already loaded at this point - open directly
-    var p = products.find(function(x){ return x.id === pid; });
-    if(p) {
-      setTimeout(function(){ window.openProduct(pid); }, 50);
-    }
-  })();
 };
 
 function renderFilters() {
@@ -4080,6 +4068,27 @@ window.handleCardAuxClick = function(e, id) {
     window.openProductNewTab(id);
   }
 };
+
+
+// ── OPEN PRODUCT FROM URL HASH (new tab via middle-click) ─
+(function() {
+  var h = window.location.hash;
+  if(!h || !h.startsWith('#producto-')) return;
+  var pid = parseInt(h.replace('#producto-', ''));
+  if(isNaN(pid)) return;
+
+  // Poll until products array is populated
+  var attempts = 0;
+  var interval = setInterval(function() {
+    attempts++;
+    if(products && products.length > 0) {
+      clearInterval(interval);
+      var p = products.find(function(x){ return x.id === pid; });
+      if(p) window.openProduct(pid);
+    }
+    if(attempts > 50) clearInterval(interval); // stop after 5s
+  }, 100);
+})();
 
 </script>
 </body>
