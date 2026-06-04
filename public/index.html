@@ -4075,25 +4075,29 @@ window.handleCardAuxClick = function(e, id) {
 (function() {
   var h = window.location.hash;
   if(!h || !h.startsWith('#producto-')) return;
-  var pid = parseInt(h.replace('#producto-', ''));
-  if(isNaN(pid)) return;
+  var pid = h.replace('#producto-', '');
 
-  // Poll until products are loaded (use window._nsProducts since this runs outside module)
+  // Wait for loading screen to hide (products loaded), then open
   var attempts = 0;
   var interval = setInterval(function() {
     attempts++;
     var prods = window._nsProducts;
-    if(prods && prods.length > 0) {
+    var loadScreen = document.getElementById('loadingScreen');
+    var isLoaded = loadScreen && loadScreen.classList.contains('hidden');
+    if(prods && prods.length > 0 && isLoaded) {
       clearInterval(interval);
-      // Try both number and string comparison
-      var p = prods.find(function(x){ return x.id == pid || String(x.id) === String(pid); });
-      if(p && window.openProduct) {
-        window.openProduct(p.id); // use actual product id, not parsed hash
-      } else {
-        console.log('Product not found for pid:', pid, 'Available ids:', prods.map(function(x){return x.id;}));
+      var p = prods.find(function(x){ return String(x.id) === String(pid); });
+      if(p && window.openProduct) window.openProduct(p.id);
+    }
+    if(attempts > 80) { // 8 seconds max
+      clearInterval(interval);
+      // Last attempt even if loading screen not hidden
+      var prods2 = window._nsProducts;
+      if(prods2) {
+        var p2 = prods2.find(function(x){ return String(x.id) === String(pid); });
+        if(p2 && window.openProduct) window.openProduct(p2.id);
       }
     }
-    if(attempts > 50) clearInterval(interval); // stop after 5s
   }, 100);
 })();
 
