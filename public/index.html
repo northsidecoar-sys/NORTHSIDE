@@ -1695,9 +1695,13 @@ window.openProduct = id => {
 
 // Middle click opens product in new tab
 window.openProductNewTab = function(id) {
-  var p = products.find(function(x){ return x.id == id; });
-  if(p) {
-    try { localStorage.setItem('ns_open_product_' + id, JSON.stringify(p)); } catch(e){}
+  // Store in localStorage using _nsProducts (accessible from window scope)
+  var prods = window._nsProducts;
+  if(prods) {
+    var p = prods.find(function(x){ return String(x.id) === String(id); });
+    if(p) {
+      try { localStorage.setItem('ns_open_product_' + id, JSON.stringify(p)); } catch(e){}
+    }
   }
   var url = window.location.origin + window.location.pathname + '?p=' + id;
   window.open(url, '_blank');
