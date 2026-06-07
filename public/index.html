@@ -857,8 +857,11 @@
               <input type="text" id="addressNum" placeholder="Número *">
             </div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-bottom:0.5rem">
-              <input type="text" id="addressFloor" placeholder="Piso / Depto (opcional)">
-              <input type="text" id="addressCity" placeholder="Ciudad / Barrio *">
+              <input type="text" id="addressBarrio" placeholder="Barrio *">
+              <input type="text" id="addressCity" placeholder="Ciudad *">
+            </div>
+            <div style="margin-bottom:0.5rem">
+              <input type="text" id="addressFloor" placeholder="Piso / Depto (opcional)" style="width:100%">
             </div>
           </div>
           <div id="shippingFormActions" style="display:none;margin-top:1rem">
@@ -1623,7 +1626,7 @@ function renderGrid() {
           '<button class="btn-ver" onclick="event.stopPropagation();window.openProduct(' + p.id + ')">Ver producto</button>' +
         '</div>' +
       '</div>' +
-    '</a>';
+    '</div>';
   }).join('');
 
   // Long press on mobile: hold to see second image
@@ -1759,8 +1762,7 @@ function renderDetail(p) {
     (sizes.length > 0 ? '<label class="select-label">Talle: <span id="selectedSizeLabel">—</span> <button class="btn-size-guide" onclick="window.openSizeGuide()">¿Cuál es mi talle?</button></label><div class="sizes-grid">' + sizes.map(function(s,i){ return '<button class="size-btn" onclick="window.selectSize(' + i + ',\'' + s + '\')">' + s + '</button>'; }).join('') + '</div><div id="stockAlertEl"></div>' : '') +
     '<div class="transfer-highlight" id="transferHighlight"></div>' +
     '<div class="select-alert" id="selectAlert">Por favor seleccioná talle y color antes de continuar.</div>' +
-    '<button data-pid="' + p.id + '" onclick="window.addToCartFromDetail(parseInt(this.dataset.pid))" style="width:100%;background:var(--black);color:var(--bg);border:none;padding:0.9rem;font-family:DM Sans,sans-serif;font-size:0.82rem;font-weight:500;letter-spacing:0.08em;cursor:pointer;text-transform:uppercase;margin-bottom:0.6rem;transition:opacity 0.2s">🛒 Agregar al carrito</button>' +
-    '<button class="btn-whatsapp-big" data-pid="' + p.id + '" onclick="window.sendWhatsapp(parseInt(this.dataset.pid))"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>Consulta puntual</button>';
+    '<button data-pid="' + p.id + '" onclick="window.addToCartFromDetail(parseInt(this.dataset.pid))" style="width:100%;background:var(--black);color:var(--bg);border:none;padding:0.9rem;font-family:DM Sans,sans-serif;font-size:0.82rem;font-weight:500;letter-spacing:0.08em;cursor:pointer;text-transform:uppercase;margin-bottom:0.6rem;transition:opacity 0.2s">🛒 Agregar al carrito</button>';
   _selSize = null; _selColor = null;
 }
 
@@ -3030,11 +3032,13 @@ window.prefillAddress = async function() {
         const st = document.getElementById('addressStreet');
         const nu = document.getElementById('addressNum');
         const fl = document.getElementById('addressFloor');
+        const ba = document.getElementById('addressBarrio');
         const ci = document.getElementById('addressCity');
         const cp = document.getElementById('cpInput');
         if(st && a.street) st.value = a.street;
         if(nu && a.num) nu.value = a.num;
         if(fl && a.floor) fl.value = a.floor;
+        if(ba && a.barrio) ba.value = a.barrio;
         if(ci && a.city) ci.value = a.city;
         if(cp && a.cp) cp.value = a.cp;
         showToast('✓ Dirección cargada de tu cuenta');
@@ -3220,17 +3224,18 @@ window.saveShipping = function() {
   var street = document.getElementById('addressStreet') ? document.getElementById('addressStreet').value.trim() : '';
   var num = document.getElementById('addressNum') ? document.getElementById('addressNum').value.trim() : '';
   var floor = document.getElementById('addressFloor') ? document.getElementById('addressFloor').value.trim() : '';
+  var barrio = document.getElementById('addressBarrio') ? document.getElementById('addressBarrio').value.trim() : '';
   var city = document.getElementById('addressCity') ? document.getElementById('addressCity').value.trim() : '';
-  if(!street || !num || !city) {
-    showToast('Completá la dirección completa antes de continuar');
+  if(!street || !num || !barrio || !city) {
+    showToast('Completá todos los campos obligatorios: calle, número, barrio y ciudad');
     return;
   }
-  selectedShipping.address = street + ' ' + num + (floor ? ' ' + floor : '') + ', ' + city;
+  selectedShipping.address = street + ' ' + num + (floor ? ' ' + floor : '') + ', ' + barrio + ', ' + city;
   // Save address for logged-in users
   if(currentUser) {
     try {
       setDoc(doc(db, 'users', currentUser.uid), {
-        address: { street, num, floor, city, cp: document.getElementById('cpInput') ? document.getElementById('cpInput').value : '' }
+        address: { street, num, floor, barrio, city, cp: document.getElementById('cpInput') ? document.getElementById('cpInput').value : '' }
       }, { merge: true });
     } catch(e) {}
   }
@@ -3567,11 +3572,25 @@ window.finalizarCompra = async function() {
     saveCart();
     updateCartBadge();
     showToast('✅ Pedido confirmado correctamente');
-    setTimeout(function() {
-      document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
-      document.getElementById('viewHome').classList.add('active');
-      alert('✅ Pedido confirmado\n\nNúmero de pedido: ' + orderId + '\n\nNos contactaremos pronto para coordinar la entrega.');
-    }, 500);
+
+    // Si el envío es Andreani (a cotizar), redirigir a WhatsApp
+    if(selectedShipping && selectedShipping.aCotizar) {
+      const waNum = (waConfig && waConfig.number) ? waConfig.number : '5491100000000';
+      const waMsg = '¡Hola! Acabo de hacer un pedido en Northside.\n\n' +
+        '📦 *Número de pedido: ' + orderId + '*\n\n' +
+        'Quedo esperando para coordinar el envío por Andreani. ¡Gracias!';
+      setTimeout(function() {
+        document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
+        document.getElementById('viewHome').classList.add('active');
+        window.open('https://wa.me/' + waNum + '?text=' + encodeURIComponent(waMsg), '_blank');
+      }, 600);
+    } else {
+      setTimeout(function() {
+        document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
+        document.getElementById('viewHome').classList.add('active');
+        alert('✅ Pedido confirmado\n\nNúmero de pedido: ' + orderId + '\n\nNos contactaremos pronto para coordinar la entrega.');
+      }, 500);
+    }
 
   } catch(e) {
     console.error('Error finalizando:', e);
