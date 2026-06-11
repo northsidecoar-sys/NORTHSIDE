@@ -1543,6 +1543,13 @@ window.filterCat = function(cat) {
   history.pushState({ view: 'home' }, '', window.location.pathname);
   renderFilters();
   renderGrid();
+
+  // Mostrar/ocultar banner y hero según filtro
+  var bannerEl = document.getElementById('bannerSection');
+  var heroEl = document.querySelector('.hero');
+  var isAll = (cat === 'all');
+  if(bannerEl) bannerEl.style.display = isAll ? '' : 'none';
+  if(heroEl) heroEl.style.display = isAll ? '' : 'none';
 };
 
 function renderFilters() {
