@@ -494,9 +494,21 @@
     from { opacity:0; transform:translateY(18px); }
     to   { opacity:1; transform:translateY(0); }
   }
+  @keyframes sectionFadeIn {
+    from { opacity:0; transform:translateY(10px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
   .product-card.animating {
     opacity:0;
     animation: cardFadeIn 0.4s ease forwards;
+  }
+  #bannerSection.animating {
+    opacity:0;
+    animation: sectionFadeIn 0.5s ease forwards;
+  }
+  .hero.animating {
+    opacity:0;
+    animation: sectionFadeIn 0.5s ease 0.15s forwards;
   }
   .card-gallery{position:relative;aspect-ratio:3/4;background:var(--bg2);overflow:hidden;}
   /* old gallery rule removed */
@@ -1556,8 +1568,24 @@ window.filterCat = function(cat) {
   var bannerEl = document.getElementById('bannerSection');
   var heroEl = document.querySelector('.hero');
   var isAll = (cat === 'all');
-  if(bannerEl) bannerEl.style.display = isAll ? '' : 'none';
-  if(heroEl) heroEl.style.display = isAll ? '' : 'none';
+
+  if(isAll) {
+    // Mostrar con fade
+    if(bannerEl) {
+      bannerEl.style.display = '';
+      bannerEl.classList.add('animating');
+      setTimeout(function(){ bannerEl.classList.remove('animating'); }, 600);
+    }
+    if(heroEl) {
+      heroEl.style.display = '';
+      heroEl.classList.add('animating');
+      setTimeout(function(){ heroEl.classList.remove('animating'); }, 700);
+    }
+  } else {
+    // Ocultar directo
+    if(bannerEl) bannerEl.style.display = 'none';
+    if(heroEl) heroEl.style.display = 'none';
+  }
 };
 
 function renderFilters() {
