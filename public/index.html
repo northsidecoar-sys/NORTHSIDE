@@ -831,6 +831,14 @@
       <div id="checkout-step-1">
         <div class="section-label">Tu carrito</div>
         <div id="cartItemsList"></div>
+
+        <!-- EMAIL PARA INVITADOS (solo visible si no hay sesión) -->
+        <div id="guestEmailSection" style="display:none;margin-top:1.2rem;padding-top:1rem;border-top:1px solid var(--border)">
+          <label style="font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:0.5rem">Tu email <span style="color:var(--warm)">*</span></label>
+          <input type="email" id="guestEmail" placeholder="nombre@email.com" style="width:100%">
+          <div style="font-size:0.68rem;color:var(--muted);margin-top:0.3rem">Lo usamos para enviarte actualizaciones de tu pedido.</div>
+        </div>
+
         <div style="margin-top:1.5rem;padding-top:1rem;border-top:1px solid var(--border)">
           <button class="btn-next-step" onclick="window.goCheckoutStep(2)">Continuar con la entrega →</button>
           <button class="btn-back-step" onclick="window.showHome()">← Seguir comprando</button>
@@ -905,13 +913,6 @@
                 <div class="payment-option-sub" id="transferSubLabel">20% OFF · Alias: NORTHSIDE.CO</div>
               </div>
             </label>
-            <label class="payment-option" onclick="window.selectPayment('efectivo',this)">
-              <input type="radio" name="payment" value="efectivo">
-              <div>
-                <div class="payment-option-label">💵 Efectivo</div>
-                <div class="payment-option-sub">Pagás al retirar o coordinar entrega</div>
-              </div>
-            </label>
           </div>
           <div style="margin-top:1rem">
             <button class="btn-next-step" onclick="window.goPayTab()">Continuar →</button>
@@ -978,19 +979,7 @@
 
       </div>
 
-      <!-- EFECTIVO -->
-      <div id="payDetailEfectivo4" style="display:none">
-        <div style="background:var(--black);color:var(--bg);padding:0.8rem 1rem;margin-bottom:1rem;display:flex;justify-content:space-between;align-items:center;">
-          <span style="font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;opacity:0.6">Total a pagar en efectivo</span>
-          <span style="font-family:'Bebas Neue',sans-serif;font-size:1.3rem;" id="efectivoTotalAmount"></span>
-        </div>
-        <label style="margin-top:0">Nombre y apellido *</label>
-        <input type="text" id="efectivoNombre" placeholder="Tu nombre completo">
-        <label>Localidad / Barrio *</label>
-        <input type="text" id="efectivoDireccion" placeholder="Ej: Palermo, Buenos Aires">
-        <label>Aclaraciones (opcional)</label>
-        <textarea id="efectivoNota" placeholder="Horarios disponibles, preferencia de zona, cualquier detalle..."></textarea>
-      </div>
+      <!-- fin panels pago -->
 
       <div style="margin-top:1.5rem">
         <button class="btn-next-step" onclick="window.finalizarCompra()">Confirmar pedido →</button>
@@ -2948,7 +2937,21 @@ function renderCheckoutStep(step) {
     if(sidebar) sidebar.style.display = '';
     if(main) { main.style.borderRight = ''; main.style.maxWidth = ''; }
   }
-  if(step === 1) renderCartItems();
+  if(step === 1) {
+    renderCartItems();
+    // Mostrar campo email solo si no hay sesión
+    var guestSec = document.getElementById('guestEmailSection');
+    if(guestSec) guestSec.style.display = currentUser ? 'none' : 'block';
+  }
+  if(step === 2 && !currentUser) {
+    // Validar email de invitado antes de avanzar
+    var emailVal = document.getElementById('guestEmail') ? document.getElementById('guestEmail').value.trim() : '';
+    if(!emailVal || !emailVal.includes('@')) {
+      showToast('Ingresá tu email para continuar');
+      renderCheckoutStep(1);
+      return;
+    }
+  }
   if(step === 3) setupPaymentStep();
   updateStickyTotal();
 }
@@ -3277,7 +3280,7 @@ window.goPayTab = function() {
   const subtotal = getCartTotal() + shippingCost;
 
   // Hide all step 4 panels
-  ['payDetailTransferencia4','payDetailMercadopago4','payDetailEfectivo4'].forEach(function(id){
+  ['payDetailTransferencia4','payDetailMercadopago4'].forEach(function(id){
     var el = document.getElementById(id); if(el) el.style.display = 'none';
   });
 
@@ -3298,11 +3301,6 @@ window.goPayTab = function() {
     var totMP = Math.round(subtotal * (1 - pctMP/100));
     var totElMP = document.getElementById('step4MPTotal');
     if(totElMP) totElMP.textContent = '$' + Number(totMP).toLocaleString('es-AR');
-      } else if(selectedPayment === 'efectivo') {
-    var panelEf = document.getElementById('payDetailEfectivo4');
-    if(panelEf) panelEf.style.display = 'block';
-    var totalEl = document.getElementById('efectivoTotalAmount');
-    if(totalEl) totalEl.textContent = '$' + Number(subtotal).toLocaleString('es-AR');
   }
 
   window.goCheckoutStep(4);
@@ -3476,16 +3474,6 @@ window.finalizarCompra = async function() {
     return;
   }
 
-  // Efectivo validation
-  if(selectedPayment === 'efectivo') {
-    var nombre = document.getElementById('efectivoNombre') ? document.getElementById('efectivoNombre').value.trim() : '';
-    var dir = document.getElementById('efectivoDireccion') ? document.getElementById('efectivoDireccion').value.trim() : '';
-    if(!nombre || !dir) {
-      showToast('⚠️ Completá nombre y localidad para continuar');
-      return;
-    }
-  }
-
   _isProcessing = true;
   showLoading('Procesando pedido...');
 
@@ -3498,10 +3486,8 @@ window.finalizarCompra = async function() {
     var transferDiscount = Math.round((subtotal + shippingCost - couponDiscount) * pct / 100);
     var total = subtotal + shippingCost - couponDiscount - transferDiscount;
 
-    var clienteNombre = selectedPayment === 'efectivo'
-      ? (document.getElementById('efectivoNombre') ? document.getElementById('efectivoNombre').value.trim() : '')
-      : (currentUser ? (currentUser.displayName || currentUser.email) : 'Visitante');
-    var clienteEmail = currentUser ? currentUser.email : '';
+    var clienteNombre = currentUser ? (currentUser.displayName || currentUser.email) : 'Visitante';
+    var clienteEmail = currentUser ? currentUser.email : (document.getElementById('guestEmail') ? document.getElementById('guestEmail').value.trim() : '');
 
     // Save order to Firebase first
     var orderData = {
