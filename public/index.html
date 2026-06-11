@@ -490,6 +490,14 @@
   .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);}
   .product-card{background:var(--bg);overflow:hidden;cursor:pointer;transition:opacity 0.15s;}
   .product-card:hover{opacity:0.92;}
+  @keyframes cardFadeIn {
+    from { opacity:0; transform:translateY(18px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+  .product-card.animating {
+    opacity:0;
+    animation: cardFadeIn 0.4s ease forwards;
+  }
   .card-gallery{position:relative;aspect-ratio:3/4;background:var(--bg2);overflow:hidden;}
   /* old gallery rule removed */
   
@@ -1628,6 +1636,21 @@ function renderGrid() {
       '</div>' +
     '</div>';
   }).join('');
+
+  // Animación escalonada de entrada
+  if(window._gridAnimating) clearTimeout(window._gridAnimating);
+  grid.querySelectorAll('.product-card').forEach(function(card, i) {
+    card.classList.add('animating');
+    card.style.animationDelay = (i * 60) + 'ms';
+  });
+  // Limpiar clase después de que terminen todas las animaciones
+  var total = grid.querySelectorAll('.product-card').length;
+  window._gridAnimating = setTimeout(function() {
+    grid.querySelectorAll('.product-card').forEach(function(card) {
+      card.classList.remove('animating');
+      card.style.animationDelay = '';
+    });
+  }, total * 60 + 450);
 
   // Long press on mobile: hold to see second image
   grid.querySelectorAll('.product-card').forEach(function(card) {
