@@ -487,7 +487,7 @@
   .filters{display:flex;gap:0.5rem;padding:1.2rem 2rem;border-bottom:1px solid var(--border);overflow-x:auto;background:var(--bg);}
   .filter-btn{background:transparent;border:1px solid var(--border);color:var(--muted);padding:0.35rem 1rem;font-family:'DM Sans',sans-serif;font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;white-space:nowrap;transition:all 0.2s;}
   .filter-btn:hover,.filter-btn.active{border-color:var(--black);color:var(--black);background:var(--bg2);}
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1px;background:var(--border);}
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);}
   .product-card{background:var(--bg);overflow:hidden;cursor:pointer;transition:opacity 0.15s;}
   .product-card:hover{opacity:0.92;}
   .card-gallery{position:relative;aspect-ratio:3/4;background:var(--bg2);overflow:hidden;}
@@ -503,15 +503,15 @@
   .gallery-placeholder span{font-size:2.5rem;opacity:0.25;}
   .gallery-placeholder p{font-size:0.68rem;color:var(--muted);letter-spacing:0.12em;text-transform:uppercase;}
   .img-count{position:absolute;top:8px;right:8px;background:rgba(0,0,0,0.45);color:#fff;font-size:0.62rem;padding:2px 7px;}
-  .product-info{padding:1rem 1.2rem 1.5rem;border-top:1px solid var(--border);}
-  .product-cat{font-size:0.63rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);margin-bottom:0.3rem;}
-  .product-name{font-size:0.95rem;font-weight:500;margin-bottom:0.3rem;color:var(--black);}
-  .color-dots{display:flex;gap:5px;margin-bottom:0.5rem;flex-wrap:wrap;}
-  .color-dot{width:14px;height:14px;border-radius:50%;border:1px solid rgba(0,0,0,0.15);flex-shrink:0;}
-  .product-sizes-preview{font-size:0.68rem;color:var(--muted);letter-spacing:0.08em;margin-bottom:0.9rem;}
+  .product-info{padding:0.7rem 0.8rem 1rem;border-top:1px solid var(--border);}
+  .product-cat{font-size:0.6rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);margin-bottom:0.2rem;}
+  .product-name{font-size:0.82rem;font-weight:500;margin-bottom:0.2rem;color:var(--black);}
+  .color-dots{display:flex;gap:5px;margin-bottom:0.4rem;flex-wrap:wrap;}
+  .color-dot{width:12px;height:12px;border-radius:50%;border:1px solid rgba(0,0,0,0.15);flex-shrink:0;}
+  .product-sizes-preview{font-size:0.63rem;color:var(--muted);letter-spacing:0.08em;margin-bottom:0.6rem;}
   .card-footer{display:flex;align-items:center;justify-content:space-between;}
-  .product-price{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:0.05em;color:var(--warm);}
-  .btn-ver{background:var(--black);color:var(--bg);border:none;padding:0.45rem 1rem;font-family:'DM Sans',sans-serif;font-size:0.68rem;font-weight:500;letter-spacing:0.08em;cursor:pointer;text-transform:uppercase;transition:opacity 0.2s;}
+  .product-price{font-family:'Bebas Neue',sans-serif;font-size:1.15rem;letter-spacing:0.05em;color:var(--warm);}
+  .btn-ver{background:var(--black);color:var(--bg);border:none;padding:0.38rem 0.8rem;font-family:'DM Sans',sans-serif;font-size:0.62rem;font-weight:500;letter-spacing:0.08em;cursor:pointer;text-transform:uppercase;transition:opacity 0.2s;}
   .btn-ver:hover{opacity:0.75;}
   .detail-back{display:flex;align-items:center;gap:0.5rem;padding:1rem 2rem;border-bottom:1px solid var(--border);cursor:pointer;font-size:0.75rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);transition:color 0.2s;background:var(--bg);}
   .detail-back:hover{color:var(--black);}
@@ -645,6 +645,10 @@
     .nav-cats{display:none;}
   }
 
+  @media(max-width:1100px){
+    .grid{grid-template-columns:repeat(3,1fr);}
+  }
+
   @media(max-width:768px){
     /* NAV */
     nav{padding:0.9rem 1rem;gap:0.5rem;}
@@ -679,11 +683,11 @@
 
     /* GRID - 2 columns on mobile */
     .grid{grid-template-columns:repeat(2,1fr);}
-    .product-name{font-size:0.82rem;}
-    .product-price{font-size:1.15rem;}
-    .product-info{padding:0.7rem 0.8rem 1rem;}
-    .btn-ver{padding:0.38rem 0.7rem;font-size:0.6rem;letter-spacing:0.05em;}
-    .color-dot{width:11px;height:11px;}
+    .product-name{font-size:0.75rem;}
+    .product-price{font-size:1rem;}
+    .product-info{padding:0.5rem 0.6rem 0.8rem;}
+    .btn-ver{padding:0.32rem 0.55rem;font-size:0.56rem;letter-spacing:0.04em;}
+    .color-dot{width:10px;height:10px;}
 
     /* DETAIL */
     .detail-back{padding:0.8rem 1rem;font-size:0.68rem;}
