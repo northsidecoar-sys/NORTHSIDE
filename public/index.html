@@ -40,15 +40,6 @@
   .hero-tagline{margin-top:1.2rem;font-size:0.75rem;letter-spacing:0.28em;text-transform:uppercase;color:var(--muted);}
   .hero-tagline em{font-style:normal;color:var(--warm);}
 
-  /* LOCAL STATUS */
-  .local-status-bar{display:flex;align-items:center;justify-content:center;gap:0.75rem;padding:1rem 2rem;border-bottom:1px solid var(--border);border-top:1px solid var(--border);background:var(--bg);}
-  .local-status-dot{width:11px;height:11px;border-radius:50%;flex-shrink:0;}
-  .local-status-dot.open{background:#22c55e;box-shadow:0 0 8px rgba(34,197,94,0.5);animation:pulse-green 2s infinite;}
-  .local-status-dot.closed{background:#ef4444;box-shadow:0 0 6px rgba(239,68,68,0.4);}
-  @keyframes pulse-green{0%,100%{box-shadow:0 0 4px rgba(34,197,94,0.4);}50%{box-shadow:0 0 14px rgba(34,197,94,0.8);}}
-  .local-status-text{font-size:0.72rem;letter-spacing:0.16em;text-transform:uppercase;color:var(--muted);}
-  .local-status-text strong{color:var(--black);font-weight:600;}
-
 
 
   /* TICKER */
@@ -112,6 +103,7 @@
   .btn-confirm-yes:hover{opacity:0.75;}
   .btn-confirm-no{flex:1;background:none;border:1px solid var(--border);color:var(--black);padding:0.75rem;font-family:'DM Sans',sans-serif;font-size:0.78rem;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;transition:all 0.2s;}
   .btn-confirm-no:hover{border-color:var(--black);}
+  /* FOOTER */
   .site-footer{border-top:1px solid var(--border);padding:3rem 2rem 2rem;background:var(--bg);}
   .footer-inner{display:flex;justify-content:space-between;align-items:flex-start;}
   .footer-left{flex:0 0 auto;}
@@ -824,14 +816,7 @@
     <p class="hero-tagline">Stay original &nbsp;·&nbsp; <em>Stay Northside</em></p>
   </div>
   
-  <!-- LOCAL STATUS -->
-  <div class="local-status-bar" id="localStatusBar" style="display:none">
-    <div class="local-status-dot" id="localStatusDot"></div>
-    <div class="local-status-text">Local presencial · <strong id="localStatusLabel">—</strong></div>
-  </div>
-
   <div class="filters" id="filterBar"><button class="filter-btn active" onclick="filterCat('all',this)">Todos</button></div>
-
   <div class="grid" id="productGrid"></div>
 
   <!-- FOOTER -->
@@ -2083,23 +2068,6 @@ async function loadFooterConfig() {
     });
     applyFooterSocial();
     applyFooterContact();
-  } catch(e) {}
-}
-
-async function loadLocalStatus() {
-  try {
-    const snap = await getDocs(collection(db, 'config'));
-    snap.forEach(function(d){
-      if(d.id === 'local') {
-        const isOpen = !!d.data().open;
-        const bar  = document.getElementById('localStatusBar');
-        const dot  = document.getElementById('localStatusDot');
-        const lbl  = document.getElementById('localStatusLabel');
-        if(bar) bar.style.display = 'flex';
-        if(dot) { dot.classList.toggle('open', isOpen); dot.classList.toggle('closed', !isOpen); }
-        if(lbl) lbl.textContent = isOpen ? 'Abierto ahora' : 'Cerrado';
-      }
-    });
   } catch(e) {}
 }
 
@@ -4333,7 +4301,7 @@ window.removeBanner = async function(btn) {
 // ── INIT ──────────────────────────────────────────────
 async function init() {
   try {
-    await Promise.all([loadProducts(), loadWaConfig(), loadBanner(), loadTicker(), loadPaymentConfig(), loadFooterConfig(), loadLocalStatus()]);
+    await Promise.all([loadProducts(), loadWaConfig(), loadBanner(), loadTicker(), loadPaymentConfig(), loadFooterConfig()]);
   window._products = products; // debug access
   } catch(e) {
     showToast('Error conectando a Firebase. Verificá tu conexión.');
@@ -4432,4 +4400,3 @@ window.handleCardAuxClick = function(e, id) {
 </script>
 </body>
 </html>
- 
