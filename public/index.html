@@ -485,6 +485,38 @@
   .banner-product-select{width:100%;background:var(--bg2);border:1px solid var(--border);color:var(--black);padding:0.6rem 0.8rem;font-family:'DM Sans',sans-serif;font-size:0.82rem;outline:none;appearance:none;cursor:pointer;}
   .banner-product-select:focus{border-color:var(--warm);}
   .filters{display:flex;gap:0.5rem;padding:1.2rem 2rem;border-bottom:1px solid var(--border);overflow-x:auto;background:var(--bg);}
+  /* FOOTER */
+  .site-footer{border-top:1px solid var(--border);padding:3rem 2rem 2rem;background:var(--bg);}
+  .footer-inner{display:flex;justify-content:space-between;align-items:flex-start;}
+  .footer-left{flex:0 0 auto;}
+  .footer-right{flex:0 0 auto;text-align:right;}
+  .footer-early-label{font-size:0.65rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--muted);margin-bottom:1rem;}
+  .footer-email-row{display:flex;border-bottom:1px solid var(--black);padding-bottom:0.5rem;margin-bottom:1.2rem;width:320px;}
+  .footer-email-row input{flex:1;background:none;border:none;outline:none;font-family:'DM Sans',sans-serif;font-size:0.85rem;color:var(--black);padding:0.3rem 0;}
+  .footer-email-row input::placeholder{color:var(--muted);}
+  .footer-email-btn{background:none;border:none;cursor:pointer;color:var(--black);font-size:1rem;padding:0 0.3rem;transition:opacity 0.2s;}
+  .footer-email-btn:hover{opacity:0.5;}
+  .footer-social{display:flex;gap:1rem;margin-top:0.5rem;}
+  .footer-social a{color:var(--muted);transition:color 0.2s;display:flex;align-items:center;}
+  .footer-social a:hover{color:var(--black);}
+  .footer-contact-label{font-size:0.65rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--muted);margin-bottom:1rem;}
+  .footer-contact-item{font-size:0.82rem;color:var(--black);margin-bottom:0.4rem;}
+  .footer-bottom{margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--border);font-size:0.65rem;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;}
+  @media(max-width:768px){
+    .footer-inner{flex-direction:column;gap:2rem;}
+    .footer-right{text-align:left;}
+    .footer-email-row{width:100%;}
+    .site-footer{padding:2rem 1rem 1.5rem;}
+  }
+
+  /* LOCAL STATUS */
+  .local-status-bar{display:flex;align-items:center;justify-content:center;gap:0.75rem;padding:1rem 2rem;border-bottom:1px solid var(--border);border-top:1px solid var(--border);background:var(--bg);}
+  .local-status-dot{width:11px;height:11px;border-radius:50%;flex-shrink:0;}
+  .local-status-dot.open{background:#22c55e;box-shadow:0 0 8px rgba(34,197,94,0.5);animation:pulse-green 2s infinite;}
+  @keyframes pulse-green{0%,100%{box-shadow:0 0 4px rgba(34,197,94,0.4);}50%{box-shadow:0 0 14px rgba(34,197,94,0.8);}}
+  .local-status-text{font-size:0.72rem;letter-spacing:0.16em;text-transform:uppercase;color:var(--muted);}
+  .local-status-text strong{color:var(--black);font-weight:600;}
+
   .filter-btn{background:transparent;border:1px solid var(--border);color:var(--muted);padding:0.35rem 1rem;font-family:'DM Sans',sans-serif;font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;white-space:nowrap;transition:all 0.2s;}
   .filter-btn:hover,.filter-btn.active{border-color:var(--black);color:var(--black);background:var(--bg2);}
   .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);}
@@ -770,8 +802,41 @@
     <p class="hero-tagline">Stay original &nbsp;·&nbsp; <em>Stay Northside</em></p>
   </div>
   
+  <!-- LOCAL STATUS -->
+  <div class="local-status-bar" id="localStatusBar" style="display:none">
+    <div class="local-status-dot" id="localStatusDot"></div>
+    <div class="local-status-text">Local presencial · <strong id="localStatusLabel">—</strong></div>
+  </div>
+
   <div class="filters" id="filterBar" style="display:none"></div>
   <div class="grid" id="productGrid"></div>
+
+  <!-- FOOTER -->
+  <footer class="site-footer" id="siteFooter">
+    <div class="footer-inner">
+      <div class="footer-left">
+        <div class="footer-early-label">Join the Early Access List</div>
+        <div class="footer-email-row">
+          <input type="email" id="footerEmailInput" placeholder="Email">
+          <button class="footer-email-btn" onclick="window.submitEarlyAccess()">→</button>
+        </div>
+        <div class="footer-social">
+          <a href="#" id="footerInstagram" target="_blank" title="Instagram">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4.5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+          </a>
+          <a href="#" id="footerTiktok" target="_blank" title="TikTok">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.32 6.32 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.74a4.85 4.85 0 0 1-1.01-.05z"/></svg>
+          </a>
+        </div>
+      </div>
+      <div class="footer-right">
+        <div class="footer-contact-label">Contactanos</div>
+        <div class="footer-contact-item" id="footerPhone">—</div>
+        <div class="footer-contact-item" id="footerEmail">—</div>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2025 Northside — thenorthside.com.ar</div>
+  </footer>
 </div>
 
 <div class="view" id="viewDetail">
@@ -4034,9 +4099,71 @@ window.removeBanner = async function(btn) {
 };
 
 // ── INIT ──────────────────────────────────────────────
+// ── FOOTER ────────────────────────────────────────────────
+window.submitEarlyAccess = async function() {
+  const input = document.getElementById('footerEmailInput');
+  const email = input ? input.value.trim() : '';
+  if(!email || !email.includes('@')) { showToast('Ingresá un email válido'); return; }
+  try {
+    await addDoc(collection(db, 'early_access'), { email: email, createdAt: Date.now() });
+    showToast('✓ ¡Te anotaste! Te avisamos antes que nadie.');
+    if(input) input.value = '';
+  } catch(e) { showToast('Error al registrar email'); }
+};
+
+let socialConfig  = { instagram: '', tiktok: '' };
+let contactConfig = { phone: '', email: '' };
+
+function applyFooterSocial() {
+  const igEl = document.getElementById('footerInstagram');
+  const ttEl = document.getElementById('footerTiktok');
+  if(igEl) igEl.href = socialConfig.instagram || '#';
+  if(ttEl) ttEl.href = socialConfig.tiktok || '#';
+}
+
+function applyFooterContact() {
+  const phEl = document.getElementById('footerPhone');
+  const emEl = document.getElementById('footerEmail');
+  if(phEl) phEl.textContent = contactConfig.phone || '—';
+  if(emEl) emEl.textContent = contactConfig.email || '—';
+}
+
+async function loadFooterConfig() {
+  try {
+    const snap = await getDocs(collection(db, 'config'));
+    snap.forEach(function(d){
+      if(d.id === 'social')  socialConfig  = Object.assign({}, socialConfig,  d.data());
+      if(d.id === 'contact') contactConfig = Object.assign({}, contactConfig, d.data());
+    });
+    applyFooterSocial();
+    applyFooterContact();
+  } catch(e) {}
+}
+
+async function loadLocalStatus() {
+  try {
+    const snap = await getDocs(collection(db, 'config'));
+    snap.forEach(function(d){
+      if(d.id === 'local') {
+        const isOpen = !!d.data().open;
+        const bar = document.getElementById('localStatusBar');
+        const dot = document.getElementById('localStatusDot');
+        const lbl = document.getElementById('localStatusLabel');
+        if(isOpen) {
+          if(bar) bar.style.display = 'flex';
+          if(dot) { dot.classList.add('open'); dot.classList.remove('closed'); }
+          if(lbl) lbl.textContent = 'Abierto ahora';
+        } else {
+          if(bar) bar.style.display = 'none';
+        }
+      }
+    });
+  } catch(e) {}
+}
+
 async function init() {
   try {
-    await Promise.all([loadProducts(), loadWaConfig(), loadBanner(), loadTicker(), loadPaymentConfig()]);
+    await Promise.all([loadProducts(), loadWaConfig(), loadBanner(), loadTicker(), loadPaymentConfig(), loadLocalStatus(), loadFooterConfig()]);
   window._products = products; // debug access
   } catch(e) {
     showToast('Error conectando a Firebase. Verificá tu conexión.');
