@@ -1538,13 +1538,21 @@ window.updateLabel = (arrName, i, val) => {
 
 // ── GRID & FILTERS ────────────────────────────────────
 function getCategories() { return [...new Set(products.map(p => p.cat))]; }
+// ── SAFE HISTORY HELPER (works on file:// and http://) ──────
+function safePush(state, url) {
+  try { history.pushState(state, '', url); } catch(e) {}
+}
+function safeReplace(state, url) {
+  try { history.replaceState(state, '', url); } catch(e) {}
+}
+
 window.filterCat = function(cat) {
   currentFilter = cat;
   // If we're in detail or orders view, go back to home first
   document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
   document.getElementById('viewHome').classList.add('active');
   openProductId = null;
-  history.pushState({ view: 'home', filter: cat }, '', cat === 'all' ? '/' : '/categoria/' + slugify(cat));
+  safePush({ view: 'home', filter: cat }, cat === 'all' ? '/' : '/categoria/' + slugify(cat));
   renderFilters();
   renderGrid();
 };
@@ -1677,14 +1685,14 @@ window.prevCardImg = (e,id) => { e.stopPropagation(); const p=products.find(x=>x
 window.nextCardImg = (e,id) => { e.stopPropagation(); const p=products.find(x=>x.id===id); if(!p||!p.imgs||p.imgs.length<2)return; activeCardImg[id]=(activeCardImg[id]+1)%p.imgs.length; renderGrid(); };
 window.goCardImg  = (e,id,i) => { e.stopPropagation(); activeCardImg[id]=i; renderGrid(); };
 
-// ── DETAIL ────────────────────────────────────────────
-window.openProduct = id => {
 function slugify(str) {
   return (str||'').toLowerCase()
     .replace(/á/g,'a').replace(/é/g,'e').replace(/í/g,'i').replace(/ó/g,'o').replace(/ú/g,'u').replace(/ñ/g,'n')
     .replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
 }
 
+// ── DETAIL ────────────────────────────────────────────
+window.openProduct = id => {
   const p = products.find(x => x.id === id); if (!p) return;
   openProductId = id; detailActiveImg = 0;
   renderDetail(p);
@@ -1692,7 +1700,7 @@ function slugify(str) {
   document.getElementById('viewDetail').classList.add('active');
   window.scrollTo(0, 0);
   var slug = slugify(p.name);
-  history.pushState({ view: 'detail', productId: id }, '', '/producto/' + slug);
+  safePush({ view: 'detail', productId: id }, '/producto/' + slug);
   document.title = p.name + ' | NORTHSIDE';
   var ogTitle = document.querySelector('meta[property="og:title"]');
   if(ogTitle) ogTitle.setAttribute('content', p.name + ' | NORTHSIDE');
@@ -1711,7 +1719,7 @@ window.showHome = (pushState) => {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.getElementById('viewHome').classList.add('active');
   openProductId = null;
-  if(pushState !== false) history.pushState({ view: 'home' }, '', '/');
+  if(pushState !== false) safePush({ view: 'home' }, '/');
   document.title = 'NORTHSIDE | Ropa Streetwear Argentina';
 };
 function renderDetail(p) {
@@ -2217,8 +2225,7 @@ window.showOrders = async function() {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.getElementById('viewOrders').classList.add('active');
   window.scrollTo(0,0);
-  history.pushState({ view: 'orders' }, '', '#mis-consultas');
-  history.pushState({ view: 'orders' }, '', '#mis-consultas');
+  safePush({ view: 'orders' }, '#mis-consultas');
   const list = document.getElementById('ordersList');
   list.innerHTML = '<p style="color:var(--muted);text-align:center;padding:2rem">Cargando...</p>';
   const orders = await loadUserOrders(currentUser.uid);
@@ -2917,7 +2924,7 @@ window.openCheckout = function() {
   renderCheckoutStep(1);
   renderSummary();
   window.scrollTo(0,0);
-  history.replaceState({ view: 'checkout', step: 1 }, '', '/checkout');
+  safeReplace({ view: 'checkout', step: 1 }, '/checkout');
 };
 
 window.goCheckoutStep = function(step) {
@@ -2925,7 +2932,7 @@ window.goCheckoutStep = function(step) {
   renderCheckoutStep(step);
   window.scrollTo(0,0);
   // Push a history entry for each checkout step so browser back works correctly
-  history.pushState({ view: 'checkout', step: step }, '', '/checkout');
+  safePush({ view: 'checkout', step: step }, '/checkout');
 };
 
 function renderCheckoutStep(step) {
