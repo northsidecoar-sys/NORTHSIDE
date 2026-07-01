@@ -1496,6 +1496,7 @@ const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/' + CLOUD_NAME + '/image
 
 // ── STATE ─────────────────────────────────────────────
 let products = [];
+window.products = products;
 let waConfig = { number: '', msg: 'Hola! Me interesa el producto:' };
 let currentFilter = 'all';
 let pendingColors = [];
@@ -1512,8 +1513,9 @@ let uploading = false;
 async function loadProducts() {
   const snap = await getDocs(collection(db, 'products'));
   products = snap.docs.map(d => ({ ...d.data(), _docId: d.id }));
-  window._nsProducts = products; // expose for hash handler
   products.sort((a,b) => (a.order||0) - (b.order||0));
+  window.products = products; // expose globally for URL parser
+  window._nsProducts = products;
 }
 
 async function saveProduct(p) {
@@ -4151,41 +4153,34 @@ window.handleCardAuxClick = function(e, id) {
 // ── OPEN PRODUCT FROM CLEAN URL ───────────────────────────
 (function() {
   var path = window.location.pathname;
-  var pid = null;
 
-  if(path.startsWith('/producto/')) {
-    // Clean URL: /producto/baggy-oxide
-    var slug = path.replace('/producto/','');
-    var attempts = 0;
-    var interval = setInterval(function() {
-      attempts++;
-      var found = products.find(function(p){ return slugify(p.name) === slug; });
-      if(found) {
-        clearInterval(interval);
-        window.openProduct(found.id);
-      } else if(attempts > 40) clearInterval(interval);
-    }, 150);
-    return;
-  }
+  if(!path.startsWith('/producto/')) return;
 
-  // Legacy: ?p=ID support
-  var params = new URLSearchParams(window.location.search);
-  pid = params.get('p');
-  if(!pid) {
-    var h = window.location.hash;
-    if(h && h.startsWith('#producto-')) pid = h.replace('#producto-','');
-  }
-  if(!pid) return;
+  var slug = path.replace('/producto/','');
+  var attempts = 0;
 
-  var attempts2 = 0;
-  var interval2 = setInterval(function() {
-    attempts2++;
-    var found = products.find(function(x){ return String(x.id) === String(pid); });
-    if(found) {
-      clearInterval(interval2);
+  var interval = setInterval(function() {
+    attempts++;
+    var prods = window.products || [];
+    if(!prods.length) {
+      if(attempts > 80) clearInterval(interval);
+      return;
+    }
+    // slugify might not be defined yet on first ticks
+    var found = null;
+    try {
+      found = prods.find(function(p){
+        return (p.name||'').toLowerCase()
+          .replace(/á/g,'a').replace(/é/g,'e').replace(/í/g,'i').replace(/ó/g,'o').replace(/ú/g,'u').replace(/ñ/g,'n')
+          .replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'') === slug;
+      });
+    } catch(e) {}
+    if(found && window.openProduct) {
+      clearInterval(interval);
       window.openProduct(found.id);
-      history.replaceState({ view: 'detail', productId: found.id }, '', '/producto/' + slugify(found.name));
-    } else if(attempts2 > 40) clearInterval(interval2);
+    } else if(attempts > 80) {
+      clearInterval(interval);
+    }
   }, 150);
 })();
 
