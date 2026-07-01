@@ -612,7 +612,7 @@
   .filter-btn{background:none;border:none;color:var(--muted);padding:0.4rem 0.9rem;font-family:'DM Sans',sans-serif;font-size:0.68rem;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;white-space:nowrap;transition:all 0.2s;border-radius:20px;}
   .filter-btn:hover{color:var(--black);}
   .filter-btn.active{background:var(--black);color:var(--bg);}
-  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;background:var(--bg);padding:0 1.5rem;}
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);row-gap:0;column-gap:0.75rem;background:var(--bg);padding:0;}
   .grid-bottom-spacer{height:5rem;background:var(--bg);}
   .pagination{display:flex;align-items:center;justify-content:center;gap:0.4rem;padding:2rem 1rem 1rem;background:var(--bg);flex-wrap:wrap;}
   .pagination button{background:none;border:1px solid var(--border);color:var(--black);width:34px;height:34px;font-family:'DM Sans',sans-serif;font-size:0.78rem;cursor:pointer;transition:all 0.2s;border-radius:2px;}
@@ -811,7 +811,7 @@
     .filter-btn{padding:0.3rem 0.8rem;font-size:0.65rem;}
 
     /* GRID - 2 columns on mobile */
-    .grid{grid-template-columns:repeat(2,1fr);gap:0.9rem;padding:0 1rem;}
+    .grid{grid-template-columns:repeat(2,1fr);row-gap:0;column-gap:0.45rem;padding:0;}
     .product-name{font-size:0.82rem;}
     .product-price{font-size:1.15rem;}
     .product-info{padding:0.7rem 0.8rem 1rem;}
@@ -4380,7 +4380,10 @@ function renderBanner() {
     return '<div class="banner-slide" onclick="window.bannerClick(' + s.productId + ')">' +
       '<img src="' + (s.url||s.data||'') + '" alt="' + (s.label||'') + '" style="object-position:' + (s.position||'center center') + '" loading="' + (i===0?'eager':'lazy') + '">' +
       '<div class="banner-overlay"></div>' +
-      (p ? '<div class="banner-label"><p>' + p.cat + '</p><h3>' + p.name + '</h3><span>Ver producto →</span></div>' : '') +
+      (p
+        ? '<div class="banner-label"><p>' + p.cat + '</p><h3>' + p.name + '</h3><span>Ver producto →</span></div>'
+        : (s.label ? '<div class="banner-label"><h3>' + s.label + '</h3></div>' : '')
+      ) +
     '</div>';
   }).join('');
 
