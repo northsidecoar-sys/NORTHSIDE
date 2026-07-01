@@ -1837,6 +1837,7 @@ function safeReplace(state, url) {
 window.filterCat = function(cat) {
   currentFilter = cat;
   currentPage = 1;
+  scrollCategoryWindowToFilter(cat);
   // If we're in detail or orders view, go back to home first
   document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
   document.getElementById('viewHome').classList.add('active');
@@ -1855,12 +1856,8 @@ function renderFilters() {
   const cats = getCategories();
   const allCats = ['all'].concat(cats); // 'all' represents "Todos"
 
-  // If current filter isn't in the visible window, jump window to show it
-  const activeIdx = allCats.indexOf(currentFilter);
-  if(activeIdx !== -1 && (activeIdx < catDisplayIndex || activeIdx >= catDisplayIndex + CATS_VISIBLE)) {
-    catDisplayIndex = Math.floor(activeIdx / CATS_VISIBLE) * CATS_VISIBLE;
-  }
   if(catDisplayIndex >= allCats.length) catDisplayIndex = 0;
+  if(catDisplayIndex < 0) catDisplayIndex = 0;
 
   const visible = allCats.slice(catDisplayIndex, catDisplayIndex + CATS_VISIBLE);
   const hasMore = allCats.length > CATS_VISIBLE;
@@ -1877,6 +1874,15 @@ function renderFilters() {
 
   nav.innerHTML = '<li><a class="' + (currentFilter==='all'?'active':'') + '" onclick="filterCat(\'all\',this)">Todo</a></li>';
   cats.forEach(c => { nav.innerHTML += '<li><a class="' + (currentFilter===c?'active':'') + '" onclick="filterCat(\'' + c + '\',this)">' + c + '</a></li>'; });
+}
+
+function scrollCategoryWindowToFilter(filterVal) {
+  const cats = getCategories();
+  const allCats = ['all'].concat(cats);
+  const idx = allCats.indexOf(filterVal);
+  if(idx !== -1) {
+    catDisplayIndex = Math.floor(idx / CATS_VISIBLE) * CATS_VISIBLE;
+  }
 }
 
 window.cycleCategories = function() {
