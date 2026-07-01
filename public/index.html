@@ -3533,7 +3533,7 @@ window.goPayTab = function() {
     var savEl = document.getElementById('step4TransSaving');
     if(totEl) totEl.textContent = '$' + Number(tot).toLocaleString('es-AR');
     if(savEl) savEl.textContent = '$' + Number(sav).toLocaleString('es-AR');
-      } else if(selectedPayment === 'mercadopago') {
+  } else if(selectedPayment === 'mercadopago') {
     var panelMP = document.getElementById('payDetailMercadopago4');
     if(panelMP) panelMP.style.display = 'block';
     var pctMP = paymentConfig.transferPct || 20;
@@ -3541,6 +3541,7 @@ window.goPayTab = function() {
     var totElMP = document.getElementById('step4MPTotal');
     if(totElMP) totElMP.textContent = '$' + Number(totMP).toLocaleString('es-AR');
   }
+  window.goCheckoutStep(4);
 };
 
 
