@@ -527,7 +527,6 @@
   .banner-add-row{display:flex;gap:8px;align-items:flex-start;margin-top:0.8rem;flex-direction:column;}
   .banner-product-select{width:100%;background:var(--bg2);border:1px solid var(--border);color:var(--black);padding:0.6rem 0.8rem;font-family:'DM Sans',sans-serif;font-size:0.82rem;outline:none;appearance:none;cursor:pointer;}
   .banner-product-select:focus{border-color:var(--warm);}
-  .filters{display:flex;gap:0.5rem;overflow-x:auto;background:none;padding:0;border:none;}
   /* FOOTER */
   .site-footer{border-top:1px solid var(--border);padding:3rem 2rem 2rem;background:var(--bg);}
   .footer-inner{display:flex;justify-content:space-between;align-items:flex-start;}
@@ -570,7 +569,7 @@
     opacity:1;
   }
   .gender-filter-bar.hidden-scroll{transform:translateX(-50%) translateY(140%);opacity:0;pointer-events:none;}
-  .gender-filter-bar .filters{max-width:320px;}
+
   .gender-toggle{display:flex;gap:0.3rem;background:var(--bg2);padding:0.25rem;border-radius:30px;flex-shrink:0;}
   .gender-toggle button{background:none;border:none;padding:0.4rem 0.9rem;font-family:'DM Sans',sans-serif;font-size:0.68rem;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);cursor:pointer;border-radius:20px;transition:all 0.2s;white-space:nowrap;}
   .gender-toggle button.active{background:var(--black);color:var(--bg);}
@@ -599,19 +598,21 @@
 
   @media(max-width:768px){
     .gender-filter-bar{bottom:1rem;padding:0.35rem 0.4rem 0.35rem 0.7rem;gap:0.4rem;}
-    .gender-filter-bar .filters{max-width:150px;}
+
     .gender-toggle button{padding:0.35rem 0.6rem;font-size:0.6rem;}
     .btn-filtrar{padding:0.5rem 0.8rem;font-size:0.6rem;}
     .btn-filtrar span.filtrar-text{display:none;}
     .filter-drawer{width:100vw;}
   }
 
-  .filters{display:flex;gap:0.3rem;overflow-x:auto;background:var(--bg2);padding:0.25rem;border-radius:30px;scrollbar-width:none;}
+  .filters{display:flex;gap:0.3rem;background:var(--bg2);padding:0.25rem;border-radius:30px;flex-shrink:0;}
+  .filter-btn-arrow{background:none;border:none;color:var(--muted);width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;cursor:pointer;border-radius:50%;transition:all 0.2s;flex-shrink:0;}
+  .filter-btn-arrow:hover{background:var(--bg);color:var(--black);}
   .filters::-webkit-scrollbar{display:none;}
   .filter-btn{background:none;border:none;color:var(--muted);padding:0.4rem 0.9rem;font-family:'DM Sans',sans-serif;font-size:0.68rem;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;white-space:nowrap;transition:all 0.2s;border-radius:20px;}
   .filter-btn:hover{color:var(--black);}
   .filter-btn.active{background:var(--black);color:var(--bg);}
-  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);}
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;background:var(--bg);padding:0 1.5rem;}
   .grid-bottom-spacer{height:5rem;background:var(--bg);}
   .pagination{display:flex;align-items:center;justify-content:center;gap:0.4rem;padding:2rem 1rem 1rem;background:var(--bg);flex-wrap:wrap;}
   .pagination button{background:none;border:1px solid var(--border);color:var(--black);width:34px;height:34px;font-family:'DM Sans',sans-serif;font-size:0.78rem;cursor:pointer;transition:all 0.2s;border-radius:2px;}
@@ -620,8 +621,8 @@
   .pagination button:disabled{opacity:0.35;cursor:not-allowed;}
   .pagination-arrow{font-size:0.9rem;}
   .pagination-dots{color:var(--muted);padding:0 0.2rem;font-size:0.8rem;}
-  .product-card{background:var(--bg);overflow:hidden;cursor:pointer;transition:opacity 0.15s;}
-  .product-card:hover{opacity:0.92;}
+  .product-card{background:var(--bg);overflow:hidden;cursor:pointer;transition:all 0.15s;border:1px solid var(--border);}
+  .product-card:hover{box-shadow:0 4px 14px rgba(26,22,18,0.08);opacity:0.96;}
   .card-gallery{position:relative;aspect-ratio:3/4;background:var(--bg2);overflow:hidden;}
   /* old gallery rule removed */
   
@@ -810,7 +811,7 @@
     .filter-btn{padding:0.3rem 0.8rem;font-size:0.65rem;}
 
     /* GRID - 2 columns on mobile */
-    .grid{grid-template-columns:repeat(2,1fr);}
+    .grid{grid-template-columns:repeat(2,1fr);gap:0.9rem;padding:0 1rem;}
     .product-name{font-size:0.82rem;}
     .product-price{font-size:1.15rem;}
     .product-info{padding:0.7rem 0.8rem 1rem;}
@@ -1845,15 +1846,46 @@ window.filterCat = function(cat) {
   renderGrid();
 };
 
+let catDisplayIndex = 0;
+const CATS_VISIBLE = 3;
+
 function renderFilters() {
   const bar = document.getElementById('filterBar');
   const nav = document.getElementById('navCats');
   const cats = getCategories();
-  bar.innerHTML = '<button class="filter-btn' + (currentFilter==='all'?' active':'') + '" onclick="filterCat(\'all\',this)">Todos</button>';
-  cats.forEach(c => { bar.innerHTML += '<button class="filter-btn' + (currentFilter===c?' active':'') + '" onclick="filterCat(\'' + c + '\',this)">' + c + '</button>'; });
+  const allCats = ['all'].concat(cats); // 'all' represents "Todos"
+
+  // If current filter isn't in the visible window, jump window to show it
+  const activeIdx = allCats.indexOf(currentFilter);
+  if(activeIdx !== -1 && (activeIdx < catDisplayIndex || activeIdx >= catDisplayIndex + CATS_VISIBLE)) {
+    catDisplayIndex = Math.floor(activeIdx / CATS_VISIBLE) * CATS_VISIBLE;
+  }
+  if(catDisplayIndex >= allCats.length) catDisplayIndex = 0;
+
+  const visible = allCats.slice(catDisplayIndex, catDisplayIndex + CATS_VISIBLE);
+  const hasMore = allCats.length > CATS_VISIBLE;
+
+  bar.innerHTML = visible.map(function(c) {
+    const label = c === 'all' ? 'Todos' : c;
+    const val = c === 'all' ? 'all' : c;
+    return '<button class="filter-btn' + (currentFilter===val?' active':'') + '" onclick="filterCat(\'' + val + '\',this)">' + label + '</button>';
+  }).join('');
+
+  if(hasMore) {
+    bar.innerHTML += '<button class="filter-btn-arrow" onclick="window.cycleCategories()" title="Ver más categorías">›</button>';
+  }
+
   nav.innerHTML = '<li><a class="' + (currentFilter==='all'?'active':'') + '" onclick="filterCat(\'all\',this)">Todo</a></li>';
   cats.forEach(c => { nav.innerHTML += '<li><a class="' + (currentFilter===c?'active':'') + '" onclick="filterCat(\'' + c + '\',this)">' + c + '</a></li>'; });
 }
+
+window.cycleCategories = function() {
+  const cats = getCategories();
+  const total = cats.length + 1; // +1 for "Todos"
+  catDisplayIndex += CATS_VISIBLE;
+  if(catDisplayIndex >= total) catDisplayIndex = 0;
+  renderFilters();
+};
 
 function applyAllFilters() {
   let filtered = currentFilter === 'all' ? products.slice() : products.filter(p => p.cat === currentFilter);
