@@ -868,6 +868,10 @@
           <input type="text" id="profilePhone" placeholder="Ej: +54 9 11 1234-5678" style="width:100%;background:var(--bg);border:1px solid var(--border);padding:0.5rem 0.7rem;font-family:'DM Sans',sans-serif;font-size:0.82rem;color:var(--black);">
         </div>
       </div>
+      <div style="margin-bottom:0.8rem;">
+        <label style="font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:0.3rem;">WhatsApp 📲</label>
+        <input type="tel" id="profileWhatsapp" placeholder="Ej: +54 9 11 1234-5678" style="width:100%;background:var(--bg);border:1px solid var(--border);padding:0.5rem 0.7rem;font-family:'DM Sans',sans-serif;font-size:0.82rem;color:var(--black);">
+      </div>
       <div style="display:grid;grid-template-columns:2fr 1fr;gap:0.8rem;margin-bottom:0.8rem;">
         <div>
           <label style="font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:0.3rem;">Calle</label>
@@ -941,6 +945,14 @@
       <!-- STEP 2: DELIVERY -->
       <div id="checkout-step-2" style="display:none">
         <div class="section-label">Entrega</div>
+
+        <!-- WHATSAPP OBLIGATORIO -->
+        <div style="margin-bottom:1.2rem;padding:0.9rem 1rem;background:var(--bg2);border:1px solid var(--border);">
+          <label style="font-size:0.68rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:0.4rem;">📲 WhatsApp <span style="color:#ef4444">*</span></label>
+          <input type="tel" id="checkoutWhatsapp" placeholder="Ej: +54 9 11 1234-5678" style="width:100%;background:var(--bg);border:1px solid var(--border);padding:0.5rem 0.7rem;font-family:'DM Sans',sans-serif;font-size:0.82rem;color:var(--black);">
+          <div style="font-size:0.65rem;color:var(--muted);margin-top:0.3rem;">Lo usamos para coordinar el envío y avisarte el estado de tu pedido.</div>
+        </div>
+
         <div class="shipping-calc">
           <label>Código Postal</label>
           <div class="shipping-input-row">
@@ -2295,6 +2307,7 @@ window.loadProfile = async function() {
         const f = function(id, val) { var el = document.getElementById(id); if(el && val) el.value = val; };
         f('profileName',   data.displayName || currentUser.displayName || '');
         f('profilePhone',  data.phone || '');
+        f('profileWhatsapp', data.whatsapp || '');
         f('profileStreet', a.street || '');
         f('profileNum',    a.num || '');
         f('profileBarrio', a.barrio || '');
@@ -2311,6 +2324,7 @@ window.saveProfile = async function() {
   const profileData = {
     displayName: g('profileName'),
     phone: g('profilePhone'),
+    whatsapp: g('profileWhatsapp'),
     address: {
       street: g('profileStreet'),
       num:    g('profileNum'),
@@ -3056,8 +3070,20 @@ window.goCheckoutStep = function(step) {
   currentCheckoutStep = step;
   renderCheckoutStep(step);
   window.scrollTo(0,0);
-  // Push a history entry for each checkout step so browser back works correctly
   safePush({ view: 'checkout', step: step }, '/checkout');
+  // Autocompletar WhatsApp si el usuario ya lo tiene guardado
+  if(step === 2 && currentUser) {
+    var waField = document.getElementById('checkoutWhatsapp');
+    if(waField && !waField.value) {
+      getDocs(collection(db, 'users')).then(function(snap){
+        snap.forEach(function(d){
+          if(d.id === currentUser.uid && (d.data().whatsapp || d.data().phone)) {
+            waField.value = d.data().whatsapp || d.data().phone || '';
+          }
+        });
+      }).catch(function(){});
+    }
+  }
 };
 
 function renderCheckoutStep(step) {
@@ -3344,6 +3370,14 @@ window.pickShipping = function(el, id, precio, name, date, gratis) {
 };
 
 window.saveShipping = function() {
+  // Validar WhatsApp obligatorio
+  var wa = document.getElementById('checkoutWhatsapp') ? document.getElementById('checkoutWhatsapp').value.trim() : '';
+  if(!wa) {
+    showToast('Ingresá tu número de WhatsApp para continuar');
+    document.getElementById('checkoutWhatsapp').focus();
+    return;
+  }
+
   if(!selectedShipping) { showToast('Seleccioná una opción de envío'); return; }
   var street = document.getElementById('addressStreet') ? document.getElementById('addressStreet').value.trim() : '';
   var num = document.getElementById('addressNum') ? document.getElementById('addressNum').value.trim() : '';
@@ -3354,10 +3388,12 @@ window.saveShipping = function() {
     return;
   }
   selectedShipping.address = street + ' ' + num + (floor ? ' ' + floor : '') + ', ' + city;
-  // Save address for logged-in users
+  selectedShipping.userPhone = wa; // guardar WA en el shipping
+  // Save address + WhatsApp for logged-in users
   if(currentUser) {
     try {
       setDoc(doc(db, 'users', currentUser.uid), {
+        whatsapp: wa,
         address: { street, num, floor, city, cp: document.getElementById('cpInput') ? document.getElementById('cpInput').value : '' }
       }, { merge: true });
     } catch(e) {}
@@ -3393,6 +3429,79 @@ window.switchPaymentTab = function(tab, btn) {
   if(btn) btn.classList.add('active');
   const panel = document.getElementById('payTab' + tab.charAt(0).toUpperCase() + tab.slice(1));
   if(panel) panel.classList.add('active');
+};
+
+// ── FINALIZAR COMPRA ───────────────────────────────────────
+window.finalizarCompra = async function() {
+  if(!selectedPayment) { showToast('Seleccioná un método de pago'); return; }
+  if(!selectedShipping) { showToast('Seleccioná una opción de envío'); return; }
+
+  var userWhatsapp = '';
+  // Primero del campo del checkout (más fresco)
+  var waField = document.getElementById('checkoutWhatsapp');
+  if(waField && waField.value.trim()) {
+    userWhatsapp = waField.value.trim();
+  } else if(currentUser) {
+    try {
+      const snap = await getDocs(collection(db, 'users'));
+      snap.forEach(function(d){
+        if(d.id === currentUser.uid) userWhatsapp = d.data().whatsapp || d.data().phone || '';
+      });
+    } catch(e) {}
+  }
+
+  const subtotal = getCartTotal();
+  const pct = paymentConfig.transferPct || 20;
+  const finalTotal = selectedPayment === 'transferencia'
+    ? Math.round((subtotal + shippingCost) * (1 - pct/100))
+    : subtotal + shippingCost;
+
+  const orderId = 'NS-' + Date.now().toString(36).toUpperCase();
+  const guestEmail = document.getElementById('guestEmail') ? document.getElementById('guestEmail').value.trim() : '';
+
+  const orderData = {
+    orderId,
+    uid: currentUser ? currentUser.uid : null,
+    userName: currentUser ? (currentUser.displayName || currentUser.email) : 'Visitante',
+    userEmail: currentUser ? currentUser.email : guestEmail,
+    userPhone: userWhatsapp,
+    items: cart.map(function(i){ return { name:i.name, size:i.size, color:i.color, price:i.price, qty:i.qty, imgUrl:(i.imgs&&i.imgs[0])?i.imgs[0].url:'' }; }),
+    payment: selectedPayment,
+    shipping: selectedShipping,
+    total: finalTotal,
+    transferDiscount: selectedPayment === 'transferencia' ? Math.round((subtotal + shippingCost) * pct/100) : 0,
+    coupon: appliedCoupon ? appliedCoupon.code : null,
+    status: 'pendiente',
+    orderType: 'checkout_carrito',
+    createdAt: Date.now()
+  };
+
+  try {
+    await addDoc(collection(db, 'orders'), orderData);
+    appliedCoupon = null;
+    cart = [];
+    saveCart();
+    updateCartBadge();
+    showToast('✅ Pedido confirmado — ' + orderId);
+
+    if(selectedShipping && selectedShipping.aCotizar) {
+      const waNum = (waConfig && waConfig.number) ? waConfig.number : '5491100000000';
+      const waMsg = '¡Hola! Acabo de hacer un pedido en Northside.\n\n📦 *Número de pedido: ' + orderId + '*\n\nQuedo esperando para coordinar el envío por Andreani. ¡Gracias!';
+      setTimeout(function() {
+        document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
+        document.getElementById('viewHome').classList.add('active');
+        window.open('https://wa.me/' + waNum + '?text=' + encodeURIComponent(waMsg), '_blank');
+      }, 600);
+    } else {
+      setTimeout(function() {
+        document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
+        document.getElementById('viewHome').classList.add('active');
+      }, 500);
+    }
+  } catch(e) {
+    console.error(e);
+    showToast('Error al confirmar el pedido. Intentá de nuevo.');
+  }
 };
 
 window.goPayTab = function() {
