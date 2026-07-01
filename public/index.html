@@ -560,13 +560,22 @@
   .local-status-text{font-size:0.72rem;letter-spacing:0.16em;text-transform:uppercase;color:var(--muted);}
   .local-status-text strong{color:var(--black);font-weight:600;}
 
-  /* GENDER TOGGLE + FILTER BAR */
-  .gender-filter-bar{display:flex;align-items:center;justify-content:space-between;padding:0.9rem 2rem;border-bottom:1px solid var(--border);gap:1rem;flex-wrap:wrap;}
-  .gender-toggle{display:flex;gap:0.4rem;background:var(--bg2);padding:0.25rem;border-radius:30px;}
-  .gender-toggle button{background:none;border:none;padding:0.4rem 1.1rem;font-family:'DM Sans',sans-serif;font-size:0.7rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);cursor:pointer;border-radius:20px;transition:all 0.2s;}
+  /* GENDER TOGGLE + FILTER BAR — FLOATING PILL */
+  .gender-filter-bar{
+    position:fixed;left:50%;bottom:1.5rem;transform:translateX(-50%) translateY(0);
+    display:flex;align-items:center;gap:0.6rem;
+    background:var(--bg);border-radius:40px;padding:0.4rem 0.5rem 0.4rem 0.9rem;
+    box-shadow:0 6px 24px rgba(26,22,18,0.18);
+    z-index:150;transition:transform 0.35s ease, opacity 0.35s ease;
+    opacity:1;
+  }
+  .gender-filter-bar.hidden-scroll{transform:translateX(-50%) translateY(140%);opacity:0;pointer-events:none;}
+  .gender-filter-bar .filters{max-width:320px;}
+  .gender-toggle{display:flex;gap:0.3rem;background:var(--bg2);padding:0.25rem;border-radius:30px;flex-shrink:0;}
+  .gender-toggle button{background:none;border:none;padding:0.4rem 0.9rem;font-family:'DM Sans',sans-serif;font-size:0.68rem;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);cursor:pointer;border-radius:20px;transition:all 0.2s;white-space:nowrap;}
   .gender-toggle button.active{background:var(--black);color:var(--bg);}
-  .btn-filtrar{display:flex;align-items:center;gap:0.5rem;background:var(--black);color:var(--bg);border:none;padding:0.55rem 1.2rem;font-family:'DM Sans',sans-serif;font-size:0.7rem;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;border-radius:30px;white-space:nowrap;}
-  .btn-filtrar svg{width:15px;height:15px;}
+  .btn-filtrar{display:flex;align-items:center;gap:0.4rem;background:var(--black);color:var(--bg);border:none;padding:0.55rem 1.1rem;font-family:'DM Sans',sans-serif;font-size:0.68rem;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;border-radius:30px;white-space:nowrap;flex-shrink:0;}
+  .btn-filtrar svg{width:14px;height:14px;}
   .filter-active-badge{background:var(--warm);color:#fff;border-radius:50%;width:16px;height:16px;font-size:0.6rem;display:flex;align-items:center;justify-content:center;font-weight:700;}
 
   .filter-drawer-overlay{display:none;position:fixed;inset:0;background:rgba(26,22,18,0.5);z-index:500;}
@@ -589,13 +598,20 @@
   .btn-apply-filters{background:var(--black);border:none;color:var(--bg);}
 
   @media(max-width:768px){
-    .gender-filter-bar{padding:0.8rem 1rem;}
+    .gender-filter-bar{bottom:1rem;padding:0.35rem 0.4rem 0.35rem 0.7rem;gap:0.4rem;}
+    .gender-filter-bar .filters{max-width:150px;}
+    .gender-toggle button{padding:0.35rem 0.6rem;font-size:0.6rem;}
+    .btn-filtrar{padding:0.5rem 0.8rem;font-size:0.6rem;}
+    .btn-filtrar span.filtrar-text{display:none;}
     .filter-drawer{width:100vw;}
   }
 
-  .filter-btn{background:transparent;border:1px solid var(--border);color:var(--muted);padding:0.35rem 1rem;font-family:'DM Sans',sans-serif;font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;white-space:nowrap;transition:all 0.2s;}
-  .filter-btn:hover,.filter-btn.active{border-color:var(--black);color:var(--black);background:var(--bg2);}
-  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);}
+  .filters{display:flex;gap:0.3rem;overflow-x:auto;background:var(--bg2);padding:0.25rem;border-radius:30px;scrollbar-width:none;}
+  .filters::-webkit-scrollbar{display:none;}
+  .filter-btn{background:none;border:none;color:var(--muted);padding:0.4rem 0.9rem;font-family:'DM Sans',sans-serif;font-size:0.68rem;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;white-space:nowrap;transition:all 0.2s;border-radius:20px;}
+  .filter-btn:hover{color:var(--black);}
+  .filter-btn.active{background:var(--black);color:var(--bg);}
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);padding-bottom:5rem;}
   .product-card{background:var(--bg);overflow:hidden;cursor:pointer;transition:opacity 0.15s;}
   .product-card:hover{opacity:0.92;}
   .card-gallery{position:relative;aspect-ratio:3/4;background:var(--bg2);overflow:hidden;}
@@ -784,8 +800,6 @@
     /* FILTERS */
     .filters{padding:0;gap:0.4rem;}
     .filter-btn{padding:0.3rem 0.8rem;font-size:0.65rem;}
-    .gender-filter-bar{flex-direction:column;align-items:stretch;gap:0.8rem;}
-    .gender-filter-bar > div:first-child{flex-direction:column;align-items:stretch;}
 
     /* GRID - 2 columns on mobile */
     .grid{grid-template-columns:repeat(2,1fr);}
@@ -886,20 +900,12 @@
     <div class="local-status-text">Local presencial · <strong id="localStatusLabel">—</strong></div>
   </div>
 
-  <!-- CATEGORIAS + GENDER TOGGLE + FILTRAR Y ORDENAR -->
-  <div class="gender-filter-bar">
-    <div style="display:flex;align-items:center;gap:0.8rem;flex-wrap:wrap;">
-      <div class="filters" id="filterBar"></div>
-      <div class="gender-toggle" id="genderToggle">
-        <button class="active" data-g="all" onclick="window.setGenderFilter('all',this)">Ver todos</button>
-        <button data-g="woman" onclick="window.setGenderFilter('woman',this)">Woman</button>
-        <button data-g="man" onclick="window.setGenderFilter('man',this)">Man</button>
-        <button data-g="unisex" onclick="window.setGenderFilter('unisex',this)">Unisex</button>
-      </div>
-    </div>
+  <!-- CATEGORIAS + FILTRAR Y ORDENAR (FLOATING) -->
+  <div class="gender-filter-bar" id="genderFilterBar">
+    <div class="filters" id="filterBar"></div>
     <button class="btn-filtrar" onclick="window.openFilterDrawer()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="7" y1="12" x2="17" y2="12"/><line x1="10" y1="18" x2="14" y2="18"/></svg>
-      Filtrar y ordenar
+      <span class="filtrar-text">Filtrar</span>
       <span class="filter-active-badge" id="filterActiveBadge" style="display:none">0</span>
     </button>
   </div>
@@ -922,6 +928,13 @@
         <label class="filter-radio-row"><input type="radio" name="sortMode" value="az" onchange="window.setSortMode(this.value)">A - Z</label>
         <label class="filter-radio-row"><input type="radio" name="sortMode" value="za" onchange="window.setSortMode(this.value)">Z - A</label>
         <label class="filter-radio-row"><input type="radio" name="sortMode" value="newest" onchange="window.setSortMode(this.value)">Más Nuevo al Más Viejo</label>
+      </div>
+      <div class="filter-section">
+        <div class="filter-section-title">Género</div>
+        <label class="filter-radio-row"><input type="radio" name="genderMode" value="all" checked onchange="window.setGenderFilter(this.value)">Todos</label>
+        <label class="filter-radio-row"><input type="radio" name="genderMode" value="woman" onchange="window.setGenderFilter(this.value)">Woman</label>
+        <label class="filter-radio-row"><input type="radio" name="genderMode" value="man" onchange="window.setGenderFilter(this.value)">Man</label>
+        <label class="filter-radio-row"><input type="radio" name="genderMode" value="unisex" onchange="window.setGenderFilter(this.value)">Unisex</label>
       </div>
       <div class="filter-section">
         <div class="filter-section-title">Categorías</div>
@@ -1862,10 +1875,9 @@ function applyAllFilters() {
   return filtered;
 }
 
-window.setGenderFilter = function(g, el) {
+window.setGenderFilter = function(g) {
   genderFilter = g;
-  document.querySelectorAll('#genderToggle button').forEach(function(b){ b.classList.remove('active'); });
-  if(el) el.classList.add('active');
+  updateFilterBadge();
   renderGrid();
 };
 
@@ -1890,8 +1902,11 @@ window.clearFilters = function() {
   activeCatFilters = [];
   activeSizeFilters = [];
   sortMode = 'destacado';
+  genderFilter = 'all';
   var radio = document.querySelector('input[name="sortMode"][value="destacado"]');
   if(radio) radio.checked = true;
+  var genderRadio = document.querySelector('input[name="genderMode"][value="all"]');
+  if(genderRadio) genderRadio.checked = true;
   renderFilterOptions();
   renderGrid();
 };
@@ -1909,7 +1924,7 @@ window.toggleSizeFilter = function(size, checked) {
 };
 
 function updateFilterBadge() {
-  var total = activeCatFilters.length + activeSizeFilters.length;
+  var total = activeCatFilters.length + activeSizeFilters.length + (genderFilter !== 'all' ? 1 : 0);
   var badge = document.getElementById('filterActiveBadge');
   if(badge) {
     badge.style.display = total > 0 ? 'flex' : 'none';
@@ -1939,6 +1954,9 @@ function renderFilterOptions() {
     return '<label class="filter-check-row"><input type="checkbox" ' + (checked?'checked':'') + ' onchange="window.toggleSizeFilter(\'' + s + '\',this.checked)">' + s + '</label>';
   }).join('');
 
+  var genderRadio = document.querySelector('input[name="genderMode"][value="' + genderFilter + '"]');
+  if(genderRadio) genderRadio.checked = true;
+
   updateFilterBadge();
 }
 
@@ -1946,7 +1964,7 @@ function renderGrid() {
   const grid = document.getElementById('productGrid');
   const filtered = applyAllFilters();
   if (!filtered.length) {
-    grid.innerHTML = '<div class="empty-state"><span class="emoji-img">🧥</span><p>No hay productos todavía</p><button onclick="openAdmin()">Agregar primer producto</button></div>';
+    grid.innerHTML = '<div class="empty-state"><span class="emoji-img">🧥</span><p>No hay productos todavía</p></div>';
     return;
   }
   grid.innerHTML = filtered.map(function(p) {
@@ -2609,6 +2627,37 @@ window.loadOrdersList = async function() {
   });
   list.innerHTML = html;
 };
+
+// ── FLOATING FILTER BAR: hide on scroll down, show on scroll up ──
+(function() {
+  var lastScrollY = window.scrollY || 0;
+  var bar = null;
+  var ticking = false;
+
+  function onScroll() {
+    if(!bar) bar = document.getElementById('genderFilterBar');
+    if(!bar) return;
+    var currentY = window.scrollY || 0;
+    var diff = currentY - lastScrollY;
+
+    if(currentY < 80) {
+      bar.classList.remove('hidden-scroll');
+    } else if(diff > 4) {
+      bar.classList.add('hidden-scroll');
+    } else if(diff < -4) {
+      bar.classList.remove('hidden-scroll');
+    }
+    lastScrollY = currentY;
+    ticking = false;
+  }
+
+  window.addEventListener('scroll', function() {
+    if(!ticking) {
+      requestAnimationFrame(onScroll);
+      ticking = true;
+    }
+  }, { passive: true });
+})();
 
 window.loginGoogle = async function() {
   try {
