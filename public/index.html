@@ -3051,6 +3051,16 @@ function updateCartBadge() {
 let currentCheckoutStep = 1;
 let selectedShipping = null;
 let selectedPayment = null;
+
+window.selectPayment = function(method, el) {
+  selectedPayment = method;
+  document.querySelectorAll('.payment-option').forEach(function(o){ o.classList.remove('selected'); });
+  if(el) el.classList.add('selected');
+  // Mark radio
+  var radio = el ? el.querySelector('input[type="radio"]') : null;
+  if(radio) radio.checked = true;
+  renderSummary();
+};
 let shippingCost = 0;
 
 window.openCheckout = function() {
