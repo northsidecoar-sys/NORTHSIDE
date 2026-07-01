@@ -1861,8 +1861,14 @@ function renderFilters() {
 
   const visible = allCats.slice(catDisplayIndex, catDisplayIndex + CATS_VISIBLE);
   const hasMore = allCats.length > CATS_VISIBLE;
+  const hasPrev = catDisplayIndex > 0;
 
-  bar.innerHTML = visible.map(function(c) {
+  bar.innerHTML = '';
+  if(hasPrev) {
+    bar.innerHTML += '<button class="filter-btn-arrow" onclick="window.cyclePrevCategories()" title="Ver categorías anteriores">‹</button>';
+  }
+
+  bar.innerHTML += visible.map(function(c) {
     const label = c === 'all' ? 'Todos' : c;
     const val = c === 'all' ? 'all' : c;
     return '<button class="filter-btn' + (currentFilter===val?' active':'') + '" onclick="filterCat(\'' + val + '\',this)">' + label + '</button>';
@@ -1890,6 +1896,12 @@ window.cycleCategories = function() {
   const total = cats.length + 1; // +1 for "Todos"
   catDisplayIndex += CATS_VISIBLE;
   if(catDisplayIndex >= total) catDisplayIndex = 0;
+  renderFilters();
+};
+
+window.cyclePrevCategories = function() {
+  catDisplayIndex -= CATS_VISIBLE;
+  if(catDisplayIndex < 0) catDisplayIndex = 0;
   renderFilters();
 };
 
