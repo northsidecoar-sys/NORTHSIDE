@@ -860,12 +860,12 @@
       <div style="font-size:0.65rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);margin-bottom:1rem;">Mi perfil</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;margin-bottom:0.8rem;">
         <div>
-          <label style="font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:0.3rem;">Nombre</label>
-          <input type="text" id="profileName" placeholder="Tu nombre" style="width:100%;background:var(--bg);border:1px solid var(--border);padding:0.5rem 0.7rem;font-family:'DM Sans',sans-serif;font-size:0.82rem;color:var(--black);">
+          <label style="font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:0.3rem;">Nombre y apellido</label>
+          <input type="text" id="profileName" placeholder="Tu nombre y apellido" style="width:100%;background:var(--bg);border:1px solid var(--border);padding:0.5rem 0.7rem;font-family:'DM Sans',sans-serif;font-size:0.82rem;color:var(--black);">
         </div>
         <div>
-          <label style="font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:0.3rem;">Teléfono</label>
-          <input type="text" id="profilePhone" placeholder="Ej: +54 9 11 1234-5678" style="width:100%;background:var(--bg);border:1px solid var(--border);padding:0.5rem 0.7rem;font-family:'DM Sans',sans-serif;font-size:0.82rem;color:var(--black);">
+          <label style="font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:0.3rem;">Email</label>
+          <input type="email" id="profileEmail" placeholder="tu@email.com" style="width:100%;background:var(--bg);border:1px solid var(--border);padding:0.5rem 0.7rem;font-family:'DM Sans',sans-serif;font-size:0.82rem;color:var(--black);">
         </div>
       </div>
       <div style="margin-bottom:0.8rem;">
@@ -2306,7 +2306,7 @@ window.loadProfile = async function() {
         const a = data.address || {};
         const f = function(id, val) { var el = document.getElementById(id); if(el && val) el.value = val; };
         f('profileName',   data.displayName || currentUser.displayName || '');
-        f('profilePhone',  data.phone || '');
+        f('profileEmail',  data.contactEmail || currentUser.email || '');
         f('profileWhatsapp', data.whatsapp || '');
         f('profileStreet', a.street || '');
         f('profileNum',    a.num || '');
@@ -2323,7 +2323,7 @@ window.saveProfile = async function() {
   const g = function(id) { var el = document.getElementById(id); return el ? el.value.trim() : ''; };
   const profileData = {
     displayName: g('profileName'),
-    phone: g('profilePhone'),
+    contactEmail: g('profileEmail'),
     whatsapp: g('profileWhatsapp'),
     address: {
       street: g('profileStreet'),
