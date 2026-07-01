@@ -2325,6 +2325,8 @@ window.saveProfile = async function() {
     if(msg) { msg.style.display = 'inline'; setTimeout(function(){ msg.style.display = 'none'; }, 2500); }
   } catch(e) { showToast('Error al guardar'); }
 };
+
+async function loadUserOrders(uid) {
   const q = query(collection(db, 'orders'), where('uid', '==', uid));
   const snap = await getDocs(q);
   const orders = [];
