@@ -430,6 +430,38 @@
   .btn-logout{background:none;border:none;color:var(--muted);font-size:0.7rem;cursor:pointer;letter-spacing:0.06em;text-transform:uppercase;padding:0;transition:color 0.2s;}
   .btn-logout:hover{color:var(--black);}
   /* ORDERS VIEW */
+  /* ACCOUNT LAYOUT */
+  .account-layout{display:grid;grid-template-columns:200px 1fr;min-height:80vh;border-top:1px solid var(--border);}
+  .account-sidebar{border-right:1px solid var(--border);padding:2rem 0;display:flex;flex-direction:column;}
+  .account-title{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:0.12em;padding:0 1.5rem;margin-bottom:1.5rem;color:var(--black);}
+  .account-nav{display:flex;flex-direction:column;flex:1;}
+  .account-nav-item{background:none;border:none;text-align:left;padding:0.7rem 1.5rem;font-family:'DM Sans',sans-serif;font-size:0.78rem;letter-spacing:0.04em;color:var(--muted);cursor:pointer;transition:all 0.15s;border-left:2px solid transparent;}
+  .account-nav-item:hover{color:var(--black);background:var(--bg2);}
+  .account-nav-item.active{color:var(--black);font-weight:600;border-left-color:var(--black);background:var(--bg2);}
+  .account-content{padding:2rem 2.5rem;position:relative;overflow:hidden;}
+  .account-section-title{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:0.1em;margin-bottom:1.5rem;color:var(--black);border-bottom:1px solid var(--border);padding-bottom:0.6rem;}
+  .account-label{font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:0.3rem;}
+  .account-input{width:100%;background:var(--bg);border:1px solid var(--border);padding:0.5rem 0.7rem;font-family:'DM Sans',sans-serif;font-size:0.82rem;color:var(--black);}
+  .account-btn{background:var(--black);color:var(--bg);border:none;padding:0.6rem 1.4rem;font-family:'DM Sans',sans-serif;font-size:0.72rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;transition:opacity 0.2s;}
+  .account-btn:hover{opacity:0.8;}
+  .account-btn-sec{background:none;border:1px solid var(--border);color:var(--black);padding:0.55rem 1.2rem;font-family:'DM Sans',sans-serif;font-size:0.72rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;transition:all 0.2s;}
+  .account-btn-sec:hover{border-color:var(--black);}
+  .account-tab{display:none;}
+  .account-tab.active{display:block;}
+  .address-card{padding:1rem;border:1px solid var(--border);background:var(--bg);display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;}
+  .address-card.default{border-color:var(--black);}
+  .address-card-label{font-size:0.6rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:0.25rem;}
+  .address-card-text{font-size:0.82rem;color:var(--black);line-height:1.5;}
+  .address-card-badge{font-size:0.6rem;background:var(--black);color:var(--bg);padding:0.15rem 0.5rem;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.4rem;display:inline-block;}
+  @media(max-width:768px){
+    .account-layout{grid-template-columns:1fr;}
+    .account-sidebar{border-right:none;border-bottom:1px solid var(--border);padding:1rem 0;}
+    .account-nav{flex-direction:row;overflow-x:auto;}
+    .account-nav-item{white-space:nowrap;border-left:none;border-bottom:2px solid transparent;}
+    .account-nav-item.active{border-left:none;border-bottom-color:var(--black);}
+    .account-content{padding:1.5rem 1rem;}
+  }
+
   .orders-back{display:flex;align-items:center;gap:0.5rem;padding:1rem 2rem;border-bottom:1px solid var(--border);cursor:pointer;font-size:0.75rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);transition:color 0.2s;background:var(--bg);}
   .orders-back:hover{color:var(--black);}
   .orders-body{max-width:680px;margin:0 auto;padding:2rem;}
@@ -864,61 +896,80 @@
 
 <div class="view" id="viewOrders">
   <div class="orders-back" onclick="window.showHome()">← Volver al catálogo</div>
-  <div class="orders-body">
-    <!-- PERFIL EDITABLE -->
-    <div id="profileSection" style="margin-bottom:2rem;padding:1.5rem;border:1px solid var(--border);background:var(--bg2);position:relative;overflow:hidden;">
-      <div style="font-size:0.65rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);margin-bottom:1rem;">Mi perfil</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;margin-bottom:0.8rem;">
-        <div>
-          <label style="font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:0.3rem;">Nombre y apellido</label>
-          <input type="text" id="profileName" placeholder="Tu nombre y apellido" style="width:100%;background:var(--bg);border:1px solid var(--border);padding:0.5rem 0.7rem;font-family:'DM Sans',sans-serif;font-size:0.82rem;color:var(--black);">
-        </div>
-        <div>
-          <label style="font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:0.3rem;">Email</label>
-          <input type="email" id="profileEmail" placeholder="tu@email.com" style="width:100%;background:var(--bg);border:1px solid var(--border);padding:0.5rem 0.7rem;font-family:'DM Sans',sans-serif;font-size:0.82rem;color:var(--black);">
-        </div>
-      </div>
-      <div style="margin-bottom:0.8rem;">
-        <label style="font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:0.3rem;">WhatsApp 📲</label>
-        <input type="tel" id="profileWhatsapp" placeholder="Ej: +54 9 11 1234-5678" style="width:100%;background:var(--bg);border:1px solid var(--border);padding:0.5rem 0.7rem;font-family:'DM Sans',sans-serif;font-size:0.82rem;color:var(--black);">
-      </div>
-      <div style="display:grid;grid-template-columns:2fr 1fr;gap:0.8rem;margin-bottom:0.8rem;">
-        <div>
-          <label style="font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:0.3rem;">Calle</label>
-          <input type="text" id="profileStreet" placeholder="Nombre de la calle" style="width:100%;background:var(--bg);border:1px solid var(--border);padding:0.5rem 0.7rem;font-family:'DM Sans',sans-serif;font-size:0.82rem;color:var(--black);">
-        </div>
-        <div>
-          <label style="font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:0.3rem;">Número</label>
-          <input type="text" id="profileNum" placeholder="1234" style="width:100%;background:var(--bg);border:1px solid var(--border);padding:0.5rem 0.7rem;font-family:'DM Sans',sans-serif;font-size:0.82rem;color:var(--black);">
-        </div>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.8rem;margin-bottom:1rem;">
-        <div>
-          <label style="font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:0.3rem;">Barrio</label>
-          <input type="text" id="profileBarrio" placeholder="Barrio" style="width:100%;background:var(--bg);border:1px solid var(--border);padding:0.5rem 0.7rem;font-family:'DM Sans',sans-serif;font-size:0.82rem;color:var(--black);">
-        </div>
-        <div>
-          <label style="font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:0.3rem;">Ciudad</label>
-          <input type="text" id="profileCity" placeholder="Ciudad" style="width:100%;background:var(--bg);border:1px solid var(--border);padding:0.5rem 0.7rem;font-family:'DM Sans',sans-serif;font-size:0.82rem;color:var(--black);">
-        </div>
-        <div>
-          <label style="font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:0.3rem;">Piso / Depto</label>
-          <input type="text" id="profileFloor" placeholder="Opcional" style="width:100%;background:var(--bg);border:1px solid var(--border);padding:0.5rem 0.7rem;font-family:'DM Sans',sans-serif;font-size:0.82rem;color:var(--black);">
-        </div>
-      </div>
-      <button onclick="window.saveProfile()" style="background:var(--black);color:var(--bg);border:none;padding:0.6rem 1.4rem;font-family:'DM Sans',sans-serif;font-size:0.72rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;">Guardar datos</button>
-      <span id="profileSaveMsg" style="display:none"></span>
+  <div class="account-layout">
 
-      <!-- NOTIFICACION GUARDAR PERFIL -->
-      <div id="profileSaveOverlay" style="display:none;position:absolute;inset:0;z-index:10;background:rgba(26,22,18,0.82);align-items:center;justify-content:center;">
-        <div id="profileSaveToast" style="color:#fff;font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:0.15em;text-align:center;opacity:0;transform:scale(0.85);transition:opacity 0.3s ease, transform 0.3s ease;">
-          ✓ DATOS GUARDADOS
-        </div>
+    <!-- SIDEBAR -->
+    <div class="account-sidebar">
+      <div class="account-title">MI CUENTA</div>
+      <div class="account-nav">
+        <button class="account-nav-item active" id="navPerfil" onclick="window.switchAccountTab('perfil')">Detalles de la cuenta</button>
+        <button class="account-nav-item" id="navDirecciones" onclick="window.switchAccountTab('direcciones')">Direcciones</button>
+        <button class="account-nav-item" id="navPedidos" onclick="window.switchAccountTab('pedidos')">Mis pedidos</button>
+        <button class="account-nav-item" id="navSalir" onclick="window.logoutGoogle()" style="color:var(--muted);margin-top:auto;">Cerrar sesión</button>
       </div>
     </div>
 
-    <div class="orders-title">Mis pedidos</div>
-    <div id="ordersList"></div>
+    <!-- CONTENIDO -->
+    <div class="account-content">
+
+      <!-- TAB: PERFIL -->
+      <div id="tabPerfil" class="account-tab active">
+        <div class="account-section-title">Detalles de la cuenta</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;margin-bottom:0.8rem;">
+          <div>
+            <label class="account-label">Nombre y apellido</label>
+            <input type="text" id="profileName" placeholder="Tu nombre y apellido" class="account-input">
+          </div>
+          <div>
+            <label class="account-label">Email</label>
+            <input type="email" id="profileEmail" placeholder="tu@email.com" class="account-input">
+          </div>
+        </div>
+        <div style="margin-bottom:1rem;">
+          <label class="account-label">WhatsApp 📲</label>
+          <input type="tel" id="profileWhatsapp" placeholder="Ej: +54 9 11 1234-5678" class="account-input" style="max-width:320px;">
+        </div>
+        <button onclick="window.saveProfile()" class="account-btn">Guardar cambios</button>
+        <span id="profileSaveMsg" style="display:none"></span>
+        <!-- NOTIFICACION -->
+        <div id="profileSaveOverlay" style="display:none;position:absolute;inset:0;z-index:10;background:rgba(26,22,18,0.82);align-items:center;justify-content:center;">
+          <div id="profileSaveToast" style="color:#fff;font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:0.15em;text-align:center;opacity:0;transform:scale(0.85);transition:opacity 0.3s ease, transform 0.3s ease;">✓ DATOS GUARDADOS</div>
+        </div>
+      </div>
+
+      <!-- TAB: DIRECCIONES -->
+      <div id="tabDirecciones" class="account-tab" style="display:none">
+        <div class="account-section-title">Mis direcciones</div>
+        <div id="addressList" style="margin-bottom:1.5rem;display:flex;flex-direction:column;gap:0.8rem;"></div>
+        <button onclick="window.showAddAddressForm()" class="account-btn-sec">+ Agregar nueva dirección</button>
+        <div id="addAddressForm" style="display:none;margin-top:1.2rem;padding:1.2rem;border:1px solid var(--border);background:var(--bg2);">
+          <div class="account-section-title" style="font-size:0.78rem;margin-bottom:0.8rem;">Nueva dirección</div>
+          <div style="display:grid;grid-template-columns:2fr 1fr;gap:0.5rem;margin-bottom:0.5rem;">
+            <input type="text" id="newStreet" placeholder="Calle *" class="account-input">
+            <input type="text" id="newNum" placeholder="Número *" class="account-input">
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-bottom:0.5rem;">
+            <input type="text" id="newBarrio" placeholder="Barrio *" class="account-input">
+            <input type="text" id="newCity" placeholder="Ciudad *" class="account-input">
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-bottom:0.8rem;">
+            <input type="text" id="newFloor" placeholder="Piso / Depto (opcional)" class="account-input">
+            <input type="text" id="newLabel" placeholder="Etiqueta (ej: Casa, Trabajo)" class="account-input">
+          </div>
+          <div style="display:flex;gap:0.6rem;">
+            <button onclick="window.saveNewAddress()" class="account-btn">Guardar dirección</button>
+            <button onclick="window.hideAddAddressForm()" class="account-btn-sec">Cancelar</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: PEDIDOS -->
+      <div id="tabPedidos" class="account-tab" style="display:none">
+        <div class="account-section-title">Mis pedidos</div>
+        <div id="ordersList"></div>
+      </div>
+
+    </div>
   </div>
 </div>
 
@@ -2197,20 +2248,149 @@ window.goToProfile = function() {
   var menu = document.getElementById('userDropdownMenu');
   if(menu) menu.classList.remove('open');
   window.showOrders();
-  setTimeout(function() {
-    var ps = document.getElementById('profileSection');
-    if(ps) ps.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, 200);
 };
 
 window.goToPedidos = function() {
   var menu = document.getElementById('userDropdownMenu');
   if(menu) menu.classList.remove('open');
-  window.showOrders();
-  setTimeout(function() {
-    var ol = document.getElementById('ordersList');
-    if(ol) ol.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, 400);
+  if(!currentUser) { showToast('Iniciá sesión primero'); return; }
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('viewOrders').classList.add('active');
+  window.scrollTo(0,0);
+  window.loadProfile();
+  window.switchAccountTab('pedidos');
+};
+
+
+// ── ACCOUNT TABS ─────────────────────────────────────────
+window.switchAccountTab = function(tab) {
+  ['perfil','direcciones','pedidos'].forEach(function(t) {
+    var tabEl = document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1));
+    var navEl = document.getElementById('nav' + t.charAt(0).toUpperCase() + t.slice(1));
+    if(tabEl) tabEl.style.display = t === tab ? 'block' : 'none';
+    if(navEl) navEl.classList.toggle('active', t === tab);
+  });
+  if(tab === 'pedidos') window.loadOrdersList();
+  if(tab === 'direcciones') window.loadAddressList();
+};
+
+// ── ADDRESSES ─────────────────────────────────────────────
+var userAddresses = []; // [{id, label, street, num, floor, barrio, city, isDefault}]
+
+window.loadAddressList = async function() {
+  if(!currentUser) return;
+  var listEl = document.getElementById('addressList');
+  if(!listEl) return;
+  try {
+    const snap = await getDocs(collection(db, 'users'));
+    snap.forEach(function(d){
+      if(d.id === currentUser.uid) {
+        userAddresses = d.data().addresses || [];
+        // migrate old single address
+        if(!userAddresses.length && d.data().address) {
+          var a = d.data().address;
+          userAddresses = [{id:'addr_0', label:'Principal', street:a.street||'', num:a.num||'', floor:a.floor||'', barrio:a.barrio||'', city:a.city||'', isDefault:true}];
+        }
+      }
+    });
+  } catch(e) {}
+  renderAddressList();
+};
+
+function renderAddressList() {
+  var listEl = document.getElementById('addressList');
+  if(!listEl) return;
+  if(!userAddresses.length) {
+    listEl.innerHTML = '<div style="font-size:0.82rem;color:var(--muted);">Todavía no tenés direcciones guardadas.</div>';
+    return;
+  }
+  listEl.innerHTML = userAddresses.map(function(a, i) {
+    return '<div class="address-card' + (a.isDefault ? ' default' : '') + '">' +
+      '<div>' +
+        (a.isDefault ? '<div class="address-card-badge">Predeterminada</div>' : '') +
+        '<div class="address-card-label">' + (a.label || 'Dirección ' + (i+1)) + '</div>' +
+        '<div class="address-card-text">' + a.street + ' ' + a.num + (a.floor ? ', ' + a.floor : '') + '<br>' + a.barrio + ', ' + a.city + '</div>' +
+      '</div>' +
+      '<div style="display:flex;flex-direction:column;gap:0.4rem;align-items:flex-end;">' +
+        (!a.isDefault ? '<button onclick="window.setDefaultAddress(' + i + ')" class="account-btn-sec" style="font-size:0.65rem;padding:0.35rem 0.7rem;">Predeterminar</button>' : '') +
+        '<button onclick="window.deleteAddress(' + i + ')" style="background:none;border:none;color:var(--muted);font-size:0.72rem;cursor:pointer;text-decoration:underline;">Eliminar</button>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+window.showAddAddressForm = function() {
+  var f = document.getElementById('addAddressForm');
+  if(f) f.style.display = 'block';
+};
+window.hideAddAddressForm = function() {
+  var f = document.getElementById('addAddressForm');
+  if(f) f.style.display = 'none';
+  ['newStreet','newNum','newBarrio','newCity','newFloor','newLabel'].forEach(function(id){
+    var el = document.getElementById(id); if(el) el.value = '';
+  });
+};
+
+window.saveNewAddress = async function() {
+  var g = function(id){ var el = document.getElementById(id); return el ? el.value.trim() : ''; };
+  var street = g('newStreet'), num = g('newNum'), barrio = g('newBarrio'), city = g('newCity');
+  if(!street || !num || !barrio || !city) { showToast('Completá los campos obligatorios'); return; }
+  var addr = { id: 'addr_' + Date.now(), label: g('newLabel')||'Casa', street, num, floor: g('newFloor'), barrio, city, isDefault: userAddresses.length === 0 };
+  userAddresses.push(addr);
+  try {
+    await setDoc(doc(db, 'users', currentUser.uid), { addresses: userAddresses }, { merge: true });
+    showToast('✓ Dirección guardada');
+    window.hideAddAddressForm();
+    renderAddressList();
+  } catch(e) { showToast('Error guardando'); }
+};
+
+window.setDefaultAddress = async function(idx) {
+  userAddresses = userAddresses.map(function(a, i){ return Object.assign({}, a, { isDefault: i === idx }); });
+  try {
+    await setDoc(doc(db, 'users', currentUser.uid), { addresses: userAddresses }, { merge: true });
+    renderAddressList();
+  } catch(e) { showToast('Error'); }
+};
+
+window.deleteAddress = async function(idx) {
+  if(!confirm('¿Eliminar esta dirección?')) return;
+  userAddresses.splice(idx, 1);
+  if(userAddresses.length && !userAddresses.some(function(a){ return a.isDefault; })) userAddresses[0].isDefault = true;
+  try {
+    await setDoc(doc(db, 'users', currentUser.uid), { addresses: userAddresses }, { merge: true });
+    renderAddressList();
+  } catch(e) { showToast('Error'); }
+};
+
+// ── LOAD ORDERS LIST ──────────────────────────────────────
+window.loadOrdersList = async function() {
+  if(!currentUser) return;
+  var list = document.getElementById('ordersList');
+  if(!list) return;
+  list.innerHTML = '<p style="color:var(--muted);padding:1rem 0">Cargando...</p>';
+  const orders = await loadUserOrders(currentUser.uid);
+  if(!orders.length) {
+    list.innerHTML = '<div style="color:var(--muted);font-size:0.82rem;">Todavía no tenés pedidos.</div>';
+    return;
+  }
+  let html = '';
+  orders.forEach(function(o) {
+    const date = o.createdAt ? new Date(o.createdAt).toLocaleDateString('es-AR', {day:'2-digit',month:'2-digit',year:'numeric'}) : '—';
+    const status = {pendiente:'⏳ Pendiente',pagado:'✓ Pagado',preparando:'📦 Preparando',enviado:'🚚 En camino',entregado:'✅ Entregado',cancelado:'✕ Cancelado'}[o.status] || o.status;
+    const total = o.total ? '$' + Number(o.total).toLocaleString('es-AR') : '—';
+    html += '<div style="padding:1rem;border:1px solid var(--border);margin-bottom:0.6rem;">' +
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.4rem;">' +
+        '<span style="font-family:'Bebas Neue',sans-serif;letter-spacing:0.08em;">' + (o.orderId||o._docId.substring(0,12).toUpperCase()) + '</span>' +
+        '<span style="font-size:0.72rem;color:var(--muted);">' + date + '</span>' +
+      '</div>' +
+      '<div style="display:flex;justify-content:space-between;align-items:center;">' +
+        '<span style="font-size:0.78rem;color:var(--muted);">' + status + '</span>' +
+        '<span style="font-size:0.82rem;font-weight:500;">' + total + '</span>' +
+      '</div>' +
+    '</div>';
+  });
+  list.innerHTML = html;
 };
 
 window.loginGoogle = async function() {
@@ -2433,53 +2613,10 @@ window.showOrders = async function() {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.getElementById('viewOrders').classList.add('active');
   window.scrollTo(0,0);
-  safePush({ view: 'orders' }, '#mis-consultas');
-  // Load profile data
+  safePush({ view: 'orders' }, '#mi-cuenta');
   window.loadProfile();
-  const list = document.getElementById('ordersList');
-  list.innerHTML = '<p style="color:var(--muted);text-align:center;padding:2rem">Cargando...</p>';
-  const orders = await loadUserOrders(currentUser.uid);
-  if(!orders.length) {
-    list.innerHTML = '<div class="orders-empty">Todavía no tenés pedidos</div>';
-    return;
-  }
-  let ordersHtml = '';
-  orders.forEach(function(o) {
-    const date = o.createdAt ? new Date(o.createdAt).toLocaleDateString('es-AR', {day:'2-digit',month:'2-digit',year:'numeric'}) : '—';
-    const statusClass = o.status === 'confirmado' ? 'confirmado' : o.status === 'cancelado' ? 'cancelado' : 'pendiente';
-    const statusLabel = o.status === 'confirmado' ? 'Confirmado' : o.status === 'cancelado' ? 'Cancelado' : 'Pendiente';
-    ordersHtml += '<div class="order-card">';
-    ordersHtml += '<div class="order-card-header">';
-    ordersHtml += '<span class="order-card-date">' + date + '</span>';
-    ordersHtml += '<span class="order-status ' + statusClass + '">' + statusLabel + '</span>';
-    ordersHtml += '</div>';
-    ordersHtml += renderOrderStatusBar(o.status || 'pendiente');
-    ordersHtml += '<div class="order-card-body">';
-    // Handle both single product orders and cart orders
-    if(o.items && o.items.length > 0) {
-      // Cart order - multiple items
-      o.items.forEach(function(item) {
-        ordersHtml += (item.imgUrl ? '<img class="order-thumb" src="' + item.imgUrl + '" alt="">' : '<div class="order-thumb"></div>');
-        ordersHtml += '<div class="order-info">';
-        ordersHtml += '<div class="order-name">' + (item.name||'Producto') + '</div>';
-        ordersHtml += '<div class="order-detail">Talle: ' + (item.size||'—') + ' · Color: ' + (item.color||'—') + ' · x' + (item.qty||1) + '</div>';
-        ordersHtml += '</div>';
-        ordersHtml += '<div class="order-price">$' + Number((item.price||0)*(item.qty||1)).toLocaleString('es-AR') + '</div>';
-      });
-    } else {
-      // Single product order
-      ordersHtml += (o.imgUrl ? '<img class="order-thumb" src="' + o.imgUrl + '" alt="">' : '<div class="order-thumb"></div>');
-      ordersHtml += '<div class="order-info">';
-      ordersHtml += '<div class="order-name">' + (o.productName||'Producto') + '</div>';
-      ordersHtml += '<div class="order-detail">Talle: ' + (o.size||'—') + ' · Color: ' + (o.color||'—') + '</div>';
-      ordersHtml += '</div>';
-      ordersHtml += '<div class="order-price">$' + Number(o.price||0).toLocaleString('es-AR') + '</div>';
-    }
-    ordersHtml += '</div></div>';
-  });
-  list.innerHTML = ordersHtml;
+  window.switchAccountTab('perfil');
 };
-
 async function renderAdminOrders() {
   const list = document.getElementById('adminOrdersList');
   if(!list) return;
