@@ -411,6 +411,15 @@
   .banner-edit-header h2{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:0.1em;color:var(--black);}
   .banner-preview-current{width:100%;height:200px;object-fit:cover;display:block;border:1px solid var(--border);margin-bottom:1rem;}
   /* AUTH */
+  .user-chip{position:relative;display:flex;align-items:center;}
+  .user-dropdown-btn{background:none;border:1px solid var(--border);color:var(--black);padding:0.45rem 1rem;font-family:'DM Sans',sans-serif;font-size:0.75rem;font-weight:500;letter-spacing:0.08em;cursor:pointer;text-transform:uppercase;transition:all 0.2s;display:flex;align-items:center;gap:0.5rem;}
+  .user-dropdown-btn:hover{border-color:var(--black);}
+  .user-dropdown-menu{display:none;position:absolute;top:calc(100% + 6px);right:0;background:var(--bg);border:1px solid var(--border);min-width:160px;z-index:200;flex-direction:column;}
+  .user-chip:hover .user-dropdown-menu{display:flex;}
+  .user-dropdown-menu a, .user-dropdown-menu button{display:block;width:100%;text-align:left;padding:0.65rem 1rem;font-family:'DM Sans',sans-serif;font-size:0.78rem;color:var(--black);background:none;border:none;cursor:pointer;text-decoration:none;letter-spacing:0.04em;transition:background 0.15s;}
+  .user-dropdown-menu a:hover, .user-dropdown-menu button:hover{background:var(--bg2);}
+  .user-dropdown-divider{height:1px;background:var(--border);margin:0.3rem 0;}
+
   .auth-bar{display:flex;align-items:center;gap:0.8rem;}
   .btn-login{background:none;border:1px solid var(--border);color:var(--black);padding:0.45rem 1rem;font-family:'DM Sans',sans-serif;font-size:0.75rem;font-weight:500;letter-spacing:0.08em;cursor:pointer;text-transform:uppercase;transition:all 0.2s;display:flex;align-items:center;gap:0.5rem;}
   .btn-login:hover{border-color:var(--black);}
@@ -2152,10 +2161,12 @@ onAuthStateChanged(auth, async function(user) {
   if(user) {
     area.innerHTML =
       '<div class="user-chip">' +
-        (user.photoURL ? '<img src="' + user.photoURL + '" alt="">' : '') +
-        '<span>' + (user.displayName ? user.displayName.split(' ')[0] : user.email) + '</span>' +
-        '<button class="btn-logout" onclick="window.logoutGoogle()">Salir</button>' +
-        '<button class="btn-login" onclick="window.showOrders()" style="margin-left:4px">Mi cuenta</button>' +
+        '<button class="user-dropdown-btn">Mi cuenta ▾</button>' +
+        '<div class="user-dropdown-menu">' +
+          '<button onclick="window.showOrders()">Mi perfil y pedidos</button>' +
+          '<div class="user-dropdown-divider"></div>' +
+          '<button onclick="window.logoutGoogle()" style="color:var(--muted)">Cerrar sesión</button>' +
+        '</div>' +
       '</div>';
     // Prefill address if available
     setTimeout(window.prefillAddress, 500);
