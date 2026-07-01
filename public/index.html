@@ -856,7 +856,7 @@
   <div class="orders-back" onclick="window.showHome()">← Volver al catálogo</div>
   <div class="orders-body">
     <!-- PERFIL EDITABLE -->
-    <div id="profileSection" style="margin-bottom:2rem;padding:1.5rem;border:1px solid var(--border);background:var(--bg2);">
+    <div id="profileSection" style="margin-bottom:2rem;padding:1.5rem;border:1px solid var(--border);background:var(--bg2);position:relative;overflow:hidden;">
       <div style="font-size:0.65rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);margin-bottom:1rem;">Mi perfil</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;margin-bottom:0.8rem;">
         <div>
@@ -898,12 +898,12 @@
       </div>
       <button onclick="window.saveProfile()" style="background:var(--black);color:var(--bg);border:none;padding:0.6rem 1.4rem;font-family:'DM Sans',sans-serif;font-size:0.72rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;">Guardar datos</button>
       <span id="profileSaveMsg" style="display:none"></span>
-    </div>
 
-    <!-- NOTIFICACION GUARDAR PERFIL -->
-    <div id="profileSaveOverlay" style="display:none;position:fixed;inset:0;z-index:999;pointer-events:none;display:flex;align-items:center;justify-content:center;">
-      <div id="profileSaveToast" style="background:var(--black);color:var(--bg);padding:1.2rem 2.5rem;font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:0.15em;text-align:center;opacity:0;transform:scale(0.85);transition:opacity 0.3s ease, transform 0.3s ease;border-radius:4px;">
-        ✓ DATOS GUARDADOS
+      <!-- NOTIFICACION GUARDAR PERFIL -->
+      <div id="profileSaveOverlay" style="display:none;position:absolute;inset:0;z-index:10;background:rgba(26,22,18,0.82);align-items:center;justify-content:center;">
+        <div id="profileSaveToast" style="color:#fff;font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:0.15em;text-align:center;opacity:0;transform:scale(0.85);transition:opacity 0.3s ease, transform 0.3s ease;">
+          ✓ DATOS GUARDADOS
+        </div>
       </div>
     </div>
 
