@@ -169,24 +169,25 @@
 
   /* STEPS BAR */
   .checkout-steps {
-    display:flex;align-items:center;padding:1.2rem 2rem;
-    border-bottom:1px solid var(--border);background:var(--bg);
-    gap:0;
+    display:flex;flex-direction:column;padding:1.2rem 2rem;
+    border-bottom:1px solid var(--border);background:var(--bg);gap:0.6rem;
   }
-  .checkout-step {
-    display:flex;align-items:center;gap:0.5rem;
-    font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;
-    color:var(--muted);flex:1;
+  .checkout-steps-labels {
+    display:flex;justify-content:space-between;
   }
-  .checkout-step.active { color:var(--black);font-weight:500; }
-  .checkout-step.done { color:var(--warm); }
-  .step-num {
-    width:22px;height:22px;border-radius:50%;
-    border:1px solid currentColor;
-    display:flex;align-items:center;justify-content:center;
-    font-size:0.65rem;font-weight:600;flex-shrink:0;
+  .checkout-step-label {
+    font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;
+    color:var(--muted);flex:1;text-align:center;
   }
-  .step-divider { flex:0 0 24px;height:1px;background:var(--border);margin:0 0.3rem; }
+  .checkout-step-label.active { color:var(--black);font-weight:600; }
+  .checkout-step-label.done { color:var(--warm); }
+  .checkout-progress-track {
+    width:100%;height:3px;background:var(--border);border-radius:2px;overflow:hidden;
+  }
+  .checkout-progress-fill {
+    height:100%;background:var(--black);border-radius:2px;
+    transition:width 0.4s ease;
+  }
 
   /* CHECKOUT BODY */
   .checkout-body {
@@ -854,7 +855,48 @@
 <div class="view" id="viewOrders">
   <div class="orders-back" onclick="window.showHome()">← Volver al catálogo</div>
   <div class="orders-body">
-    <div class="orders-title">Mis consultas</div>
+    <!-- PERFIL EDITABLE -->
+    <div id="profileSection" style="margin-bottom:2rem;padding:1.5rem;border:1px solid var(--border);background:var(--bg2);">
+      <div style="font-size:0.65rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);margin-bottom:1rem;">Mi perfil</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;margin-bottom:0.8rem;">
+        <div>
+          <label style="font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:0.3rem;">Nombre</label>
+          <input type="text" id="profileName" placeholder="Tu nombre" style="width:100%;background:var(--bg);border:1px solid var(--border);padding:0.5rem 0.7rem;font-family:'DM Sans',sans-serif;font-size:0.82rem;color:var(--black);">
+        </div>
+        <div>
+          <label style="font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:0.3rem;">Teléfono</label>
+          <input type="text" id="profilePhone" placeholder="Ej: +54 9 11 1234-5678" style="width:100%;background:var(--bg);border:1px solid var(--border);padding:0.5rem 0.7rem;font-family:'DM Sans',sans-serif;font-size:0.82rem;color:var(--black);">
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:2fr 1fr;gap:0.8rem;margin-bottom:0.8rem;">
+        <div>
+          <label style="font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:0.3rem;">Calle</label>
+          <input type="text" id="profileStreet" placeholder="Nombre de la calle" style="width:100%;background:var(--bg);border:1px solid var(--border);padding:0.5rem 0.7rem;font-family:'DM Sans',sans-serif;font-size:0.82rem;color:var(--black);">
+        </div>
+        <div>
+          <label style="font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:0.3rem;">Número</label>
+          <input type="text" id="profileNum" placeholder="1234" style="width:100%;background:var(--bg);border:1px solid var(--border);padding:0.5rem 0.7rem;font-family:'DM Sans',sans-serif;font-size:0.82rem;color:var(--black);">
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.8rem;margin-bottom:1rem;">
+        <div>
+          <label style="font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:0.3rem;">Barrio</label>
+          <input type="text" id="profileBarrio" placeholder="Barrio" style="width:100%;background:var(--bg);border:1px solid var(--border);padding:0.5rem 0.7rem;font-family:'DM Sans',sans-serif;font-size:0.82rem;color:var(--black);">
+        </div>
+        <div>
+          <label style="font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:0.3rem;">Ciudad</label>
+          <input type="text" id="profileCity" placeholder="Ciudad" style="width:100%;background:var(--bg);border:1px solid var(--border);padding:0.5rem 0.7rem;font-family:'DM Sans',sans-serif;font-size:0.82rem;color:var(--black);">
+        </div>
+        <div>
+          <label style="font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:0.3rem;">Piso / Depto</label>
+          <input type="text" id="profileFloor" placeholder="Opcional" style="width:100%;background:var(--bg);border:1px solid var(--border);padding:0.5rem 0.7rem;font-family:'DM Sans',sans-serif;font-size:0.82rem;color:var(--black);">
+        </div>
+      </div>
+      <button onclick="window.saveProfile()" style="background:var(--black);color:var(--bg);border:none;padding:0.6rem 1.4rem;font-family:'DM Sans',sans-serif;font-size:0.72rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;">Guardar datos</button>
+      <span id="profileSaveMsg" style="font-size:0.72rem;color:var(--warm);margin-left:1rem;display:none;">✓ Guardado</span>
+    </div>
+
+    <div class="orders-title">Mis pedidos</div>
     <div id="ordersList"></div>
   </div>
 </div>
@@ -870,21 +912,15 @@
   </div>
 
   <!-- Steps bar -->
-  <div class="checkout-steps">
-    <div class="checkout-step active" id="step-tab-1">
-      <div class="step-num">1</div><span class="step-name">Carrito</span>
+  <div class="checkout-steps" id="checkoutStepsBar">
+    <div class="checkout-steps-labels">
+      <div class="checkout-step-label active" id="step-tab-1">Carrito</div>
+      <div class="checkout-step-label" id="step-tab-2">Entrega</div>
+      <div class="checkout-step-label" id="step-tab-3">Pago</div>
+      <div class="checkout-step-label" id="step-tab-4">Confirmar</div>
     </div>
-    <div class="step-divider"></div>
-    <div class="checkout-step" id="step-tab-2">
-      <div class="step-num">2</div><span class="step-name">Entrega</span>
-    </div>
-    <div class="step-divider"></div>
-    <div class="checkout-step" id="step-tab-3">
-      <div class="step-num">3</div><span class="step-name">Método de pago</span>
-    </div>
-    <div class="step-divider"></div>
-    <div class="checkout-step" id="step-tab-4">
-      <div class="step-num">4</div><span class="step-name">Pago</span>
+    <div class="checkout-progress-track">
+      <div class="checkout-progress-fill" id="checkoutProgressFill" style="width:25%"></div>
     </div>
   </div>
 
@@ -967,13 +1003,7 @@
                 <div class="payment-option-sub" id="transferSubLabel">20% OFF · Alias: NORTHSIDE.CO</div>
               </div>
             </label>
-            <label class="payment-option" onclick="window.selectPayment('efectivo',this)">
-              <input type="radio" name="payment" value="efectivo">
-              <div>
-                <div class="payment-option-label">💵 Efectivo</div>
-                <div class="payment-option-sub">Pagás al retirar o coordinar entrega</div>
-              </div>
-            </label>
+
           </div>
           <div style="margin-top:1rem">
             <button class="btn-next-step" onclick="window.goPayTab()">Continuar →</button>
@@ -1039,21 +1069,6 @@
 
 
       </div>
-
-      <!-- EFECTIVO -->
-      <div id="payDetailEfectivo4" style="display:none">
-        <div style="background:var(--black);color:var(--bg);padding:0.8rem 1rem;margin-bottom:1rem;display:flex;justify-content:space-between;align-items:center;">
-          <span style="font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;opacity:0.6">Total a pagar en efectivo</span>
-          <span style="font-family:'Bebas Neue',sans-serif;font-size:1.3rem;" id="efectivoTotalAmount"></span>
-        </div>
-        <label style="margin-top:0">Nombre y apellido *</label>
-        <input type="text" id="efectivoNombre" placeholder="Tu nombre completo">
-        <label>Localidad / Barrio *</label>
-        <input type="text" id="efectivoDireccion" placeholder="Ej: Palermo, Buenos Aires">
-        <label>Aclaraciones (opcional)</label>
-        <textarea id="efectivoNota" placeholder="Horarios disponibles, preferencia de zona, cualquier detalle..."></textarea>
-      </div>
-
       <div style="margin-top:1.5rem">
         <button class="btn-next-step" onclick="window.finalizarCompra()">Confirmar pedido →</button>
         <button class="btn-back-step" onclick="window.goCheckoutStep(3)">← Cambiar método de pago</button>
@@ -2268,7 +2283,48 @@ async function saveOrder(order) {
   await addDoc(collection(db, 'orders'), order);
 }
 
-async function loadUserOrders(uid) {
+// ── PERFIL EDITABLE ───────────────────────────────────────
+window.loadProfile = async function() {
+  if(!currentUser) return;
+  try {
+    const snap = await getDocs(collection(db, 'users'));
+    snap.forEach(function(d){
+      if(d.id === currentUser.uid) {
+        const data = d.data();
+        const a = data.address || {};
+        const f = function(id, val) { var el = document.getElementById(id); if(el && val) el.value = val; };
+        f('profileName',   data.displayName || currentUser.displayName || '');
+        f('profilePhone',  data.phone || '');
+        f('profileStreet', a.street || '');
+        f('profileNum',    a.num || '');
+        f('profileBarrio', a.barrio || '');
+        f('profileCity',   a.city || '');
+        f('profileFloor',  a.floor || '');
+      }
+    });
+  } catch(e) {}
+};
+
+window.saveProfile = async function() {
+  if(!currentUser) return;
+  const g = function(id) { var el = document.getElementById(id); return el ? el.value.trim() : ''; };
+  const profileData = {
+    displayName: g('profileName'),
+    phone: g('profilePhone'),
+    address: {
+      street: g('profileStreet'),
+      num:    g('profileNum'),
+      barrio: g('profileBarrio'),
+      city:   g('profileCity'),
+      floor:  g('profileFloor'),
+    }
+  };
+  try {
+    await setDoc(doc(db, 'users', currentUser.uid), profileData, { merge: true });
+    const msg = document.getElementById('profileSaveMsg');
+    if(msg) { msg.style.display = 'inline'; setTimeout(function(){ msg.style.display = 'none'; }, 2500); }
+  } catch(e) { showToast('Error al guardar'); }
+};
   const q = query(collection(db, 'orders'), where('uid', '==', uid));
   const snap = await getDocs(q);
   const orders = [];
@@ -2291,6 +2347,8 @@ window.showOrders = async function() {
   document.getElementById('viewOrders').classList.add('active');
   window.scrollTo(0,0);
   safePush({ view: 'orders' }, '#mis-consultas');
+  // Load profile data
+  window.loadProfile();
   const list = document.getElementById('ordersList');
   list.innerHTML = '<p style="color:var(--muted);text-align:center;padding:2rem">Cargando...</p>';
   const orders = await loadUserOrders(currentUser.uid);
@@ -3001,14 +3059,15 @@ window.goCheckoutStep = function(step) {
 };
 
 function renderCheckoutStep(step) {
-  // Update steps bar
+  // Update progress bar
   for(let i=1; i<=4; i++) {
     const tab = document.getElementById('step-tab-' + i);
     if(!tab) continue;
-    tab.className = 'checkout-step' + (i===step ? ' active' : i<step ? ' done' : '');
-    if(i < step) tab.querySelector('.step-num').textContent = '✓';
-    else tab.querySelector('.step-num').textContent = i;
+    tab.className = 'checkout-step-label' + (i===step ? ' active' : i<step ? ' done' : '');
   }
+  const fill = document.getElementById('checkoutProgressFill');
+  if(fill) fill.style.width = (step * 25) + '%';
+
   // Show/hide step panels
   for(let i=1; i<=4; i++) {
     const panel = document.getElementById('checkout-step-' + i);
@@ -3339,7 +3398,7 @@ window.goPayTab = function() {
   const subtotal = getCartTotal() + shippingCost;
 
   // Hide all step 4 panels
-  ['payDetailTransferencia4','payDetailMercadopago4','payDetailEfectivo4'].forEach(function(id){
+  ['payDetailTransferencia4','payDetailMercadopago4'].forEach(function(id){
     var el = document.getElementById(id); if(el) el.style.display = 'none';
   });
 
@@ -3360,283 +3419,6 @@ window.goPayTab = function() {
     var totMP = Math.round(subtotal * (1 - pctMP/100));
     var totElMP = document.getElementById('step4MPTotal');
     if(totElMP) totElMP.textContent = '$' + Number(totMP).toLocaleString('es-AR');
-      } else if(selectedPayment === 'efectivo') {
-    var panelEf = document.getElementById('payDetailEfectivo4');
-    if(panelEf) panelEf.style.display = 'block';
-    var totalEl = document.getElementById('efectivoTotalAmount');
-    if(totalEl) totalEl.textContent = '$' + Number(subtotal).toLocaleString('es-AR');
-  }
-
-  window.goCheckoutStep(4);
-};
-
-window.handleComprobante = function(e) {
-  const file = e.target.files[0]; if(!file) return;
-  const reader = new FileReader();
-  reader.onload = function(ev) {
-    comprobanteUrl = ev.target.result;
-    const preview = document.getElementById('comprobantePreview');
-    const img = document.getElementById('comprobanteImg');
-    const name = document.getElementById('comprobanteName');
-    if(file.type.startsWith('image/')) {
-      img.src = ev.target.result;
-      img.style.display = 'block';
-    } else {
-      img.style.display = 'none';
-    }
-    if(name) name.textContent = file.name;
-    if(preview) preview.style.display = 'block';
-  };
-  reader.readAsDataURL(file);
-};
-
-window.removeComprobante = function() {
-  comprobanteUrl = null;
-  document.getElementById('comprobantePreview').style.display = 'none';
-  document.getElementById('comprobanteImg').src = '';
-  document.getElementById('comprobanteFile').value = '';
-};
-
-window.handleComprobanteMP = function(e) {
-  const file = e.target.files[0]; if(!file) return;
-  const reader = new FileReader();
-  reader.onload = function(ev) {
-    comprobanteUrlMP = ev.target.result;
-    const preview = document.getElementById('comprobantePreviewMP');
-    const img = document.getElementById('comprobanteImgMP');
-    const name = document.getElementById('comprobanteNameMP');
-    if(file.type.startsWith('image/')) {
-      img.src = ev.target.result;
-      img.style.display = 'block';
-    } else {
-      img.style.display = 'none';
-    }
-    if(name) name.textContent = file.name;
-    if(preview) preview.style.display = 'block';
-  };
-  reader.readAsDataURL(file);
-};
-
-window.removeComprobanteMP = function() {
-  comprobanteUrlMP = null;
-  document.getElementById('comprobantePreviewMP').style.display = 'none';
-  document.getElementById('comprobanteImgMP').src = '';
-  document.getElementById('comprobanteFileMP').value = '';
-};
-
-// ── PAYMENT ───────────────────────────────────────────
-function setupPaymentStep() {
-  const subtotal = getCartTotal();
-  const pct = paymentConfig.transferPct || 0;
-  if(pct > 0) {
-    document.getElementById('transferSubLabel').textContent = pct + '% de descuento al pagar por transferencia';
-  }
-}
-
-window.selectPayment = function(type, el) {
-  document.querySelectorAll('.payment-option').forEach(function(o){ o.classList.remove('selected'); });
-  el.classList.add('selected');
-  selectedPayment = type;
-
-  renderSummary();
-};
-
-
-
-
-
-// ── SUMMARY SIDEBAR ───────────────────────────────────
-function renderSummary() {
-  const subtotal = getCartTotal();
-  const couponDiscount = getCouponDiscount();
-  const transferDiscount = (selectedPayment === 'transferencia' || selectedPayment === 'mercadopago') && paymentConfig.transferPct > 0
-    ? Math.round((subtotal + shippingCost - couponDiscount) * paymentConfig.transferPct / 100) : 0;
-  const total = subtotal + shippingCost - couponDiscount - transferDiscount;
-
-  const itemsEl = document.getElementById('summaryItems');
-  if(itemsEl) {
-    itemsEl.innerHTML = cart.map(function(item) {
-      return '<div class="summary-line"><span>' + item.name + ' x' + item.qty + '</span><span>$' + Number(item.price*item.qty).toLocaleString('es-AR') + '</span></div>';
-    }).join('');
-  }
-
-  const subEl = document.getElementById('summarySubtotal');
-  if(subEl) subEl.textContent = '$' + Number(subtotal).toLocaleString('es-AR');
-
-  const shipLine = document.getElementById('summaryShippingLine');
-  const shipEl = document.getElementById('summaryShipping');
-  if(shipLine && shipEl && selectedShipping) {
-    shipLine.style.display = 'flex';
-    shipEl.textContent = shippingCost === 0 ? '¡Gratis!' : '$' + Number(shippingCost).toLocaleString('es-AR');
-  }
-
-  const discLine = document.getElementById('summaryDiscountLine');
-  const discEl = document.getElementById('summaryDiscount');
-  if(discLine && discEl) {
-    discLine.style.display = transferDiscount > 0 ? 'flex' : 'none';
-    discEl.textContent = '-$' + Number(transferDiscount).toLocaleString('es-AR');
-  }
-  // Coupon discount line
-  var couponLine = document.getElementById('summaryCouponLine');
-  var couponEl = document.getElementById('summaryCouponAmt');
-  if(couponLine && couponEl) {
-    couponLine.style.display = couponDiscount > 0 ? 'flex' : 'none';
-    couponEl.textContent = '-$' + Number(couponDiscount).toLocaleString('es-AR');
-  }
-
-  const totEl = document.getElementById('summaryTotal');
-  if(totEl) totEl.textContent = '$' + Number(total).toLocaleString('es-AR');
-
-  updateStickyTotal();
-}
-
-function updateStickyTotal() {
-  const subtotal = getCartTotal();
-  const couponDiscount = getCouponDiscount();
-  const transferDiscount = (selectedPayment === 'transferencia' || selectedPayment === 'mercadopago') && paymentConfig.transferPct > 0
-    ? Math.round((subtotal + shippingCost - couponDiscount) * paymentConfig.transferPct / 100) : 0;
-  const total = subtotal + shippingCost - couponDiscount - transferDiscount;
-  const el = document.getElementById('checkoutStickyTotal');
-  if(el) el.textContent = '$' + Number(total).toLocaleString('es-AR');
-}
-
-window.toggleCheckoutSummary = function() {
-  const sumEl = document.querySelector('.checkout-summary');
-  if(sumEl) sumEl.style.display = sumEl.style.display === 'block' ? 'none' : 'block';
-};
-
-// ── FINALIZAR ─────────────────────────────────────────
-window.finalizarCompra = async function() {
-  if(_isProcessing) { showToast('⏳ Ya estamos procesando tu pedido, esperá...'); return; }
-  if(!selectedPayment) { showToast('Seleccioná un método de pago'); return; }
-
-  // Validate stock
-  var stockError = null;
-  cart.forEach(function(item) {
-    if(stockError) return;
-    var p = products.find(function(x){ return x.id === item.productId; });
-    var available = p ? getAvailableStock(p, item.size, item.color) : Infinity;
-    if(available !== Infinity && item.qty > available) {
-      stockError = item.name + ' — Talle ' + item.size + ': solo quedan ' + available + ' unidades';
-    }
-  });
-  if(stockError) { showToast('⚠️ Stock insuficiente: ' + stockError); return; }
-
-  // Comprobante required for transferencia
-  if(selectedPayment === 'transferencia' && !comprobanteUrl) {
-    showToast('⚠️ Subí el comprobante de transferencia para continuar');
-    return;
-  }
-
-  // Efectivo validation
-  if(selectedPayment === 'efectivo') {
-    var nombre = document.getElementById('efectivoNombre') ? document.getElementById('efectivoNombre').value.trim() : '';
-    var dir = document.getElementById('efectivoDireccion') ? document.getElementById('efectivoDireccion').value.trim() : '';
-    if(!nombre || !dir) {
-      showToast('⚠️ Completá nombre y localidad para continuar');
-      return;
-    }
-  }
-
-  _isProcessing = true;
-  showLoading('Procesando pedido...');
-
-  try {
-    // Build order ID
-    var orderId = 'CH-' + Date.now() + '-' + Math.random().toString(36).substr(2,5).toUpperCase();
-    var subtotal = getCartTotal();
-    var couponDiscount = getCouponDiscount();
-    var pct = (selectedPayment === 'transferencia') && paymentConfig.transferPct > 0 ? paymentConfig.transferPct : 0;
-    var transferDiscount = Math.round((subtotal + shippingCost - couponDiscount) * pct / 100);
-    var total = subtotal + shippingCost - couponDiscount - transferDiscount;
-
-    var clienteNombre = selectedPayment === 'efectivo'
-      ? (document.getElementById('efectivoNombre') ? document.getElementById('efectivoNombre').value.trim() : '')
-      : (currentUser ? (currentUser.displayName || currentUser.email) : 'Visitante');
-    var clienteEmail = currentUser ? currentUser.email : '';
-
-    // Save order to Firebase first
-    var orderData = {
-      orderId: orderId,
-      orderType: 'checkout_carrito',
-      uid: currentUser ? currentUser.uid : null,
-      userName: clienteNombre || 'Visitante',
-      userEmail: clienteEmail,
-      items: cart.map(function(item) {
-        return { productId: item.productId, name: item.name, size: item.size, color: item.color, price: item.price, qty: item.qty, imgUrl: item.imgUrl || '' };
-      }),
-      shipping: selectedShipping,
-      payment: selectedPayment,
-      subtotal: subtotal,
-      shippingCost: shippingCost,
-      transferDiscount: transferDiscount,
-      couponDiscount: couponDiscount,
-      total: total,
-      comprobanteUrl: (selectedPayment === 'transferencia' ? comprobanteUrl : null) || null,
-      status: 'pendiente',
-      createdAt: Date.now()
-    };
-
-    try {
-      await addDoc(collection(db, 'orders'), orderData);
-    } catch(e) { console.error('Error saving order:', e); }
-
-    // ── MERCADO PAGO: redirect to Checkout Pro ────────────
-    if(selectedPayment === 'mercadopago') {
-      hideLoading();
-      showLoading('Redirigiendo a Mercado Pago...');
-      try {
-        var res = await fetch('/api/create-preference', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            orderId: orderId,
-            items: cart.map(function(item) {
-              return { productId: item.productId, name: item.name, size: item.size, color: item.color, price: item.price, qty: item.qty, imgUrl: item.imgUrl || '' };
-            }),
-            payer: { name: clienteNombre, email: clienteEmail }
-          })
-        });
-        var data = await res.json();
-        if(data.init_point) {
-          // Clear cart before redirect
-          appliedCoupon = null;
-          cart = [];
-          saveCart();
-          updateCartBadge();
-          window.location.href = data.init_point;
-          return;
-        } else {
-          throw new Error(data.error || 'No se pudo crear la preferencia de pago');
-        }
-      } catch(e) {
-        hideLoading();
-        console.error('MP error:', e);
-        showToast('❌ Error con Mercado Pago: ' + e.message);
-        _isProcessing = false;
-        return;
-      }
-    }
-
-    // ── TRANSFERENCIA / EFECTIVO: confirm and clear ───────
-    appliedCoupon = null;
-    cart = [];
-    saveCart();
-    updateCartBadge();
-    showToast('✅ Pedido confirmado correctamente');
-    setTimeout(function() {
-      document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
-      document.getElementById('viewHome').classList.add('active');
-      alert('✅ Pedido confirmado\n\nNúmero de pedido: ' + orderId + '\n\nNos contactaremos pronto para coordinar la entrega.');
-    }, 500);
-
-  } catch(e) {
-    console.error('Error finalizando:', e);
-    showToast('⚠️ Hubo un error, intenta de nuevo');
-  } finally {
-    hideLoading();
-    _isProcessing = false;
-  }
 };
 ;
 
