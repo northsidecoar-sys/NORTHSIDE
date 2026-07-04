@@ -4101,6 +4101,75 @@ window.changeShipping = function() {
 let comprobanteUrl = null;
 let comprobanteUrlMP = null;
 
+window.handleComprobante = async function(event) {
+  const file = event.target.files[0];
+  if(!file) return;
+
+  const uploadArea = document.querySelector('.comprobante-upload-area');
+  const previewEl = document.getElementById('comprobantePreview');
+  const imgEl = document.getElementById('comprobanteImg');
+  const nameEl = document.getElementById('comprobanteName');
+
+  // Validar tipo y tamaño
+  const isPdf = file.type === 'application/pdf';
+  const isImg = file.type.startsWith('image/');
+  if(!isPdf && !isImg) { showToast('Formato no válido. Subí una imagen o PDF.'); event.target.value = ''; return; }
+  if(file.size > 10 * 1024 * 1024) { showToast('El archivo es muy grande (máx 10MB)'); event.target.value = ''; return; }
+
+  if(nameEl) nameEl.textContent = 'Subiendo ' + file.name + '...';
+  if(previewEl) previewEl.style.display = 'block';
+  if(uploadArea) uploadArea.style.display = 'none';
+
+  try {
+    const result = await uploadToCloudinary(file, null, null, 1, 1);
+    comprobanteUrl = result.url;
+
+    if(isPdf) {
+      // Mostrar ícono de PDF en vez de imagen
+      if(imgEl) {
+        imgEl.style.display = 'none';
+      }
+      if(previewEl) {
+        var pdfIcon = document.getElementById('comprobantePdfIcon');
+        if(!pdfIcon) {
+          pdfIcon = document.createElement('div');
+          pdfIcon.id = 'comprobantePdfIcon';
+          pdfIcon.style.cssText = 'width:100%;padding:2rem;text-align:center;background:var(--bg);border:1px solid var(--border);font-size:2rem;';
+          pdfIcon.textContent = '📄';
+          previewEl.insertBefore(pdfIcon, previewEl.firstChild);
+        }
+        pdfIcon.style.display = 'block';
+      }
+    } else {
+      if(imgEl) { imgEl.src = result.url; imgEl.style.display = 'block'; }
+      var pdfIcon2 = document.getElementById('comprobantePdfIcon');
+      if(pdfIcon2) pdfIcon2.style.display = 'none';
+    }
+
+    if(nameEl) nameEl.textContent = '✓ ' + file.name;
+    showToast('✓ Comprobante subido correctamente');
+  } catch(e) {
+    showToast('Error al subir el comprobante. Intentá de nuevo.');
+    if(previewEl) previewEl.style.display = 'none';
+    if(uploadArea) uploadArea.style.display = 'block';
+    event.target.value = '';
+  }
+};
+
+window.removeComprobante = function() {
+  comprobanteUrl = null;
+  const uploadArea = document.querySelector('.comprobante-upload-area');
+  const previewEl = document.getElementById('comprobantePreview');
+  const imgEl = document.getElementById('comprobanteImg');
+  const fileInput = document.getElementById('comprobanteFile');
+  const pdfIcon = document.getElementById('comprobantePdfIcon');
+  if(previewEl) previewEl.style.display = 'none';
+  if(uploadArea) uploadArea.style.display = 'block';
+  if(imgEl) imgEl.src = '';
+  if(pdfIcon) pdfIcon.style.display = 'none';
+  if(fileInput) fileInput.value = '';
+};
+
 window.switchPaymentTab = function(tab, btn) {
   document.querySelectorAll('.payment-tab-btn').forEach(function(b){ b.classList.remove('active'); });
   document.querySelectorAll('.payment-tab-panel').forEach(function(p){ p.classList.remove('active'); });
@@ -4113,6 +4182,10 @@ window.switchPaymentTab = function(tab, btn) {
 window.finalizarCompra = async function() {
   if(!selectedPayment) { showToast('Seleccioná un método de pago'); return; }
   if(!selectedShipping) { showToast('Seleccioná una opción de envío'); return; }
+  if(selectedPayment === 'transferencia' && !comprobanteUrl) {
+    showToast('⚠️ Subí el comprobante de pago para continuar');
+    return;
+  }
 
   var userWhatsapp = '';
   // Primero del campo del checkout (más fresco)
@@ -4145,6 +4218,7 @@ window.finalizarCompra = async function() {
     userPhone: userWhatsapp,
     items: cart.map(function(i){ return { name:i.name, size:i.size, color:i.color, price:i.price, qty:i.qty, imgUrl:(i.imgs&&i.imgs[0])?i.imgs[0].url:'' }; }),
     payment: selectedPayment,
+    comprobanteUrl: selectedPayment === 'transferencia' ? comprobanteUrl : null,
     shipping: selectedShipping,
     total: finalTotal,
     transferDiscount: selectedPayment === 'transferencia' ? Math.round((subtotal + shippingCost) * pct/100) : 0,
@@ -4157,6 +4231,7 @@ window.finalizarCompra = async function() {
   try {
     await addDoc(collection(db, 'orders'), orderData);
     appliedCoupon = null;
+    comprobanteUrl = null;
     cart = [];
     saveCart();
     updateCartBadge();
