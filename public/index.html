@@ -665,6 +665,16 @@
   .product-cat{font-size:0.63rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);margin-bottom:0.3rem;}
   .product-name{font-size:0.95rem;font-weight:500;margin-bottom:0.3rem;color:var(--black);}
   .color-dots{display:flex;gap:5px;margin-bottom:0.5rem;flex-wrap:wrap;}
+  .color-dot{cursor:pointer;transition:all 0.15s;box-shadow:0 0 0 1px rgba(0,0,0,0.08);}
+  .color-dot:hover{transform:scale(1.15);}
+  .color-dot.selected{box-shadow:0 0 0 2px var(--bg),0 0 0 3.5px var(--black);}
+  .card-sizes-row{display:none;flex-wrap:wrap;gap:4px;margin:0.3rem 0 0.6rem;}
+  .card-sizes-row.show{display:flex;}
+  .card-size-chip{background:var(--bg);border:1px solid var(--border);color:var(--black);padding:0.22rem 0.5rem;font-family:'DM Sans',sans-serif;font-size:0.66rem;letter-spacing:0.03em;cursor:pointer;transition:all 0.15s;}
+  .card-size-chip:hover{border-color:var(--black);}
+  .card-size-chip.selected{background:var(--black);color:var(--bg);border-color:var(--black);}
+  .card-size-chip:disabled{opacity:0.35;cursor:not-allowed;text-decoration:line-through;}
+  .btn-ver.is-add{background:#1f6b3a;}
   .color-dot{width:14px;height:14px;border-radius:50%;border:1px solid rgba(0,0,0,0.15);flex-shrink:0;}
   .product-sizes-preview{font-size:0.68rem;color:var(--muted);letter-spacing:0.08em;margin-bottom:0.9rem;}
   .card-footer{display:flex;align-items:center;justify-content:space-between;}
@@ -937,8 +947,8 @@
   <span class="logo" onclick="showHome()">NORTHSIDE</span>
   <ul class="nav-cats" id="navCats" style="display:none"></ul>
   <div class="auth-bar">
-    <button id="navWishlistBtn" onclick="window.showWishlistOnly()" title="Mis favoritos" style="background:none;border:none;color:var(--black);padding:0.3rem 0.4rem;cursor:pointer;display:flex;align-items:center;">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+    <button id="navWishlistBtn" onclick="window.showWishlistOnly()" title="Mis favoritos" style="background:none;border:none;padding:0.3rem 0.4rem;cursor:pointer;display:flex;align-items:center;">
+      <span id="navWishlistIcon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a1612" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></span>
     </button>
     <button onclick="window.openSearch()" title="Buscar" style="background:none;border:none;color:var(--black);padding:0.3rem 0.4rem;cursor:pointer;display:flex;align-items:center;">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -2017,8 +2027,8 @@ window.filterCat = function(cat) {
   scrollCategoryWindowToFilter(cat);
   var bar = document.getElementById('filterBar');
   if(bar) bar.style.display = '';
-  var navBtn = document.getElementById('navWishlistBtn');
-  if(navBtn) navBtn.style.color = 'var(--black)';
+  var navBtn = document.getElementById('navWishlistIcon');
+  if(navBtn) navBtn.innerHTML = heartSVG(false);
   // If we're in detail or orders view, go back to home first
   document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
   document.getElementById('viewHome').classList.add('active');
@@ -2252,11 +2262,108 @@ window.goToPage = function(page) {
 
 function heartSVG(isFav) {
   return isFav
-    ? '<span style="font-size:1.05rem;line-height:1;">❤️</span>'
-    : '<span style="font-size:1.05rem;line-height:1;">🤍</span>';
+    ? '<svg width="17" height="17" viewBox="0 0 24 24" fill="#e0435a" stroke="#e0435a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>'
+    : '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#1a1612" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>';
 }
 
+// ── QUICK ADD FROM CARD (seleccionar color/talle sin entrar al producto) ──
+let quickSelections = {}; // { productId: { color, size } }
+
+window.quickSelectColor = function(pid, colorName, el) {
+  if(!quickSelections[pid]) quickSelections[pid] = {};
+  var card = el.closest('.product-card');
+  var alreadySelected = el.classList.contains('selected');
+
+  if(alreadySelected) {
+    // Deseleccionar
+    quickSelections[pid].color = null;
+    el.classList.remove('selected');
+  } else {
+    quickSelections[pid].color = colorName;
+    if(card) card.querySelectorAll('.color-dot').forEach(function(d){ d.classList.remove('selected'); });
+    el.classList.add('selected');
+  }
+
+  // Mostrar/ocultar la fila de talles según si hay color elegido
+  var sizesRow = document.getElementById('card-sizes-' + pid);
+  if(sizesRow) {
+    var p = products.find(function(x){ return x.id === pid; });
+    var hasColors = p && (p.colors||[]).length > 0;
+    if(quickSelections[pid].color || !hasColors) sizesRow.classList.add('show');
+    else sizesRow.classList.remove('show');
+  }
+  updateQuickCardButton(pid);
+};
+
+window.quickSelectSize = function(pid, sizeVal, el) {
+  if(!quickSelections[pid]) quickSelections[pid] = {};
+  if(el.classList.contains('selected')) {
+    quickSelections[pid].size = null;
+    el.classList.remove('selected');
+  } else {
+    quickSelections[pid].size = sizeVal;
+    var card = el.closest('.product-card');
+    if(card) card.querySelectorAll('.card-size-chip').forEach(function(c){ c.classList.remove('selected'); });
+    el.classList.add('selected');
+  }
+  updateQuickCardButton(pid);
+};
+
+function updateQuickCardButton(pid) {
+  const p = products.find(function(x){ return x.id === pid; });
+  if(!p) return;
+  const btn = document.getElementById('card-btn-' + pid);
+  if(!btn) return;
+  const hasColors = (p.colors||[]).length > 0;
+  const hasSizes = (p.sizes||'').trim().length > 0;
+  const sel = quickSelections[pid] || {};
+
+  const colorOk = !hasColors || sel.color;
+  const sizeOk = !hasSizes || sel.size;
+
+  if(colorOk && sizeOk) {
+    const available = getAvailableStock(p, sel.size || '', sel.color || '');
+    const inCart = getCartQtyForSize(p.id, sel.size || '', sel.color || '');
+    if(available !== Infinity && (available <= 0 || inCart >= available)) {
+      btn.textContent = 'Sin stock';
+      btn.classList.remove('is-add');
+      btn.onclick = function(e){ e.stopPropagation(); showToast('No hay stock disponible para esa combinación.'); };
+    } else {
+      btn.textContent = '🛒 Agregar';
+      btn.classList.add('is-add');
+      btn.onclick = function(e){ e.stopPropagation(); window.quickAddToCart(pid); };
+    }
+  } else {
+    btn.textContent = 'Ver producto';
+    btn.classList.remove('is-add');
+    btn.onclick = function(e){ e.stopPropagation(); window.openProduct(pid); };
+  }
+}
+
+window.quickAddToCart = function(pid) {
+  const p = products.find(function(x){ return x.id === pid; });
+  if(!p) return;
+  const sel = quickSelections[pid] || {};
+  const sz = sel.size || '';
+  const cl = sel.color || '';
+  const imgUrl = p.imgs && p.imgs.length > 0 ? (p.imgs[0].url||p.imgs[0].data||'') : '';
+  const added = addToCart(p.id, p.name, sz || '—', cl || '—', p.price, imgUrl);
+  if(added !== false) {
+    showCartToast(p.name);
+    // Resetear selección de esa card para la próxima vez
+    delete quickSelections[pid];
+    var card = document.querySelector('.product-card[data-pid="' + pid + '"]');
+    if(card) {
+      card.querySelectorAll('.color-dot.selected, .card-size-chip.selected').forEach(function(el){ el.classList.remove('selected'); });
+      var sizesRow = document.getElementById('card-sizes-' + pid);
+      if(sizesRow && (p.colors||[]).length > 0) sizesRow.classList.remove('show');
+    }
+    updateQuickCardButton(pid);
+  }
+};
+
 function renderGrid() {
+  quickSelections = {};
   const grid = document.getElementById('productGrid');
   const filtered = applyAllFilters();
   if (!filtered.length) {
@@ -2286,8 +2393,14 @@ function renderGrid() {
     } else {
       gal = '<div class="gallery-placeholder"><span>🧥</span><p>' + p.cat + '</p></div>';
     }
+    const hasColors = (p.colors||[]).length > 0;
+    const sizesArr = (p.sizes||'').split(',').map(function(s){ return s.trim(); }).filter(Boolean);
+    const hasSizes = sizesArr.length > 0;
     const cols = (p.colors||[]).map(function(c) {
-      return '<div class="color-dot" style="background:' + c.hex + '" title="' + c.name + '"></div>';
+      return '<div class="color-dot" style="background:' + c.hex + '" title="' + c.name + '" data-pid="' + p.id + '" data-color="' + c.name.replace(/"/g,'&quot;') + '" onclick="event.stopPropagation();window.quickSelectColor(' + p.id + ',\'' + c.name.replace(/'/g,"\\'") + '\',this)"></div>';
+    }).join('');
+    const sizeChips = sizesArr.map(function(s) {
+      return '<button class="card-size-chip" data-pid="' + p.id + '" data-size="' + s.replace(/"/g,'&quot;') + '" onclick="event.stopPropagation();window.quickSelectSize(' + p.id + ',\'' + s.replace(/'/g,"\\'") + '\',this)">' + s + '</button>';
     }).join('');
     const payHtml = getPaymentHTML(p.price, false);
     let priceHtml = '';
@@ -2329,11 +2442,15 @@ function renderGrid() {
         '<div class="product-cat">' + p.cat + '</div>' +
         '<div class="product-name">' + p.name + '</div>' +
         (cols ? '<div class="color-dots">' + cols + '</div>' : '') +
+        (hasSizes ? '<div class="card-sizes-row' + (hasColors ? '' : ' show') + '" id="card-sizes-' + p.id + '">' + sizeChips + '</div>' : '') +
         '<div class="product-sizes-preview">Talles: ' + (p.sizes||'') + ' · ' + (p.colors||[]).length + ' color' + ((p.colors||[]).length!==1?'es':'') + '</div>' +
         '<div class="card-footer">' +
           priceHtml +
           (payHtml ? '<div class="card-payment-info">' + payHtml + '</div>' : '') +
-          '<button class="btn-ver" onclick="event.stopPropagation();window.openProduct(' + p.id + ')">Ver producto</button>' +
+          (!hasColors && !hasSizes
+            ? '<button class="btn-ver is-add" id="card-btn-' + p.id + '" onclick="event.stopPropagation();window.quickAddToCart(' + p.id + ')">🛒 Agregar</button>'
+            : '<button class="btn-ver" id="card-btn-' + p.id + '" onclick="event.stopPropagation();window.openProduct(' + p.id + ')">Ver producto</button>'
+          ) +
         '</div>' +
       '</div>' +
     '</div>';
@@ -2413,6 +2530,20 @@ window.openProduct = id => {
   if(ogTitle) ogTitle.setAttribute('content', p.name + ' | NORTHSIDE');
   var ogImg = document.querySelector('meta[property="og:image"]');
   if(ogImg && p.imgs && p.imgs.length > 0) ogImg.setAttribute('content', p.imgs[0].url||'');
+
+  // Si venía con color/talle elegidos desde la card, aplicarlos acá también
+  var quickSel = quickSelections[id];
+  if(quickSel) {
+    if(quickSel.color) {
+      var colorIdx = (p.colors||[]).findIndex(function(c){ return c.name === quickSel.color; });
+      if(colorIdx !== -1) window.selectColor(colorIdx);
+    }
+    if(quickSel.size) {
+      var sizesArr = (p.sizes||'').split(',').map(function(s){ return s.trim(); }).filter(Boolean);
+      var sizeIdx = sizesArr.indexOf(quickSel.size);
+      if(sizeIdx !== -1) window.selectSize(sizeIdx, quickSel.size);
+    }
+  }
 };
 
 // Middle click opens product in new tab
@@ -3206,8 +3337,8 @@ window.showWishlistOnly = function() {
   renderGrid();
   var bar = document.getElementById('filterBar');
   if(bar) bar.style.display = 'none';
-  var navBtn = document.getElementById('navWishlistBtn');
-  if(navBtn) navBtn.style.color = '#e0435a';
+  var navBtn = document.getElementById('navWishlistIcon');
+  if(navBtn) navBtn.innerHTML = heartSVG(true);
 };
 
 window.openSearch = function() {
