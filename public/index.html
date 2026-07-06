@@ -530,10 +530,8 @@
   .banner-product-select{width:100%;background:var(--bg2);border:1px solid var(--border);color:var(--black);padding:0.6rem 0.8rem;font-family:'DM Sans',sans-serif;font-size:0.82rem;outline:none;appearance:none;cursor:pointer;}
   .banner-product-select:focus{border-color:var(--warm);}
   /* WISHLIST HEART */
-  .wishlist-heart{position:absolute;top:0.6rem;right:0.6rem;z-index:5;background:rgba(255,255,255,0.85);border:none;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--black);transition:all 0.2s;backdrop-filter:blur(4px);}
+  .wishlist-heart{position:absolute;top:0.6rem;right:0.6rem;z-index:5;background:rgba(255,255,255,0.85);border:none;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;backdrop-filter:blur(4px);}
   .wishlist-heart:hover{background:#fff;transform:scale(1.08);}
-  .wishlist-heart svg{width:17px;height:17px;}
-  .wishlist-heart.active{color:#e0435a;}
 
   /* SEARCH OVERLAY */
   .search-overlay{display:none;position:fixed;inset:0;background:rgba(26,22,18,0.6);z-index:600;}
@@ -2254,8 +2252,8 @@ window.goToPage = function(page) {
 
 function heartSVG(isFav) {
   return isFav
-    ? '<svg viewBox="0 0 24 24" fill="#e0435a" stroke="#e0435a" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>'
-    : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>';
+    ? '<span style="font-size:1.05rem;line-height:1;">❤️</span>'
+    : '<span style="font-size:1.05rem;line-height:1;">🤍</span>';
 }
 
 function renderGrid() {
