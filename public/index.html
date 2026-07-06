@@ -3744,24 +3744,26 @@ window.openCheckout = function() {
   safeReplace({ view: 'checkout', step: 1 }, '/checkout');
 };
 
+function autofillCheckoutWhatsapp() {
+  if(!currentUser) return;
+  var waField = document.getElementById('checkoutWhatsapp');
+  if(waField && !waField.value) {
+    getDocs(collection(db, 'users')).then(function(snap){
+      snap.forEach(function(d){
+        if(d.id === currentUser.uid && (d.data().whatsapp || d.data().phone)) {
+          waField.value = d.data().whatsapp || d.data().phone || '';
+        }
+      });
+    }).catch(function(){});
+  }
+}
+
 window.goCheckoutStep = function(step) {
   currentCheckoutStep = step;
   renderCheckoutStep(step);
   window.scrollTo(0,0);
   safePush({ view: 'checkout', step: step }, '/checkout');
-  // Autocompletar WhatsApp si el usuario ya lo tiene guardado
-  if(step === 2 && currentUser) {
-    var waField = document.getElementById('checkoutWhatsapp');
-    if(waField && !waField.value) {
-      getDocs(collection(db, 'users')).then(function(snap){
-        snap.forEach(function(d){
-          if(d.id === currentUser.uid && (d.data().whatsapp || d.data().phone)) {
-            waField.value = d.data().whatsapp || d.data().phone || '';
-          }
-        });
-      }).catch(function(){});
-    }
-  }
+  if(step === 2) autofillCheckoutWhatsapp();
 };
 
 function renderCheckoutStep(step) {
@@ -3793,6 +3795,7 @@ function renderCheckoutStep(step) {
     if(main) { main.style.borderRight = ''; main.style.maxWidth = ''; }
   }
   if(step === 1) renderCartItems();
+  if(step === 2) autofillCheckoutWhatsapp();
   if(step === 3) setupPaymentStep();
   updateStickyTotal();
 }
