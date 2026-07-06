@@ -532,8 +532,9 @@
   /* WISHLIST HEART */
   .wishlist-heart{position:absolute;top:0.6rem;right:0.6rem;z-index:5;background:rgba(255,255,255,0.85);border:none;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--black);transition:all 0.2s;backdrop-filter:blur(4px);}
   .wishlist-heart:hover{background:#fff;transform:scale(1.08);}
-  .wishlist-heart svg{width:17px;height:17px;}
+  .wishlist-heart svg{width:17px;height:17px;fill:none !important;stroke:currentColor;}
   .wishlist-heart.active{color:#e0435a;}
+  .wishlist-heart.active svg{fill:currentColor !important;}
 
   /* SEARCH OVERLAY */
   .search-overlay{display:none;position:fixed;inset:0;background:rgba(26,22,18,0.6);z-index:600;}
@@ -939,7 +940,7 @@
   <span class="logo" onclick="showHome()">NORTHSIDE</span>
   <ul class="nav-cats" id="navCats" style="display:none"></ul>
   <div class="auth-bar">
-    <button onclick="window.showWishlistOnly()" title="Mis favoritos" style="background:none;border:none;color:var(--black);padding:0.3rem 0.4rem;cursor:pointer;display:flex;align-items:center;">
+    <button id="navWishlistBtn" onclick="window.showWishlistOnly()" title="Mis favoritos" style="background:none;border:none;color:var(--black);padding:0.3rem 0.4rem;cursor:pointer;display:flex;align-items:center;">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
     </button>
     <button onclick="window.openSearch()" title="Buscar" style="background:none;border:none;color:var(--black);padding:0.3rem 0.4rem;cursor:pointer;display:flex;align-items:center;">
@@ -2019,6 +2020,8 @@ window.filterCat = function(cat) {
   scrollCategoryWindowToFilter(cat);
   var bar = document.getElementById('filterBar');
   if(bar) bar.style.display = '';
+  var navBtn = document.getElementById('navWishlistBtn');
+  if(navBtn) navBtn.style.color = 'var(--black)';
   // If we're in detail or orders view, go back to home first
   document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
   document.getElementById('viewHome').classList.add('active');
@@ -2254,7 +2257,11 @@ function renderGrid() {
   const grid = document.getElementById('productGrid');
   const filtered = applyAllFilters();
   if (!filtered.length) {
-    grid.innerHTML = '<div class="empty-state"><span class="emoji-img">🧥</span><p>No hay productos todavía</p></div>';
+    if(currentFilter === 'wishlist_only') {
+      grid.innerHTML = '<div class="empty-state"><span class="emoji-img">🤍</span><p>Todavía no tenés favoritos</p><button onclick="window.filterCat(\'all\')">Ver todos los productos</button></div>';
+    } else {
+      grid.innerHTML = '<div class="empty-state"><span class="emoji-img">🧥</span><p>No hay productos todavía</p></div>';
+    }
     renderPagination(0);
     return;
   }
@@ -3164,24 +3171,31 @@ window.toggleWishlist = function(id, btn) {
   const idx = wishlist.indexOf(id);
   if(idx === -1) {
     wishlist.push(id);
-    if(btn) { btn.classList.add('active'); btn.querySelector('svg').setAttribute('fill','currentColor'); }
+    if(btn) btn.classList.add('active');
     showToast('❤️ Agregado a favoritos');
   } else {
     wishlist.splice(idx, 1);
-    if(btn) { btn.classList.remove('active'); btn.querySelector('svg').setAttribute('fill','none'); }
+    if(btn) btn.classList.remove('active');
     showToast('Quitado de favoritos');
   }
   saveWishlist();
   // Sync any other heart buttons for the same product on screen
   document.querySelectorAll('.wishlist-heart[data-pid="' + id + '"]').forEach(function(h) {
-    var isFav = wishlist.indexOf(id) !== -1;
-    h.classList.toggle('active', isFav);
-    var svg = h.querySelector('svg');
-    if(svg) svg.setAttribute('fill', isFav ? 'currentColor' : 'none');
+    h.classList.toggle('active', wishlist.indexOf(id) !== -1);
   });
+  // Si estamos en la vista de favoritos y ya no queda ninguno, volver a mostrar todos
+  if(currentFilter === 'wishlist_only' && wishlist.length === 0) {
+    setTimeout(function(){ window.filterCat('all'); }, 300);
+  } else if(currentFilter === 'wishlist_only') {
+    renderGrid();
+  }
 };
 
 window.showWishlistOnly = function() {
+  if(currentFilter === 'wishlist_only') {
+    window.filterCat('all');
+    return;
+  }
   document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
   document.getElementById('viewHome').classList.add('active');
   currentFilter = 'wishlist_only';
@@ -3189,6 +3203,8 @@ window.showWishlistOnly = function() {
   renderGrid();
   var bar = document.getElementById('filterBar');
   if(bar) bar.style.display = 'none';
+  var navBtn = document.getElementById('navWishlistBtn');
+  if(navBtn) navBtn.style.color = '#e0435a';
 };
 
 window.openSearch = function() {
