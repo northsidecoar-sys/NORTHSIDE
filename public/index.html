@@ -529,6 +529,31 @@
   .banner-add-row{display:flex;gap:8px;align-items:flex-start;margin-top:0.8rem;flex-direction:column;}
   .banner-product-select{width:100%;background:var(--bg2);border:1px solid var(--border);color:var(--black);padding:0.6rem 0.8rem;font-family:'DM Sans',sans-serif;font-size:0.82rem;outline:none;appearance:none;cursor:pointer;}
   .banner-product-select:focus{border-color:var(--warm);}
+  /* WISHLIST HEART */
+  .wishlist-heart{position:absolute;top:0.6rem;right:0.6rem;z-index:5;background:rgba(255,255,255,0.85);border:none;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--black);transition:all 0.2s;backdrop-filter:blur(4px);}
+  .wishlist-heart:hover{background:#fff;transform:scale(1.08);}
+  .wishlist-heart svg{width:17px;height:17px;}
+  .wishlist-heart.active{color:#e0435a;}
+
+  /* SEARCH OVERLAY */
+  .search-overlay{display:none;position:fixed;inset:0;background:rgba(26,22,18,0.6);z-index:600;}
+  .search-overlay.open{display:block;}
+  .search-panel{background:var(--bg);max-width:700px;margin:4vh auto 0;padding:1.5rem;max-height:88vh;display:flex;flex-direction:column;}
+  .search-input-row{display:flex;align-items:center;gap:0.8rem;border-bottom:2px solid var(--black);padding-bottom:0.8rem;margin-bottom:1rem;}
+  .search-input-row svg{flex-shrink:0;color:var(--muted);}
+  .search-input-row input{flex:1;border:none;background:none;outline:none;font-family:'DM Sans',sans-serif;font-size:1rem;color:var(--black);}
+  .search-input-row button{background:none;border:none;font-size:1.3rem;color:var(--muted);cursor:pointer;}
+  .search-results{overflow-y:auto;flex:1;}
+  .search-result-item{display:flex;gap:0.9rem;padding:0.7rem 0.3rem;cursor:pointer;border-bottom:1px solid var(--border);align-items:center;}
+  .search-result-item:hover{background:var(--bg2);}
+  .search-result-item img{width:56px;height:70px;object-fit:cover;flex-shrink:0;background:var(--bg2);}
+  .search-result-info{flex:1;}
+  .search-result-name{font-size:0.85rem;font-weight:500;color:var(--black);}
+  .search-result-cat{font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-top:0.15rem;}
+  .search-result-price{font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--warm);}
+  .search-empty{text-align:center;padding:2.5rem 1rem;color:var(--muted);font-size:0.85rem;}
+  @media(max-width:768px){.search-panel{margin:0;max-width:100%;max-height:100vh;height:100vh;}}
+
   /* FOOTER */
   .site-footer{border-top:1px solid var(--border);padding:3rem 2rem 2rem;background:var(--bg);}
   .footer-inner{display:flex;justify-content:space-between;align-items:flex-start;}
@@ -651,6 +676,30 @@
   .detail-back{display:flex;align-items:center;gap:0.5rem;padding:1rem 2rem;border-bottom:1px solid var(--border);cursor:pointer;font-size:0.75rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);transition:color 0.2s;background:var(--bg);}
   .detail-back:hover{color:var(--black);}
   .detail-body{display:grid;grid-template-columns:1fr 1fr;min-height:80vh;}
+  .related-products{padding:2.5rem 2rem;border-top:1px solid var(--border);}
+  .related-title{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:0.08em;margin-bottom:1.2rem;text-align:center;}
+  .related-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0.75rem;}
+  .related-card{cursor:pointer;border:1px solid var(--border);transition:all 0.15s;}
+  .related-card:hover{box-shadow:0 4px 14px rgba(26,22,18,0.08);}
+  .related-card img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block;background:var(--bg2);}
+  .related-card-info{padding:0.7rem 0.8rem;}
+  .related-card-name{font-size:0.78rem;font-weight:500;margin-bottom:0.2rem;}
+  .related-card-price{font-family:'Bebas Neue',sans-serif;font-size:0.95rem;color:var(--warm);}
+  @media(max-width:768px){.related-grid{grid-template-columns:repeat(2,1fr);}}
+
+  /* REVIEWS */
+  .reviews-section{padding:2.5rem 2rem 3rem;border-top:1px solid var(--border);}
+  .star-input{display:flex;gap:0.3rem;font-size:1.6rem;cursor:pointer;}
+  .star-input span{color:var(--border);transition:color 0.15s;}
+  .star-input span.filled{color:var(--warm);}
+  .review-stars-static{color:var(--warm);font-size:0.85rem;letter-spacing:0.1em;}
+  .review-item{padding:1rem 0;border-bottom:1px solid var(--border);}
+  .review-item-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.3rem;}
+  .review-item-name{font-size:0.82rem;font-weight:500;}
+  .review-item-date{font-size:0.68rem;color:var(--muted);}
+  .review-item-comment{font-size:0.82rem;color:var(--black);line-height:1.5;margin-top:0.3rem;}
+  .reviews-avg-num{font-family:'Bebas Neue',sans-serif;font-size:2.2rem;color:var(--black);}
+  .reviews-avg-count{font-size:0.72rem;color:var(--muted);letter-spacing:0.06em;}
   .detail-gallery{position:relative;background:var(--bg2);border-right:1px solid var(--border);}
   .detail-gallery-main{aspect-ratio:3/4;position:relative;overflow:hidden;}
   .detail-gallery-main img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 0.35s;}
@@ -890,6 +939,12 @@
   <span class="logo" onclick="showHome()">NORTHSIDE</span>
   <ul class="nav-cats" id="navCats" style="display:none"></ul>
   <div class="auth-bar">
+    <button onclick="window.showWishlistOnly()" title="Mis favoritos" style="background:none;border:none;color:var(--black);padding:0.3rem 0.4rem;cursor:pointer;display:flex;align-items:center;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+    </button>
+    <button onclick="window.openSearch()" title="Buscar" style="background:none;border:none;color:var(--black);padding:0.3rem 0.4rem;cursor:pointer;display:flex;align-items:center;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    </button>
     <div id="authArea"><button class="btn-login" onclick="window.loginGoogle()"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>Iniciar sesión</button></div>
     <button onclick="window.openCartDrawer()" title="Ver carrito" style="background:none;border:none;color:var(--black);padding:0.3rem 0.4rem;cursor:pointer;position:relative;display:flex;align-items:center;transition:opacity 0.2s;">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
@@ -897,6 +952,18 @@
     </button>
   </div>
 </nav>
+
+<!-- SEARCH OVERLAY -->
+<div class="search-overlay" id="searchOverlay" onclick="if(event.target===this) window.closeSearch()">
+  <div class="search-panel">
+    <div class="search-input-row">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="searchInput" placeholder="Buscar productos..." oninput="window.doSearch(this.value)">
+      <button onclick="window.closeSearch()">✕</button>
+    </div>
+    <div class="search-results" id="searchResults"></div>
+  </div>
+</div>
 
 <div class="view active" id="viewHome">
   <div id="bannerSection"></div>
@@ -1000,6 +1067,25 @@
       <div class="detail-thumbs" id="detailThumbs"></div>
     </div>
     <div class="detail-info" id="detailInfo"></div>
+  </div>
+  <div class="related-products" id="relatedProducts" style="display:none">
+    <div class="related-title">También te puede interesar</div>
+    <div class="related-grid" id="relatedGrid"></div>
+  </div>
+  <div class="reviews-section" id="reviewsSection">
+    <div class="reviews-header">
+      <div class="related-title" style="margin-bottom:0.3rem">Opiniones de clientes</div>
+      <div id="reviewsAvg" style="text-align:center;margin-bottom:1.5rem;"></div>
+    </div>
+    <div id="reviewFormWrap" style="max-width:520px;margin:0 auto 2rem;padding:1.2rem;border:1px solid var(--border);background:var(--bg2);">
+      <div style="font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:0.6rem;">Dejá tu opinión</div>
+      <div class="star-input" id="starInput">
+        <span data-v="1">★</span><span data-v="2">★</span><span data-v="3">★</span><span data-v="4">★</span><span data-v="5">★</span>
+      </div>
+      <textarea id="reviewComment" placeholder="Contanos qué te pareció el producto..." style="width:100%;margin-top:0.8rem;padding:0.6rem;border:1px solid var(--border);font-family:'DM Sans',sans-serif;font-size:0.82rem;min-height:70px;resize:vertical;"></textarea>
+      <button onclick="window.submitReview()" style="margin-top:0.6rem;background:var(--black);color:var(--bg);border:none;padding:0.6rem 1.3rem;font-family:'DM Sans',sans-serif;font-size:0.72rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;">Publicar reseña</button>
+    </div>
+    <div id="reviewsList" style="max-width:520px;margin:0 auto;"></div>
   </div>
 </div>
 
@@ -1114,6 +1200,12 @@
       <div id="checkout-step-1">
         <div class="section-label">Tu carrito</div>
         <div id="cartItemsList"></div>
+        <div id="freeShippingBarStep1" style="display:none;padding:0.9rem 1rem;margin-top:1rem;background:var(--bg2);border:1px solid var(--border);">
+          <div id="freeShippingTextStep1" style="font-size:0.78rem;color:var(--black);margin-bottom:0.5rem;text-align:center;"></div>
+          <div style="width:100%;height:5px;background:var(--border);border-radius:3px;overflow:hidden;">
+            <div id="freeShippingFillStep1" style="height:100%;width:0%;background:var(--warm);transition:width 0.4s ease;"></div>
+          </div>
+        </div>
         <div style="margin-top:1.5rem;padding-top:1rem;border-top:1px solid var(--border)">
           <button class="btn-next-step" onclick="window.goCheckoutStep(2)">Continuar con la entrega →</button>
           <button class="btn-back-step" onclick="window.showHome()">← Seguir comprando</button>
@@ -1572,6 +1664,12 @@
     <button class="btn-close" onclick="window.closeCartDrawer()">✕</button>
   </div>
   <div class="cart-drawer-body" id="cartDrawerBody"></div>
+  <div id="freeShippingBar" style="display:none;padding:0.8rem 1.5rem;border-top:1px solid var(--border);background:var(--bg2);">
+    <div id="freeShippingText" style="font-size:0.75rem;color:var(--black);margin-bottom:0.5rem;text-align:center;"></div>
+    <div style="width:100%;height:5px;background:var(--border);border-radius:3px;overflow:hidden;">
+      <div id="freeShippingFill" style="height:100%;width:0%;background:var(--warm);transition:width 0.4s ease;"></div>
+    </div>
+  </div>
   <div class="cart-drawer-footer" id="cartDrawerFooter" style="display:none">
     <div class="coupon-row">
       <input type="text" id="drawerCouponInput" placeholder="Código de descuento" style="font-size:0.8rem;text-transform:uppercase">
@@ -1680,6 +1778,7 @@ const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/' + CLOUD_NAME + '/image
 // ── STATE ─────────────────────────────────────────────
 let products = [];
 window.products = products;
+let wishlist = []; // array of product IDs
 let waConfig = { number: '', msg: 'Hola! Me interesa el producto:' };
 let currentFilter = 'all';
 let genderFilter = 'all';
@@ -1918,6 +2017,8 @@ window.filterCat = function(cat) {
   currentFilter = cat;
   currentPage = 1;
   scrollCategoryWindowToFilter(cat);
+  var bar = document.getElementById('filterBar');
+  if(bar) bar.style.display = '';
   // If we're in detail or orders view, go back to home first
   document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
   document.getElementById('viewHome').classList.add('active');
@@ -1986,7 +2087,12 @@ window.cyclePrevCategories = function() {
 };
 
 function applyAllFilters() {
-  let filtered = currentFilter === 'all' ? products.slice() : products.filter(p => p.cat === currentFilter);
+  let filtered;
+  if(currentFilter === 'wishlist_only') {
+    filtered = products.filter(function(p){ return wishlist.indexOf(p.id) !== -1; });
+  } else {
+    filtered = currentFilter === 'all' ? products.slice() : products.filter(p => p.cat === currentFilter);
+  }
 
   if(genderFilter !== 'all') {
     filtered = filtered.filter(function(p) {
@@ -2203,8 +2309,12 @@ function renderGrid() {
       }
     }
     var soldOutBadge = allSoldOut ? '<div class="badge-agotado">Agotado</div>' : '';
+    var isFav = wishlist.indexOf(p.id) !== -1;
+    var favBtn = '<button class="wishlist-heart' + (isFav?' active':'') + '" data-pid="' + p.id + '" onclick="event.stopPropagation();window.toggleWishlist(' + p.id + ',this)">' +
+      '<svg viewBox="0 0 24 24" fill="' + (isFav?'currentColor':'none') + '" stroke="currentColor" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>' +
+    '</button>';
     return '<div class="product-card' + (imgs.length === 2 ? ' has-two-imgs' : '') + (allSoldOut ? ' agotado' : '') + '" data-pid="' + p.id + '" onclick="window.openProduct(' + p.id + ')" onmousedown="if(event.button===1){event.preventDefault();window.openProductNewTab(' + p.id + ')}">' +
-      '<div class="card-gallery" style="position:relative">' + soldOutBadge + gal + '</div>' +
+      '<div class="card-gallery" style="position:relative">' + soldOutBadge + favBtn + gal + '</div>' +
       '<div class="product-info">' +
         '<div class="product-cat">' + p.cat + '</div>' +
         '<div class="product-name">' + p.name + '</div>' +
@@ -2364,11 +2474,152 @@ function renderDetail(p) {
     '<div class="transfer-highlight" id="transferHighlight"></div>' +
     '<div class="select-alert" id="selectAlert">Por favor seleccioná talle y color antes de continuar.</div>' +
     '<button data-pid="' + p.id + '" onclick="window.addToCartFromDetail(parseInt(this.dataset.pid))" style="width:100%;background:var(--black);color:var(--bg);border:none;padding:0.9rem;font-family:DM Sans,sans-serif;font-size:0.82rem;font-weight:500;letter-spacing:0.08em;cursor:pointer;text-transform:uppercase;margin-bottom:0.6rem;transition:opacity 0.2s">🛒 Agregar al carrito</button>' +
+    '<button data-pid="' + p.id + '" onclick="window.shareProduct(parseInt(this.dataset.pid))" style="width:100%;background:none;color:var(--black);border:1px solid var(--border);padding:0.7rem;font-family:DM Sans,sans-serif;font-size:0.75rem;font-weight:500;letter-spacing:0.08em;cursor:pointer;text-transform:uppercase;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:0.5rem">' +
+      '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>' +
+      'Compartir' +
+    '</button>' +
 '';
   _selSize = null; _selColor = null;
+  renderRelatedProducts(p);
+  loadReviews(p.id);
+}
+
+function renderRelatedProducts(p) {
+  const section = document.getElementById('relatedProducts');
+  const grid = document.getElementById('relatedGrid');
+  if(!section || !grid) return;
+  const related = products.filter(function(x){ return x.id !== p.id && x.cat === p.cat; }).slice(0, 4);
+  if(!related.length) { section.style.display = 'none'; return; }
+  section.style.display = 'block';
+  grid.innerHTML = related.map(function(rp) {
+    const img = (rp.imgs && rp.imgs[0]) ? (rp.imgs[0].url||rp.imgs[0].data||'') : '';
+    return '<div class="related-card" onclick="window.openProduct(' + rp.id + ')">' +
+      '<img src="' + img + '" alt="' + rp.name + '">' +
+      '<div class="related-card-info">' +
+        '<div class="related-card-name">' + rp.name + '</div>' +
+        '<div class="related-card-price">$' + Number(rp.price||0).toLocaleString('es-AR') + '</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
 }
 
 let _selSize = null, _selColor = null;
+// ── REVIEWS ────────────────────────────────────────────────
+let selectedReviewStars = 0;
+
+function setupStarInput() {
+  const starInput = document.getElementById('starInput');
+  if(!starInput) return;
+  const stars = starInput.querySelectorAll('span');
+  stars.forEach(function(s) {
+    s.onclick = function() {
+      selectedReviewStars = parseInt(s.dataset.v);
+      stars.forEach(function(st) { st.classList.toggle('filled', parseInt(st.dataset.v) <= selectedReviewStars); });
+    };
+  });
+}
+
+async function loadReviews(productId) {
+  selectedReviewStars = 0;
+  const commentEl = document.getElementById('reviewComment');
+  if(commentEl) commentEl.value = '';
+  setupStarInput();
+  document.querySelectorAll('#starInput span').forEach(function(s){ s.classList.remove('filled'); });
+
+  const listEl = document.getElementById('reviewsList');
+  const avgEl = document.getElementById('reviewsAvg');
+  if(!listEl) return;
+  listEl.innerHTML = '<div style="text-align:center;color:var(--muted);font-size:0.8rem;padding:1rem 0">Cargando reseñas...</div>';
+
+  try {
+    const snap = await getDocs(collection(db, 'reviews'));
+    const reviews = [];
+    snap.forEach(function(d){ if(d.data().productId === productId) reviews.push(d.data()); });
+    reviews.sort(function(a,b){ return (b.createdAt||0) - (a.createdAt||0); });
+
+    if(!reviews.length) {
+      if(avgEl) avgEl.innerHTML = '<span style="font-size:0.8rem;color:var(--muted)">Todavía no hay reseñas de este producto</span>';
+      listEl.innerHTML = '';
+      return;
+    }
+
+    const avg = reviews.reduce(function(s,r){ return s + (r.rating||0); }, 0) / reviews.length;
+    if(avgEl) {
+      avgEl.innerHTML = '<span class="reviews-avg-num">' + avg.toFixed(1) + '</span> ' +
+        '<span class="review-stars-static">' + '★'.repeat(Math.round(avg)) + '☆'.repeat(5-Math.round(avg)) + '</span><br>' +
+        '<span class="reviews-avg-count">' + reviews.length + ' reseña' + (reviews.length!==1?'s':'') + '</span>';
+    }
+
+    listEl.innerHTML = reviews.map(function(r) {
+      const date = r.createdAt ? new Date(r.createdAt).toLocaleDateString('es-AR', {day:'2-digit',month:'2-digit',year:'numeric'}) : '';
+      return '<div class="review-item">' +
+        '<div class="review-item-header">' +
+          '<span class="review-item-name">' + (r.userName||'Cliente') + '</span>' +
+          '<span class="review-item-date">' + date + '</span>' +
+        '</div>' +
+        '<div class="review-stars-static">' + '★'.repeat(r.rating||0) + '☆'.repeat(5-(r.rating||0)) + '</div>' +
+        (r.comment ? '<div class="review-item-comment">' + r.comment.replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</div>' : '') +
+      '</div>';
+    }).join('');
+  } catch(e) {
+    listEl.innerHTML = '<div style="text-align:center;color:var(--muted);font-size:0.8rem;">Error cargando reseñas</div>';
+  }
+}
+
+window.submitReview = async function() {
+  if(!currentUser) { showToast('Iniciá sesión para dejar una reseña'); return; }
+  if(!selectedReviewStars) { showToast('Elegí una cantidad de estrellas'); return; }
+  const comment = document.getElementById('reviewComment').value.trim();
+  const p = products.find(function(x){ return x.id === openProductId; });
+  if(!p) return;
+
+  try {
+    await addDoc(collection(db, 'reviews'), {
+      productId: p.id,
+      userName: currentUser.displayName || currentUser.email,
+      rating: selectedReviewStars,
+      comment: comment,
+      createdAt: Date.now()
+    });
+    showToast('✓ ¡Gracias por tu reseña!');
+    loadReviews(p.id);
+  } catch(e) {
+    showToast('Error al publicar la reseña');
+  }
+};
+
+window.shareProduct = function(id) {
+  const p = products.find(function(x){ return x.id === id; });
+  if(!p) return;
+  const slug = slugify(p.name);
+  const url = window.location.origin + '/producto/' + slug;
+
+  if(navigator.share) {
+    navigator.share({ title: p.name + ' | NORTHSIDE', text: 'Mirá esto en Northside: ' + p.name, url: url }).catch(function(){});
+    return;
+  }
+
+  // Fallback menu: WhatsApp + copiar link
+  const existing = document.getElementById('shareMenuOverlay');
+  if(existing) existing.remove();
+
+  const overlay = document.createElement('div');
+  overlay.id = 'shareMenuOverlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(26,22,18,0.5);z-index:700;display:flex;align-items:flex-end;justify-content:center;';
+  overlay.onclick = function(e){ if(e.target === overlay) overlay.remove(); };
+
+  const panel = document.createElement('div');
+  panel.style.cssText = 'background:var(--bg);width:100%;max-width:420px;padding:1.5rem;border-radius:8px 8px 0 0;';
+  panel.innerHTML =
+    '<div style="font-family:\'Bebas Neue\',sans-serif;font-size:1.1rem;letter-spacing:0.08em;margin-bottom:1rem;">Compartir producto</div>' +
+    '<button onclick="window.open(\'https://wa.me/?text=' + encodeURIComponent('Mirá esto en Northside: ' + p.name + ' ' + url) + '\',\'_blank\')" style="width:100%;text-align:left;background:none;border:none;border-top:1px solid var(--border);padding:0.9rem 0.2rem;font-family:DM Sans,sans-serif;font-size:0.85rem;cursor:pointer;display:flex;align-items:center;gap:0.7rem;">📲 Compartir por WhatsApp</button>' +
+    '<button onclick="navigator.clipboard.writeText(\'' + url + '\');window.showToast(\'✓ Link copiado\');document.getElementById(\'shareMenuOverlay\').remove();" style="width:100%;text-align:left;background:none;border:none;border-top:1px solid var(--border);padding:0.9rem 0.2rem;font-family:DM Sans,sans-serif;font-size:0.85rem;cursor:pointer;display:flex;align-items:center;gap:0.7rem;">🔗 Copiar link</button>' +
+    '<button onclick="document.getElementById(\'shareMenuOverlay\').remove()" style="width:100%;text-align:center;background:none;border:none;border-top:1px solid var(--border);padding:0.9rem 0.2rem;font-family:DM Sans,sans-serif;font-size:0.8rem;color:var(--muted);cursor:pointer;margin-top:0.3rem;">Cancelar</button>';
+
+  overlay.appendChild(panel);
+  document.body.appendChild(overlay);
+};
+
 window.selectSize = function(i, val) {
   _selSize = val;
   document.querySelectorAll('.size-btn').forEach(function(b,j){ b.classList.toggle('selected', j===i); });
@@ -2658,6 +2909,10 @@ onAuthStateChanged(auth, async function(user) {
   } else {
     area.innerHTML = '<button class="btn-login" onclick="window.loginGoogle()"><svg viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>Iniciar sesión</button>';
   }
+  // Reload wishlist for the correct account (or localStorage if logged out)
+  if(typeof products !== 'undefined' && products.length) {
+    loadWishlist().then(function(){ if(typeof renderGrid === 'function') renderGrid(); });
+  }
 });
 
 window.toggleUserDropdown = function() {
@@ -2806,21 +3061,50 @@ window.loadOrdersList = async function() {
   let html = '';
   orders.forEach(function(o) {
     const date = o.createdAt ? new Date(o.createdAt).toLocaleDateString('es-AR', {day:'2-digit',month:'2-digit',year:'numeric'}) : '—';
-    const status = {pendiente:'⏳ Pendiente',pagado:'✓ Pagado',preparando:'📦 Preparando',enviado:'🚚 En camino',entregado:'✅ Entregado',cancelado:'✕ Cancelado'}[o.status] || o.status;
     const total = o.total ? '$' + Number(o.total).toLocaleString('es-AR') : '—';
-    html += '<div style="padding:1rem;border:1px solid var(--border);margin-bottom:0.6rem;">' +
-      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.4rem;">' +
-        '<span style="font-family:\'Bebas Neue\',sans-serif;letter-spacing:0.08em;">' + (o.orderId||o._docId.substring(0,12).toUpperCase()) + '</span>' +
+    const isCancelled = o.status === 'cancelado';
+    html += '<div style="padding:1.2rem;border:1px solid var(--border);margin-bottom:0.8rem;">' +
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.9rem;">' +
+        '<span style="font-family:\'Bebas Neue\',sans-serif;letter-spacing:0.08em;font-size:1.05rem;">' + (o.orderId||o._docId.substring(0,12).toUpperCase()) + '</span>' +
         '<span style="font-size:0.72rem;color:var(--muted);">' + date + '</span>' +
       '</div>' +
-      '<div style="display:flex;justify-content:space-between;align-items:center;">' +
-        '<span style="font-size:0.78rem;color:var(--muted);">' + status + '</span>' +
-        '<span style="font-size:0.82rem;font-weight:500;">' + total + '</span>' +
+      (isCancelled
+        ? '<div style="font-size:0.82rem;color:#e0435a;font-weight:500;padding:0.5rem 0;">✕ Pedido cancelado</div>'
+        : renderOrderTimeline(o.status || 'pendiente')
+      ) +
+      '<div style="display:flex;justify-content:flex-end;margin-top:0.8rem;padding-top:0.7rem;border-top:1px solid var(--border);">' +
+        '<span style="font-size:0.9rem;font-weight:600;">' + total + '</span>' +
       '</div>' +
     '</div>';
   });
   list.innerHTML = html;
 };
+
+function renderOrderTimeline(status) {
+  const steps = [
+    { key: 'pagado',    label: 'Pagado',     icon: '💳' },
+    { key: 'preparando',label: 'Preparando', icon: '📦' },
+    { key: 'enviado',   label: 'En camino',  icon: '🚚' },
+    { key: 'entregado', label: 'Entregado',  icon: '✅' }
+  ];
+  const order = ['pendiente','pagado','preparando','enviado','entregado'];
+  const currentIdx = order.indexOf(status);
+
+  return '<div style="display:flex;align-items:flex-start;">' +
+    steps.map(function(s, i) {
+      const stepIdx = order.indexOf(s.key);
+      const done = currentIdx >= stepIdx;
+      const isLast = i === steps.length - 1;
+      return '<div style="flex:1;display:flex;flex-direction:column;align-items:center;position:relative;">' +
+        (i > 0 ? '<div style="position:absolute;top:14px;right:50%;width:100%;height:2px;background:' + (done ? 'var(--black)' : 'var(--border)') + ';z-index:0;"></div>' : '') +
+        '<div style="width:28px;height:28px;border-radius:50%;background:' + (done ? 'var(--black)' : 'var(--bg2)') + ';color:' + (done ? '#fff' : 'var(--muted)') + ';display:flex;align-items:center;justify-content:center;font-size:0.85rem;z-index:1;border:1px solid ' + (done ? 'var(--black)' : 'var(--border)') + ';">' +
+          (done ? '✓' : s.icon) +
+        '</div>' +
+        '<span style="font-size:0.62rem;letter-spacing:0.04em;text-transform:uppercase;color:' + (done ? 'var(--black)' : 'var(--muted)') + ';margin-top:0.4rem;text-align:center;font-weight:' + (done?'600':'400') + ';">' + s.label + '</span>' +
+      '</div>';
+    }).join('') +
+  '</div>';
+}
 
 // ── FLOATING FILTER BAR: hide on scroll down, show on scroll up ──
 (function() {
@@ -2852,6 +3136,98 @@ window.loadOrdersList = async function() {
     }
   }, { passive: true });
 })();
+
+// ── SEARCH ─────────────────────────────────────────────────
+// ── WISHLIST ───────────────────────────────────────────────
+async function loadWishlist() {
+  if(currentUser) {
+    try {
+      const snap = await getDocs(collection(db, 'users'));
+      snap.forEach(function(d){
+        if(d.id === currentUser.uid) wishlist = d.data().wishlist || [];
+      });
+    } catch(e) { wishlist = []; }
+  } else {
+    try { wishlist = JSON.parse(localStorage.getItem('ns_wishlist') || '[]'); } catch(e) { wishlist = []; }
+  }
+}
+
+async function saveWishlist() {
+  if(currentUser) {
+    try { await setDoc(doc(db, 'users', currentUser.uid), { wishlist: wishlist }, { merge: true }); } catch(e) {}
+  } else {
+    try { localStorage.setItem('ns_wishlist', JSON.stringify(wishlist)); } catch(e) {}
+  }
+}
+
+window.toggleWishlist = function(id, btn) {
+  const idx = wishlist.indexOf(id);
+  if(idx === -1) {
+    wishlist.push(id);
+    if(btn) { btn.classList.add('active'); btn.querySelector('svg').setAttribute('fill','currentColor'); }
+    showToast('❤️ Agregado a favoritos');
+  } else {
+    wishlist.splice(idx, 1);
+    if(btn) { btn.classList.remove('active'); btn.querySelector('svg').setAttribute('fill','none'); }
+    showToast('Quitado de favoritos');
+  }
+  saveWishlist();
+  // Sync any other heart buttons for the same product on screen
+  document.querySelectorAll('.wishlist-heart[data-pid="' + id + '"]').forEach(function(h) {
+    var isFav = wishlist.indexOf(id) !== -1;
+    h.classList.toggle('active', isFav);
+    var svg = h.querySelector('svg');
+    if(svg) svg.setAttribute('fill', isFav ? 'currentColor' : 'none');
+  });
+};
+
+window.showWishlistOnly = function() {
+  document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
+  document.getElementById('viewHome').classList.add('active');
+  currentFilter = 'wishlist_only';
+  currentPage = 1;
+  renderGrid();
+  var bar = document.getElementById('filterBar');
+  if(bar) bar.style.display = 'none';
+};
+
+window.openSearch = function() {
+  document.getElementById('searchOverlay').classList.add('open');
+  document.getElementById('searchResults').innerHTML = '<div class="search-empty">Escribí para buscar productos</div>';
+  setTimeout(function(){ document.getElementById('searchInput').focus(); }, 100);
+};
+
+window.closeSearch = function() {
+  document.getElementById('searchOverlay').classList.remove('open');
+  document.getElementById('searchInput').value = '';
+};
+
+window.doSearch = function(query) {
+  const resultsEl = document.getElementById('searchResults');
+  const q = query.trim().toLowerCase();
+  if(!q) { resultsEl.innerHTML = '<div class="search-empty">Escribí para buscar productos</div>'; return; }
+
+  const results = products.filter(function(p) {
+    return (p.name||'').toLowerCase().includes(q) || (p.cat||'').toLowerCase().includes(q);
+  });
+
+  if(!results.length) {
+    resultsEl.innerHTML = '<div class="search-empty">No encontramos productos para "' + query + '"</div>';
+    return;
+  }
+
+  resultsEl.innerHTML = results.map(function(p) {
+    const imgUrl = (p.imgs && p.imgs[0]) ? (p.imgs[0].url||p.imgs[0].data||'') : '';
+    return '<div class="search-result-item" onclick="window.closeSearch();window.openProduct(' + p.id + ')">' +
+      '<img src="' + imgUrl + '" alt="' + p.name + '">' +
+      '<div class="search-result-info">' +
+        '<div class="search-result-name">' + p.name + '</div>' +
+        '<div class="search-result-cat">' + p.cat + '</div>' +
+      '</div>' +
+      '<div class="search-result-price">$' + Number(p.price||0).toLocaleString('es-AR') + '</div>' +
+    '</div>';
+  }).join('');
+};
 
 window.loginGoogle = async function() {
   try {
@@ -3549,6 +3925,29 @@ window.closeCartDrawer = function() {
   document.body.style.overflow = '';
 };
 
+const FREE_SHIPPING_THRESHOLD = 150000;
+
+function updateFreeShippingBar() {
+  const total = getCartTotal();
+  const bars = [
+    { bar: document.getElementById('freeShippingBar'), text: document.getElementById('freeShippingText'), fill: document.getElementById('freeShippingFill') },
+    { bar: document.getElementById('freeShippingBarStep1'), text: document.getElementById('freeShippingTextStep1'), fill: document.getElementById('freeShippingFillStep1') }
+  ];
+  bars.forEach(function(el) {
+    if(!el.bar || !el.text || !el.fill) return;
+    el.bar.style.display = 'block';
+    if(total >= FREE_SHIPPING_THRESHOLD) {
+      el.text.innerHTML = '🎉 ¡Tenés <strong>envío gratis</strong>!';
+      el.fill.style.width = '100%';
+    } else {
+      const missing = FREE_SHIPPING_THRESHOLD - total;
+      const pct = Math.min(100, Math.round((total / FREE_SHIPPING_THRESHOLD) * 100));
+      el.text.innerHTML = 'Te faltan <strong>$' + Number(missing).toLocaleString('es-AR') + '</strong> para envío gratis';
+      el.fill.style.width = pct + '%';
+    }
+  });
+}
+
 function renderCartDrawer() {
   const body = document.getElementById('cartDrawerBody');
   const footer = document.getElementById('cartDrawerFooter');
@@ -3562,6 +3961,8 @@ function renderCartDrawer() {
   if(!cart.length) {
     body.innerHTML = '<div class="cart-drawer-empty"><span>🛒</span>Tu carrito está vacío</div>';
     if(footer) footer.style.display = 'none';
+    var fsBar0 = document.getElementById('freeShippingBar');
+    if(fsBar0) fsBar0.style.display = 'none';
     return;
   }
 
@@ -3585,6 +3986,7 @@ function renderCartDrawer() {
   }).join('');
 
   if(subtotalEl) subtotalEl.textContent = '$' + Number(getCartTotal()).toLocaleString('es-AR');
+  updateFreeShippingBar();
   // Show coupon discount if applied
   var discLine = document.getElementById('couponDiscountLine');
   var discAmt = document.getElementById('couponDiscountAmt');
@@ -3803,6 +4205,7 @@ function renderCheckoutStep(step) {
 function renderCartItems() {
   const list = document.getElementById('cartItemsList');
   if(!list) return;
+  updateFreeShippingBar();
   if(!cart.length) {
     list.innerHTML = '<p style="color:var(--muted);text-align:center;padding:2rem;font-size:0.85rem;letter-spacing:0.1em;text-transform:uppercase">Tu carrito está vacío</p>';
     return;
@@ -3939,12 +4342,14 @@ window.calcularEnvio = async function() {
     errEl.textContent = 'Código postal no reconocido. Probá con otro.';
     errEl.style.display = 'block'; return;
   }
+  const qualifiesFreeShipping = getCartTotal() >= FREE_SHIPPING_THRESHOLD;
   // Free shipping zones
-  if(zona === 'GRATIS') {
+  if(zona === 'GRATIS' || qualifiesFreeShipping) {
     optEl.innerHTML = '';
     var addrSec = document.getElementById('addressSection');
     if(addrSec) addrSec.style.display = 'block';
-    const freeDiv = buildShippingOption('express', '🛵', 'Envío Gratis a tu zona', 0, 1, 2, true);
+    var freeLabel = zona === 'GRATIS' ? 'Envío Gratis a tu zona' : 'Envío Gratis (superaste $' + Number(FREE_SHIPPING_THRESHOLD).toLocaleString('es-AR') + ')';
+    const freeDiv = buildShippingOption('express', '🛵', freeLabel, 0, 1, 2, true);
     optEl.appendChild(freeDiv);
     actEl.style.display = 'block';
     loadEl.style.display = 'none';
@@ -4089,7 +4494,36 @@ window.saveShipping = function() {
   document.getElementById('shippingSummary').classList.add('show');
   document.getElementById('shippingNextActions').style.display = 'block';
   renderSummary();
+  saveAbandonedCart(wa);
 };
+
+// ── CARRITO ABANDONADO (recordatorio manual por WhatsApp desde el admin) ──
+async function saveAbandonedCart(wa) {
+  if(!wa || !cart.length) return;
+  try {
+    const docId = wa.replace(/\D/g,'');
+    if(!docId) return;
+    await setDoc(doc(db, 'abandoned_carts', docId), {
+      whatsapp: wa,
+      uid: currentUser ? currentUser.uid : null,
+      userName: currentUser ? (currentUser.displayName || currentUser.email) : 'Visitante',
+      items: cart.map(function(i){ return { name:i.name, size:i.size, color:i.color, price:i.price, qty:i.qty }; }),
+      total: getCartTotal(),
+      updatedAt: Date.now(),
+      reminded: false,
+      completed: false
+    });
+  } catch(e) {}
+}
+
+async function markAbandonedCartCompleted(wa) {
+  if(!wa) return;
+  try {
+    const docId = wa.replace(/\D/g,'');
+    if(!docId) return;
+    await setDoc(doc(db, 'abandoned_carts', docId), { completed: true }, { merge: true });
+  } catch(e) {}
+}
 
 window.changeShipping = function() {
   document.getElementById('shippingOptions').style.display = 'flex';
@@ -4233,6 +4667,7 @@ window.finalizarCompra = async function() {
 
   try {
     await addDoc(collection(db, 'orders'), orderData);
+    if(userWhatsapp) markAbandonedCartCompleted(userWhatsapp);
     appliedCoupon = null;
     comprobanteUrl = null;
     cart = [];
@@ -4816,7 +5251,7 @@ async function loadLocalStatus() {
 
 async function init() {
   try {
-    await Promise.all([loadProducts(), loadWaConfig(), loadBanner(), loadTicker(), loadPaymentConfig(), loadLocalStatus(), loadFooterConfig()]);
+    await Promise.all([loadProducts(), loadWaConfig(), loadBanner(), loadTicker(), loadPaymentConfig(), loadLocalStatus(), loadFooterConfig(), loadWishlist()]);
   window._products = products; // debug access
   } catch(e) {
     showToast('Error conectando a Firebase. Verificá tu conexión.');
