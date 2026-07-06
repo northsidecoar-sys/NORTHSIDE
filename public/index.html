@@ -532,9 +532,8 @@
   /* WISHLIST HEART */
   .wishlist-heart{position:absolute;top:0.6rem;right:0.6rem;z-index:5;background:rgba(255,255,255,0.85);border:none;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--black);transition:all 0.2s;backdrop-filter:blur(4px);}
   .wishlist-heart:hover{background:#fff;transform:scale(1.08);}
-  .wishlist-heart svg{width:17px;height:17px;fill:none !important;stroke:currentColor;}
+  .wishlist-heart svg{width:17px;height:17px;}
   .wishlist-heart.active{color:#e0435a;}
-  .wishlist-heart.active svg{fill:currentColor !important;}
 
   /* SEARCH OVERLAY */
   .search-overlay{display:none;position:fixed;inset:0;background:rgba(26,22,18,0.6);z-index:600;}
@@ -2253,6 +2252,12 @@ window.goToPage = function(page) {
   if(gridEl) gridEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
 };
 
+function heartSVG(isFav) {
+  return isFav
+    ? '<svg viewBox="0 0 24 24" fill="#e0435a" stroke="#e0435a" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>'
+    : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>';
+}
+
 function renderGrid() {
   const grid = document.getElementById('productGrid');
   const filtered = applyAllFilters();
@@ -2318,7 +2323,7 @@ function renderGrid() {
     var soldOutBadge = allSoldOut ? '<div class="badge-agotado">Agotado</div>' : '';
     var isFav = wishlist.indexOf(p.id) !== -1;
     var favBtn = '<button class="wishlist-heart' + (isFav?' active':'') + '" data-pid="' + p.id + '" onclick="event.stopPropagation();window.toggleWishlist(' + p.id + ',this)">' +
-      '<svg viewBox="0 0 24 24" fill="' + (isFav?'currentColor':'none') + '" stroke="currentColor" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>' +
+      heartSVG(isFav) +
     '</button>';
     return '<div class="product-card' + (imgs.length === 2 ? ' has-two-imgs' : '') + (allSoldOut ? ' agotado' : '') + '" data-pid="' + p.id + '" onclick="window.openProduct(' + p.id + ')" onmousedown="if(event.button===1){event.preventDefault();window.openProductNewTab(' + p.id + ')}">' +
       '<div class="card-gallery" style="position:relative">' + soldOutBadge + favBtn + gal + '</div>' +
@@ -3169,19 +3174,19 @@ async function saveWishlist() {
 
 window.toggleWishlist = function(id, btn) {
   const idx = wishlist.indexOf(id);
-  if(idx === -1) {
+  const nowFav = idx === -1;
+  if(nowFav) {
     wishlist.push(id);
-    if(btn) btn.classList.add('active');
     showToast('❤️ Agregado a favoritos');
   } else {
     wishlist.splice(idx, 1);
-    if(btn) btn.classList.remove('active');
     showToast('Quitado de favoritos');
   }
   saveWishlist();
-  // Sync any other heart buttons for the same product on screen
+  // Sync every heart button for this product on screen (including the one clicked)
   document.querySelectorAll('.wishlist-heart[data-pid="' + id + '"]').forEach(function(h) {
-    h.classList.toggle('active', wishlist.indexOf(id) !== -1);
+    h.classList.toggle('active', nowFav);
+    h.innerHTML = heartSVG(nowFav);
   });
   // Si estamos en la vista de favoritos y ya no queda ninguno, volver a mostrar todos
   if(currentFilter === 'wishlist_only' && wishlist.length === 0) {
