@@ -2631,7 +2631,12 @@ function renderRelatedProducts(p) {
   const section = document.getElementById('relatedProducts');
   const grid = document.getElementById('relatedGrid');
   if(!section || !grid) return;
-  const related = products.filter(function(x){ return x.id !== p.id && x.cat === p.cat; }).slice(0, 4);
+  let related = products.filter(function(x){ return x.id !== p.id && x.cat === p.cat; }).slice(0, 4);
+  if(related.length < 4) {
+    const usedIds = related.map(function(r){ return r.id; }).concat([p.id]);
+    const fallback = products.filter(function(x){ return usedIds.indexOf(x.id) === -1; }).slice(0, 4 - related.length);
+    related = related.concat(fallback);
+  }
   if(!related.length) { section.style.display = 'none'; return; }
   section.style.display = 'block';
   grid.innerHTML = related.map(function(rp) {
