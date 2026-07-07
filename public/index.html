@@ -683,7 +683,7 @@
   .btn-ver:hover{opacity:0.75;}
   .detail-back{display:flex;align-items:center;gap:0.5rem;padding:1rem 2rem;border-bottom:1px solid var(--border);cursor:pointer;font-size:0.75rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);transition:color 0.2s;background:var(--bg);}
   .detail-back:hover{color:var(--black);}
-  .detail-body{display:grid;grid-template-columns:1fr 1fr;align-items:start;}
+  .detail-body{display:grid;grid-template-columns:1fr 1fr;align-items:stretch;}
   .related-products{padding:2.5rem 2rem;border-top:1px solid var(--border);}
   .related-title{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:0.08em;margin-bottom:1.2rem;text-align:center;}
   .related-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0.75rem;}
@@ -708,8 +708,8 @@
   .review-item-comment{font-size:0.82rem;color:var(--black);line-height:1.5;margin-top:0.3rem;}
   .reviews-avg-num{font-family:'Bebas Neue',sans-serif;font-size:2.2rem;color:var(--black);}
   .reviews-avg-count{font-size:0.72rem;color:var(--muted);letter-spacing:0.06em;}
-  .detail-gallery{position:relative;background:var(--bg);border-right:1px solid var(--border);display:flex;gap:14px;align-items:flex-start;justify-content:center;padding:24px;}
-  .detail-gallery-main{width:min(100%,420px);aspect-ratio:3/4;max-height:68vh;position:relative;overflow:hidden;background:var(--bg);flex-shrink:0;}
+  .detail-gallery{position:relative;background:var(--bg);border-right:1px solid var(--border);display:flex;gap:14px;align-items:stretch;justify-content:center;padding:24px;}
+  .detail-gallery-main{width:min(100%,420px);position:relative;overflow:hidden;background:var(--bg);flex-shrink:0;min-height:400px;}
   .detail-gallery-main img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 0.35s;}
   .detail-gallery-main img.active{opacity:1;}
   .detail-gallery-main .gallery-arrow{opacity:0.6;}
