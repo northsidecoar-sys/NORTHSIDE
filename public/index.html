@@ -2275,6 +2275,7 @@ window.quickSelectColor = function(pid, colorName, el) {
   if(!quickSelections[pid]) quickSelections[pid] = {};
   var card = el.closest('.product-card');
   var alreadySelected = el.classList.contains('selected');
+  var p = products.find(function(x){ return x.id === pid; });
 
   if(alreadySelected) {
     // Deseleccionar
@@ -2286,10 +2287,23 @@ window.quickSelectColor = function(pid, colorName, el) {
     el.classList.add('selected');
   }
 
+  // Cambiar la foto de la card a la del color elegido (si existe una etiquetada)
+  if(card && p) {
+    var img1 = card.querySelector('.card-img-1');
+    var img2 = card.querySelector('.card-img-2');
+    var chosenColor = quickSelections[pid].color;
+    var colorImgs = chosenColor ? (p.imgs||[]).filter(function(im){ return im.color === chosenColor; }) : [];
+    var imgsToUse = colorImgs.length > 0 ? colorImgs : (p.imgs||[]);
+    if(img1 && imgsToUse[0]) img1.src = imgsToUse[0].url || imgsToUse[0].data || '';
+    if(img2) {
+      if(imgsToUse[1]) { img2.src = imgsToUse[1].url || imgsToUse[1].data || ''; img2.style.display=''; }
+      else { img2.style.display = 'none'; }
+    }
+  }
+
   // Mostrar/ocultar la fila de talles según si hay color elegido
   var sizesRow = document.getElementById('card-sizes-' + pid);
   if(sizesRow) {
-    var p = products.find(function(x){ return x.id === pid; });
     var hasColors = p && (p.colors||[]).length > 0;
     if(quickSelections[pid].color || !hasColors) sizesRow.classList.add('show');
     else sizesRow.classList.remove('show');
