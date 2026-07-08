@@ -2562,8 +2562,8 @@ window.showHome = (pushState) => {
   if(pushState !== false) safePush({ view: 'home' }, '/');
   document.title = 'NORTHSIDE | Ropa Streetwear Argentina';
 };
-function renderDetail(p) {
-  const imgs = p.imgs || [];
+function renderProductGallery(p, imgsToShow) {
+  const imgs = imgsToShow || p.imgs || [];
   const main = document.getElementById('detailGalleryMain');
   if (imgs.length > 0) {
     let html = imgs.map((img,i) => '<img src="' + img.url + '" class="' + (i===0?'active':'') + '" alt="' + (img.label||'') + '" loading="lazy">').join('');
@@ -2577,6 +2577,13 @@ function renderDetail(p) {
     main.innerHTML = '<div class="gallery-placeholder" style="aspect-ratio:3/4"><span>🧥</span><p>' + p.cat + '</p></div>';
   }
   document.getElementById('detailThumbs').innerHTML = imgs.length > 1 ? imgs.map((img,i) => '<img src="' + img.url + '" class="detail-thumb' + (i===0?' active':'') + '" alt="" onclick="window.goDetailImg(' + i + ')" loading="lazy">').join('') : '';
+  detailActiveImg = 0;
+  window._detailCurrentImgs = imgs;
+}
+
+function renderDetail(p) {
+  renderProductGallery(p);
+  const imgs = p.imgs || [];
 
   // Swipe support for detail gallery
   const detailMain = document.getElementById('detailGalleryMain');
@@ -2782,6 +2789,9 @@ window.selectColor = function(i) {
   document.querySelectorAll('.color-btn').forEach((b,j) => b.classList.toggle('selected', j===i));
   const l = document.getElementById('selectedColorLabel');
   if(l) l.textContent = _selColor;
+  // Mostrar solo las fotos de ese color, si están etiquetadas; si no, dejar todas
+  const colorImgs = (p.imgs||[]).filter(function(img){ return img.color === _selColor; });
+  renderProductGallery(p, colorImgs.length > 0 ? colorImgs : (p.imgs||[]));
   // Update stock display when color changes
   if(p) { updateStockAlert(p); updateTransferHighlight(p.price); }
 };
@@ -2794,13 +2804,14 @@ window.sendWhatsapp = async function(id) {
   const msg = template.replace('{producto}', '*' + (p.name||'') + '*');
   window.open('https://wa.me/' + num + '?text=' + encodeURIComponent(msg), '_blank');
 };
-window.prevDetailImg = () => { const p=products.find(x=>x.id===openProductId); if(!p||!p.imgs||p.imgs.length<2)return; detailActiveImg=(detailActiveImg-1+p.imgs.length)%p.imgs.length; updateDetailGallery(p); };
-window.nextDetailImg = () => { const p=products.find(x=>x.id===openProductId); if(!p||!p.imgs||p.imgs.length<2)return; detailActiveImg=(detailActiveImg+1)%p.imgs.length; updateDetailGallery(p); };
-window.goDetailImg  = i  => { const p=products.find(x=>x.id===openProductId); if(!p)return; detailActiveImg=i; updateDetailGallery(p); };
-function updateDetailGallery(p){
+window.prevDetailImg = () => { const imgs=window._detailCurrentImgs||[]; if(imgs.length<2)return; detailActiveImg=(detailActiveImg-1+imgs.length)%imgs.length; updateDetailGallery(); };
+window.nextDetailImg = () => { const imgs=window._detailCurrentImgs||[]; if(imgs.length<2)return; detailActiveImg=(detailActiveImg+1)%imgs.length; updateDetailGallery(); };
+window.goDetailImg  = i  => { detailActiveImg=i; updateDetailGallery(); };
+function updateDetailGallery(){
+  const imgs = window._detailCurrentImgs||[];
   document.querySelectorAll('#detailGalleryMain img').forEach((img,i)=>img.classList.toggle('active',i===detailActiveImg));
   document.querySelectorAll('.detail-thumb').forEach((t,i)=>t.classList.toggle('active',i===detailActiveImg));
-  const cnt=document.getElementById('detailCount'); if(cnt)cnt.textContent=(detailActiveImg+1)+' / '+p.imgs.length;
+  const cnt=document.getElementById('detailCount'); if(cnt)cnt.textContent=(detailActiveImg+1)+' / '+imgs.length;
 }
 
 // ── ADMIN ─────────────────────────────────────────────
